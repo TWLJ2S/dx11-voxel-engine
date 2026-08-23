@@ -1,0 +1,88 @@
+{
+  "assets": [
+    {
+      "id": 0,
+      "name": "air",
+      "models": [ "cube.json" ],
+      "materials": [ "" ],
+      "hitboxes": [ "" ]
+    },
+    {
+      "id": 1,
+      "name": "stone",
+      "models": [ "cube.json" ],
+      "materials": [ "stone.json" ],
+      "hitboxes": [ "cube.json" ]
+    },
+    {
+      "id": 2,
+      "name": "dirt",
+      "models": [ "cube.json" ],
+      "materials": [ "dirt.json" ],
+      "hitboxes": [ "cube.json" ]
+    },
+    {
+      "id": 3,
+      "name": "grass",
+      "models": [ "cube.json" ],
+      "materials": [ "grass.json" ],
+      "hitboxes": [ "cube.json" ]
+    },
+    {
+      "id": 4,
+      "name": "bedrock",
+      "models": [ "cube.json" ],
+      "materials": [ "stone.json" ],
+      "hitboxes": [ "cube.json" ]
+    },
+    {
+      "id": 5,
+      "name": "water",
+      "models": [ "cube.json" ],
+      "materials": [ "stone.json" ],
+      "hitboxes": [ "" ]
+    },
+    {
+      "id": 6,
+      "name": "sand",
+      "models": [ "cube.json" ],
+      "materials": [ "dirt.json" ],
+      "hitboxes": [ "cube.json" ]
+    },
+    {
+      "id": 7,
+      "name": "snow",
+      "models": [ "cube.json" ],
+      "materials": [ "stone.json" ],
+      "hitboxes": [ "cube.json" ]
+    },
+    {
+      "id": 8,
+      "name": "deepslate",
+      "models": [ "cube.json" ],
+      "materials": [ "stone.json" ],
+      "hitboxes": [ "cube.json" ]
+    },
+    {
+      "id": 9,
+      "name": "gravel",
+      "models": [ "cube.json" ],
+      "materials": [ "stone.json" ],
+      "hitboxes": [ "cube.json" ]
+    },
+    {
+      "id": 10,
+      "name": "oak_log",
+      "models": [ "cube.json" ],
+      "materials": [ "dirt.json" ],
+      "hitboxes": [ "cube.json" ]
+    },
+    {
+      "id": 11,
+      "name": "oak_leaves",
+      "models": [ "cube.json" ],
+      "materials": [ "grass.json" ],
+      "hitboxes": [ "cube.json" ]
+    }
+  ]
+}

@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{d8cb6f95-e2c3-407c-a191-0ae5833e6aa7}</ProjectGuid>
+    <RootNamespace>D3D11</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(PROJECTDIR)dependencies;$(PROJECTDIR)dependencies/GLFW/include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)dependencies/GLFW/lib;$(PROJECTDIR)dependencies/DirectXTex/lib/Debug;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;windowscodecs.lib;dxguid.lib;glfw3dll.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /D /E /I /Q /Y "$(ProjectDir)asset" "$(OutDir)asset\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(PROJECTDIR)dependencies;$(PROJECTDIR)dependencies/GLFW/include</AdditionalIncludeDirectories>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>NotSet</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)dependencies/GLFW/lib;$(PROJECTDIR)dependencies/DirectXTex/lib/Release;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;glfw3.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /D /E /I /Q /Y "$(ProjectDir)asset" "$(OutDir)asset\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="source\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dependencies\DirectXTex\DirectXTex.h" />
+    <ClInclude Include="dependencies\GLFW\include\GLFW\glfw3.h" />
+    <ClInclude Include="dependencies\GLFW\include\GLFW\glfw3native.h" />
+    <ClInclude Include="dependencies\world\chunk.h" />
+    <ClInclude Include="dependencies\world\minecraftTerrainGeneration.h" />
+    <ClInclude Include="dependencies\world\chunkWorker.h" />
+    <ClInclude Include="dependencies\world\gpuChunkMesher.h" />
+    <ClInclude Include="dependencies\world\gpuTerrainGenerator.h" />
+    <ClInclude Include="dependencies\assetManager\cpuAsset.h" />
+    <ClInclude Include="dependencies\assetManager\assetManager.h" />
+    <ClInclude Include="dependencies\header\texture.h" />
+    <ClInclude Include="dependencies\world\world.h" />
+    <ClInclude Include="dependencies\world\worldStreamer.h" />
+    <ClInclude Include="dependencies\renderer\buffer.h" />
+    <ClInclude Include="dependencies\header\camera.h" />
+    <ClInclude Include="dependencies\header\debug.h" />
+    <ClInclude Include="dependencies\header\player.h" />
+    <ClInclude Include="dependencies\header\graphics.h" />
+    <ClInclude Include="dependencies\header\applicationPipeline.h" />
+    <ClInclude Include="dependencies\header\renderer.h" />
+    <ClInclude Include="dependencies\header\shader.h" />
+    <ClInclude Include="dependencies\header\utility.h" />
+    <ClInclude Include="dependencies\header\window.h" />
+    <ClInclude Include="dependencies\rapidjson\allocators.h" />
+    <ClInclude Include="dependencies\rapidjson\document.h" />
+    <ClInclude Include="dependencies\rapidjson\encodedstream.h" />
+    <ClInclude Include="dependencies\rapidjson\encodings.h" />
+    <ClInclude Include="dependencies\rapidjson\error\en.h" />
+    <ClInclude Include="dependencies\rapidjson\error\error.h" />
+    <ClInclude Include="dependencies\rapidjson\filereadstream.h" />
+    <ClInclude Include="dependencies\rapidjson\filewritestream.h" />
+    <ClInclude Include="dependencies\rapidjson\fwd.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\itoa.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\meta.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\pow10.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\regex.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\stack.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\strtod.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\swap.h" />
+    <ClInclude Include="dependencies\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="dependencies\rapidjson\memorybuffer.h" />
+    <ClInclude Include="dependencies\rapidjson\memorystream.h" />
+    <ClInclude Include="dependencies\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="dependencies\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="dependencies\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="dependencies\rapidjson\pointer.h" />
+    <ClInclude Include="dependencies\rapidjson\prettywriter.h" />
+    <ClInclude Include="dependencies\rapidjson\rapidjson.h" />
+    <ClInclude Include="dependencies\rapidjson\reader.h" />
+    <ClInclude Include="dependencies\rapidjson\schema.h" />
+    <ClInclude Include="dependencies\rapidjson\stream.h" />
+    <ClInclude Include="dependencies\rapidjson\stringbuffer.h" />
+    <ClInclude Include="dependencies\rapidjson\writer.h" />
+    <ClInclude Include="dependencies\assetManager\gpuAsset.h" />
+    <ClInclude Include="dependencies\renderer\light.h" />
+    <ClInclude Include="dependencies\renderer\staticRenderer.h" />
+    <ClInclude Include="dependencies\renderer\dynamicRenderer.h" />
+    <ClInclude Include="dependencies\renderer\playerRenderer.h" />
+    <ClInclude Include="dependencies\ui\ui.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\model\box.gltf" />
+    <None Include="assets\model\box0.bin" />
+    <None Include="asset\hitbox\cube.json" />
+    <None Include="asset\material\glass.json" />
+    <None Include="asset\material\grass.json" />
+    <None Include="asset\material\dirt.json" />
+    <None Include="asset\material\grass_side.json" />
+    <None Include="asset\material\stone.json" />
+    <None Include="asset\material\water.json" />
+    <None Include="asset\model\cube.json" />
+    <None Include="asset\shader\chunkFaceMesher.hlsl" />
+    <None Include="asset\shader\chunkFaceVertex.hlsl" />
+    <None Include="asset\shader\chunkFaceShadowVertex.hlsl" />
+    <None Include="asset\shader\gpuTerrainGeneration.hlsl" />
+    <None Include="asset\shader\chunkVoxelHalo.hlsl" />
+    <None Include="asset\shader\ui.hlsl" />
+    <None Include="asset\shader\player.hlsl" />
+    <None Include="asset\shader\blockOutline.hlsl" />
+    <None Include="asset\block\block.json" />
+    <None Include="dependencies\DirectXTex\DirectXTex.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="dependencies\GLFW\lib\glfw3.lib" />
+    <Library Include="dependencies\GLFW\lib\glfw3dll.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="check list.txt" />
+    <Text Include="backup.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="asset\texture\grass.png" />
+    <Image Include="asset\texture\test.png" />
+    <Image Include="asset\texture\player.png" />
+    <Image Include="x64\Release\asset\texture\oliver-bullock-0bd25f675f9b05a8f8a34ade2bc9e822.png" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

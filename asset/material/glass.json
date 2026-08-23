@@ -1,0 +1,10 @@
+{
+  "id": 12,
+  "name": "glass",
+  "albedo": "asset/texture/glass.png",
+  "roughness": 0.08,
+  "metallic": 0.0,
+  "opacity": 0.35,
+  "renderMode": "translucent",
+  "doubleSided": false
+}
