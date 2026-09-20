@@ -1,0 +1,11 @@
+{
+  "blocks": [
+    {
+      "id": 30,
+      "name": "typo_test",
+      "model": 0,
+      "material": 0,
+      "renderMod": "opaque"
+    }
+  ]
+}

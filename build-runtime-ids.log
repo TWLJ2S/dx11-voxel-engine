@@ -1,0 +1,183 @@
+MSBuild version 17.14.51+25f168cee for .NET Framework
+
+  audioMixer.cpp
+  stbVorbis.cpp
+  particleSystem.cpp
+  main.cpp
+  VoxelApplication.cpp
+  assetManager.cpp
+  cpuAsset.cpp
+  gpuAsset.cpp
+  applicationPipeline.cpp
+  camera.cpp
+  debug.cpp
+  graphics.cpp
+  player.cpp
+  shader.cpp
+  texture.cpp
+  utility.cpp
+  window.cpp
+  buffer.cpp
+  dynamicRenderer.cpp
+  light.cpp
+  Generating Code...
+  Compiling...
+  gpuFrameTimer.cpp
+  playerRenderer.cpp
+  staticRenderer.cpp
+  simulationServer.cpp
+  nuklearImpl.cpp
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear.h(23420,20): warning C4305: 'return': truncation from 'nk_window_flags' to 'nk_bool' [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear.h(23422,20): warning C4305: 'return': truncation from 'nk_window_flags' to 'nk_bool' [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear.h(25804,27): warning C4805: '!=': unsafe mix of type 'int' and type 'nk_bool' in operation [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear.h(25891,23): warning C4805: '!=': unsafe mix of type 'int' and type 'nk_bool' in operation [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear.h(25903,23): warning C4805: '!=': unsafe mix of type 'int' and type 'nk_bool' in operation [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear.h(26016,25): warning C4805: '!=': unsafe mix of type 'int' and type 'nk_bool' in operation [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear.h(26028,25): warning C4805: '!=': unsafe mix of type 'int' and type 'nk_bool' in operation [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear.h(26153,25): warning C4805: '!=': unsafe mix of type 'int' and type 'nk_bool' in operation [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear.h(26247,25): warning C4805: '!=': unsafe mix of type 'int' and type 'nk_bool' in operation [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear_d3d11.h(503,79): warning C4244: 'argument': conversion from 'SIZE_T' to 'int', possible loss of data [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\nuklear\nuklear_d3d11.h(509,72): warning C4244: 'argument': conversion from 'SIZE_T' to 'int', possible loss of data [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  (compiling source file 'source/engine/ui/nuklearImpl.cpp')
+  
+  chunk.cpp
+  chunkWorker.cpp
+  gpuChunkMesher.cpp
+  gpuTerrainGenerator.cpp
+  minecraftTerrainGeneration.cpp
+  terrainGeneration.cpp
+  waterPhysics.cpp
+  redstonePhysics.cpp
+  fallingBlockPhysics.cpp
+  world.cpp
+  worldStreamer.cpp
+  Generating Code...
+DirectXTex.lib(BC.obj) : warning LNK4099: PDB '' was not found with 'DirectXTex.lib(BC.obj)' or at ''; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(BC4BC5.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(BC4BC5.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(BC6HBC7.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(BC6HBC7.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexCompress.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexCompress.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexConvert.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexConvert.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexD3D11.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexD3D11.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexDDS.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexDDS.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexHDR.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexHDR.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexImage.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexImage.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexMipMaps.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexMipMaps.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexMisc.obj) : warning LNK4099: PDB '' was not found with 'DirectXTex.lib(DirectXTexMisc.obj)' or at ''; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexResize.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexResize.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexTGA.obj) : warning LNK4099: PDB '' was not found with 'DirectXTex.lib(DirectXTexTGA.obj)' or at ''; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexUtil.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexUtil.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+DirectXTex.lib(DirectXTexWIC.obj) : warning LNK4099: PDB 'DirectXTex.pdb' was not found with 'DirectXTex.lib(DirectXTexWIC.obj)' or at 'D:\programming\dx11-voxel-engine-cpp\x64\Debug\DirectXTex.pdb'; linking object as if no debug info [D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj]
+  D3D11.vcxproj -> D:\programming\dx11-voxel-engine-cpp\x64\Debug\D3D11.exe
+  2 File(s) copied
+  0 File(s) copied
+  ReflectionProjectionTests.vcxproj -> D:\programming\dx11-voxel-engine-cpp\x64\Debug\reflectionProjectionTests.exe
+  playerFlightTests.cpp
+  PlayerFlightTests.vcxproj -> D:\programming\dx11-voxel-engine-cpp\x64\Debug\playerFlightTests.exe
+  redstonePhysicsTests.cpp
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1825,31): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+      D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1825,31):
+      the template instantiation context (the oldest one first) is
+          D:\programming\dx11-voxel-engine-cpp\source\engine\assets\gpuAsset.h(23,36):
+          see reference to class template instantiation 'rapidjson::GenericDocument<rapidjson::UTF8<char>,rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>,rapidjson::CrtAllocator>' being compiled
+          D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(2024,32):
+          see reference to class template instantiation 'rapidjson::GenericValue<rapidjson::UTF8<char>,rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>>' being compiled
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1826,33): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1827,38): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1828,39): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1829,40): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1830,41): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1831,41): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1832,38): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1833,40): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1834,39): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1835,40): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\source\engine\world\chunk.h(1088,8): warning C4100: 'direction': unreferenced parameter [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file 'redstonePhysicsTests.cpp')
+  
+  redstonePhysics.cpp
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1825,31): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+      D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1825,31):
+      the template instantiation context (the oldest one first) is
+          D:\programming\dx11-voxel-engine-cpp\source\engine\assets\gpuAsset.h(23,36):
+          see reference to class template instantiation 'rapidjson::GenericDocument<rapidjson::UTF8<char>,rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>,rapidjson::CrtAllocator>' being compiled
+          D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(2024,32):
+          see reference to class template instantiation 'rapidjson::GenericValue<rapidjson::UTF8<char>,rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>>' being compiled
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1826,33): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1827,38): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1828,39): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1829,40): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1830,41): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1831,41): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1832,38): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1833,40): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1834,39): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\dependencies\rapidjson\document.h(1835,40): warning C5054: operator '|': deprecated between enumerations of different types [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+D:\programming\dx11-voxel-engine-cpp\source\engine\world\chunk.h(1088,8): warning C4100: 'direction': unreferenced parameter [D:\programming\dx11-voxel-engine-cpp\tests\RedstonePhysicsTests.vcxproj]
+  (compiling source file '../source/engine/world/redstonePhysics.cpp')
+  
+  Generating Code...
+  RedstonePhysicsTests.vcxproj -> D:\programming\dx11-voxel-engine-cpp\x64\Debug\redstonePhysicsTests.exe

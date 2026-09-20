@@ -1,0 +1,159 @@
+python -c "
+from pathlib import Path
+path = Path(r'D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp')
+text = path.read_text(encoding='utf-8')
+
+old_col = '''\t\tsize_t collisionBoxesAt(
+\t\t\tint32_t x, int32_t y, int32_t z,
+\t\t\tac::blockId state,
+\t\t\tac::blockAABB* boxes,
+\t\t\tsize_t capacity
+\t\t) const {
+\t\t\tconst ac::blockDefinition* definition = _blocks.get(ac::blockType(state));
+\t\t\tif (!definition) return 0;
+\t\t\treturn ac::collisionBoxesFor(
+\t\t\t\tdefinition, state, boxes, capacity,
+\t\t\t\tstairShapeAt(x, y, z, state),
+\t\t\t\tfenceConnectionsAt(x, y, z, state));
+\t\t}'''
+
+new_col = '''\t\tsize_t collisionBoxesAt(
+\t\t\tint32_t x, int32_t y, int32_t z,
+\t\t\tac::blockId state,
+\t\t\tac::blockAABB* boxes,
+\t\t\tsize_t capacity
+\t\t) const {
+\t\t\tconst ac::blockDefinition* definition = _blocks.get(ac::blockType(state));
+\t\t\tif (!definition) return 0;
+\t\t\treturn ac::collisionBoxesFor(
+\t\t\t\tdefinition, state, boxes, capacity,
+\t\t\t\tstairShapeAt(x, y, z, state),
+\t\t\t\tfenceConnectionsAt(x, y, z, state));
+\t\t}
+
+\t\t// Selection can hit non-solid interactive shapes (open doors) that players
+\t\twalk through. Fluids stay unselectable so targeting continues behind them.
+\t\tsize_t selectionBoxesAt(
+\t\t\tint32_t x, int32_t y, int32_t z,
+\t\t\tac::blockId state,
+\t\t\tac::blockAABB* boxes,
+\t\t\tsize_t capacity
+\t\t) const {
+\t\t\tconst ac::blockId type = ac::blockType(state);
+\t\t\tif (type == 0 || type == ac::WATER_BLOCK_TYPE) return 0;
+\t\t\tconst ac::blockDefinition* definition = _blocks.get(type);
+\t\t\tif (!definition || !boxes || capacity == 0) return 0;
+\t\t\tif (definition->_solid)
+\t\t\t\treturn collisionBoxesAt(x, y, z, state, boxes, capacity);
+\t\t\tif (!ac::isDetailModel(definition->_model))
+\t\t\t\treturn 0;
+\t\t\treturn ac::collisionBoxesForModel(
+\t\t\t\tdefinition->_model,
+\t\t\t\tac::blockFacing(state),
+\t\t\t\tboxes,
+\t\t\t\tcapacity,
+\t\t\t\tstairShapeAt(x, y, z, state),
+\t\t\t\tfenceConnectionsAt(x, y, z, state));
+\t\t}'''
+
+if old_col not in text:
+    raise SystemExit('collisionBoxesAt missing')
+text = text.replace(old_col, new_col, 1)
+
+old_ray = '''\t\t\t\tif (id != 0) {
+\t\t\t\t\tconst ac::blockDefinition* definition = _blocks.get(ac::blockType(id));
+\t\t\t\t\t# Non-solid blocks (water, etc.) have no collision boxes. Never treat
+\t\t\t\t# an empty box list as a full-cube hit or selection stops on fluids.
+\t\t\t\t\tif (definition && definition->_solid) {
+\t\t\t\t\t\tac::blockAABB boxes[8];
+\t\t\t\t\t\tconst size_t count = collisionBoxesAt(
+\t\t\t\t\t\t\tcell.x, cell.y, cell.z, id, boxes, 8);
+\t\t\t\t\t\tbool hitShape = false;
+\t\t\t\t\t\tfloat bestT = reach + 1.0f;
+\t\t\t\t\t\tif (count == 0) {
+\t\t\t\t\t\t\thitShape = true;
+\t\t\t\t\t\t}
+\t\t\t\t\t\telse {
+\t\t\t\t\t\t\tconst float ox = static_cast<float>(cell.x);
+\t\t\t\t\t\t\tconst float oy = static_cast<float>(cell.y);
+\t\t\t\t\t\t\tconst float oz = static_cast<float>(cell.z);
+\t\t\t\t\t\t\tfor (size_t i = 0; i < count; ++i) {
+\t\t\t\t\t\t\t\tac::blockAABB world = boxes[i];
+\t\t\t\t\t\t\t\tworld.minX += ox; world.maxX += ox;
+\t\t\t\t\t\t\t\tworld.minY += oy; world.maxY += oy;
+\t\t\t\t\t\t\t\tworld.minZ += oz; world.maxZ += oz;
+\t\t\t\t\t\t\t\tfloat t = 0.0f;
+\t\t\t\t\t\t\t\tif (ac::rayAabb(
+\t\t\t\t\t\t\t\t\t\torigin.x, origin.y, origin.z,
+\t\t\t\t\t\t\t\t\t\tdirection.x, direction.y, direction.z,
+\t\t\t\t\t\t\t\t\t\tworld, t) &&
+\t\t\t\t\t\t\t\t\tt >= 0.0f && t <= reach && t < bestT) {
+\t\t\t\t\t\t\t\t\tbestT = t;
+\t\t\t\t\t\t\t\t\thitShape = true;
+\t\t\t\t\t\t\t\t}
+\t\t\t\t\t\t\t}
+\t\t\t\t\t\t}
+\t\t\t\t\t\tif (hitShape)
+\t\t\t\t\t\t\treturn blockRayHit{ cell, previous, id };
+\t\t\t\t\t}
+\t\t\t\t}'''
+
+# Fix - the file has mixed comment indentation. Read exact content via marker.
+start = text.find('\t\t\t\tif (id != 0) {\n\t\t\t\t\tconst ac::blockDefinition* definition = _blocks.get(ac::blockType(id));')
+# find within raycastBlock
+ray_start = text.find('std::optional<blockRayHit> raycastBlock')
+start = text.find('\t\t\t\tif (id != 0) {', ray_start)
+end = text.find('\t\t\t\tprevious = cell;', start)
+if start < 0 or end < 0:
+    raise SystemExit(f'ray markers {start} {end}')
+
+new_ray_body = '''\t\t\t\tif (id != 0) {
+\t\t\t\t\tac::blockAABB boxes[8];
+\t\t\t\t\tconst size_t count = selectionBoxesAt(
+\t\t\t\t\t\tcell.x, cell.y, cell.z, id, boxes, 8);
+\t\t\t\t\tif (count != 0) {
+\t\t\t\t\t\tbool hitShape = false;
+\t\t\t\t\t\tfloat bestT = reach + 1.0f;
+\t\t\t\t\t\tconst float ox = static_cast<float>(cell.x);
+\t\t\t\t\t\tconst float oy = static_cast<float>(cell.y);
+\t\t\t\t\t\tconst float oz = static_cast<float>(cell.z);
+\t\t\t\t\t\tfor (size_t i = 0; i < count; ++i) {
+\t\t\t\t\t\t\tac::blockAABB world = boxes[i];
+\t\t\t\t\t\t\tworld.minX += ox; world.maxX += ox;
+\t\t\t\t\t\t\tworld.minY += oy; world.maxY += oy;
+\t\t\t\t\t\t\tworld.minZ += oz; world.maxZ += oz;
+\t\t\t\t\t\t\tfloat t = 0.0f;
+\t\t\t\t\t\t\tif (ac::rayAabb(
+\t\t\t\t\t\t\t\t\torigin.x, origin.y, origin.z,
+\t\t\t\t\t\t\t\t\tdirection.x, direction.y, direction.z,
+\t\t\t\t\t\t\t\t\tworld, t) &&
+\t\t\t\t\t\t\t\tt >= 0.0f && t <= reach && t < bestT) {
+\t\t\t\t\t\t\t\tbestT = t;
+\t\t\t\t\t\t\t\thitShape = true;
+\t\t\t\t\t\t\t}
+\t\t\t\t\t\t}
+\t\t\t\t\t\tif (hitShape)
+\t\t\t\t\t\t\treturn blockRayHit{ cell, previous, id };
+\t\t\t\t\t}
+\t\t\t\t}
+'''
+text = text[:start] + new_ray_body + text[end:]
+
+old_outline = '''\t\t\t\t\tconst ac::blockDefinition* definition = _blocks.get(ac::blockType(target->id));
+\t\t\t\t\tac::blockAABB boxes[8];
+\t\t\t\t\tconst size_t count = collisionBoxesAt(
+\t\t\t\t\t\ttarget->block.x, target->block.y, target->block.z,
+\t\t\t\t\t\ttarget->id, boxes, 8);'''
+
+new_outline = '''\t\t\t\t\tac::blockAABB boxes[8];
+\t\t\t\t\tconst size_t count = selectionBoxesAt(
+\t\t\t\t\t\ttarget->block.x, target->block.y, target->block.z,
+\t\t\t\t\t\ttarget->id, boxes, 8);'''
+
+if old_outline not in text:
+    raise SystemExit('outline missing')
+text = text.replace(old_outline, new_outline, 1)
+
+path.write_text(text, encoding='utf-8')
+print('door selection fix ok')
+"

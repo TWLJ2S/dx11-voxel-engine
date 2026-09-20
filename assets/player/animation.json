@@ -1,0 +1,82 @@
+{
+  "note": "Angles use degrees. Times are seconds. Distances are blocks. Cycle times holdForward/sweepEnd/holdBack are 0-1 fractions of one swim stroke.",
+  "walk": {
+    "armSwingDeg": 44.7,
+    "legSwingDeg": 41.3,
+    "strideCrouch": 0.30,
+    "strideSprint": 0.185,
+    "strideWalk": 0.18,
+    "airborneKeep": 0.82,
+    "airborneMin": 0.22,
+    "poseResponse": 7.0,
+    "airborneStrideMin": 0.45,
+    "referenceSwim": 3.4,
+    "referenceSprint": 5.75,
+    "referenceCrouch": 1.6,
+    "referenceWalk": 4.0
+  },
+  "swim": {
+    "enterRate": 3.6,
+    "exitRate": 2.8,
+    "eyePivotBase": 1.625,
+    "eyePivotLift": 0.22,
+    "standFeet": 1.625,
+    "crouchFeet": 1.27,
+    "strideSpeed": 0.28,
+    "strideMin": 0.62,
+    "bodyPitchDeg": 2.3,
+    "headPitchDeg": 3.4,
+    "armPitchDeg": 0.0,
+    "armYawDeg": 6.0,
+    "armHugDeg": 12.0,
+    "armSweepDeg": 95.0,
+    "armTuckDeg": 6.0,
+    "holdForward": 0.18,
+    "sweepEnd": 0.58,
+    "holdBack": 0.66,
+    "legPitchDeg": 6.0,
+    "legKickDeg": 28.0,
+    "legRollDeg": 5.0,
+    "legRollKickDeg": 6.0,
+    "twoHandLimit": 0.45
+  },
+  "use": {
+    "retrigger": 0.05,
+    "toolDuration": 0.42,
+    "toolPitchDeg": 48.7,
+    "toolRollDeg": 12.6,
+    "handDuration": 0.40,
+    "handPitchDeg": 35.5,
+    "handRollDeg": 10.3
+  },
+  "attack": {
+    "toolDuration": 0.32,
+    "toolPitchDeg": 31.5,
+    "toolRollDeg": 9.2,
+    "handDuration": 0.28,
+    "handPitchDeg": 69.9,
+    "handRollDeg": 35.5
+  },
+  "crouch": {
+    "torsoPitchDeg": 6.9,
+    "legPitchDeg": -11.5
+  },
+  "airborne": {
+    "armPitchDeg": -8.0,
+    "legPitchDeg": 10.3
+  },
+  "head": {
+    "pitchFollow": 0.75
+  },
+  "toolRaise": {
+    "raiseSeconds": 0.20,
+    "lowerSeconds": 0.16,
+    "walkDampen": 0.88,
+    "bob": 0.06
+  },
+  "camera": {
+    "faceOffset": 0.20,
+    "swimOffset": 0.22,
+    "radius": 0.075
+  }
+}

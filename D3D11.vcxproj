@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{d8cb6f95-e2c3-407c-a191-0ae5833e6aa7}</ProjectGuid>
+    <RootNamespace>D3D11</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v145</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)source;$(ProjectDir)source/engine;$(ProjectDir)dependencies;$(ProjectDir)dependencies/SDL3/include;$(ProjectDir)dependencies/nuklear</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)dependencies/SDL3/lib;$(PROJECTDIR)dependencies/DirectXTex/lib/Debug;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;windowscodecs.lib;dxguid.lib;SDL3.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /D /E /I /Q /Y "$(ProjectDir)assets" "$(OutDir)assets\"
+xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)source;$(ProjectDir)source/engine;$(ProjectDir)dependencies;$(ProjectDir)dependencies/SDL3/include;$(ProjectDir)dependencies/nuklear</AdditionalIncludeDirectories>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>NotSet</SubSystem>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)dependencies/SDL3/lib;$(PROJECTDIR)dependencies/DirectXTex/lib/Release;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;windowscodecs.lib;dxguid.lib;SDL3.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /D /E /I /Q /Y "$(ProjectDir)assets" "$(OutDir)assets\"
+xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="source\engine\audio\audioMixer.cpp" />
+    <ClCompile Include="source\engine\audio\stbVorbis.cpp" />
+    <ClCompile Include="source\engine\renderer\particleSystem.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\app\VoxelApplication.cpp" />
+    <ClCompile Include="source\engine\assets\assetManager.cpp" />
+    <ClCompile Include="source\engine\assets\cpuAsset.cpp" />
+    <ClCompile Include="source\engine\assets\gpuAsset.cpp" />
+    <ClCompile Include="source\engine\core\applicationPipeline.cpp" />
+    <ClCompile Include="source\engine\core\camera.cpp" />
+    <ClCompile Include="source\engine\core\debug.cpp" />
+    <ClCompile Include="source\engine\core\graphics.cpp" />
+    <ClCompile Include="source\engine\core\player.cpp" />
+    <ClCompile Include="source\engine\core\shader.cpp" />
+    <ClCompile Include="source\engine\core\texture.cpp" />
+    <ClCompile Include="source\engine\core\utility.cpp" />
+    <ClCompile Include="source\engine\core\window.cpp" />
+    <ClCompile Include="source\engine\renderer\buffer.cpp" />
+    <ClCompile Include="source\engine\renderer\dynamicRenderer.cpp" />
+    <ClCompile Include="source\engine\renderer\light.cpp" />
+    <ClCompile Include="source\engine\renderer\gpuFrameTimer.cpp" />
+    <ClCompile Include="source\engine\renderer\playerRenderer.cpp" />
+    <ClCompile Include="source\engine\renderer\staticRenderer.cpp" />
+    <ClCompile Include="source\engine\server\simulationServer.cpp" />
+    <ClCompile Include="source\engine\ui\nuklearImpl.cpp" />
+    <ClCompile Include="source\engine\world\chunk.cpp" />
+    <ClCompile Include="source\engine\world\chunkWorker.cpp" />
+    <ClCompile Include="source\engine\world\gpuChunkMesher.cpp" />
+    <ClCompile Include="source\engine\world\gpuTerrainGenerator.cpp" />
+    <ClCompile Include="source\engine\world\minecraftTerrainGeneration.cpp" />
+    <ClCompile Include="source\engine\world\terrainGeneration.cpp" />
+    <ClCompile Include="source\engine\world\waterPhysics.cpp" />
+    <ClCompile Include="source\engine\world\redstonePhysics.cpp" />
+    <ClCompile Include="source\engine\world\fallingBlockPhysics.cpp" />
+    <ClCompile Include="source\engine\world\world.cpp" />
+    <ClCompile Include="source\engine\world\worldStreamer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dependencies\DirectXTex\DirectXTex.h" />
+    <ClInclude Include="source\engine\core\inputKeys.h" />
+    <ClInclude Include="source\app\VoxelApplication.h" />
+    <ClInclude Include="source\engine\world\chunk.h" />
+    <ClInclude Include="source\engine\world\minecraftTerrainGeneration.h" />
+    <ClInclude Include="source\engine\world\terrainGeneration.h" />
+    <ClInclude Include="source\engine\world\waterPhysics.h" />
+    <ClInclude Include="source\engine\world\redstonePhysics.h" />
+    <ClInclude Include="source\engine\world\chunkWorker.h" />
+    <ClInclude Include="source\engine\world\gpuChunkMesher.h" />
+    <ClInclude Include="source\engine\world\gpuTerrainGenerator.h" />
+    <ClInclude Include="source\engine\assets\cpuAsset.h" />
+    <ClInclude Include="source\engine\assets\assetManager.h" />
+    <ClInclude Include="source\engine\assets\contentPack.h" />
+    <ClInclude Include="source\engine\core\texture.h" />
+    <ClInclude Include="source\engine\world\world.h" />
+    <ClInclude Include="source\engine\world\worldSaves.h" />
+    <ClInclude Include="source\engine\world\worldStreamer.h" />
+    <ClInclude Include="source\engine\renderer\buffer.h" />
+    <ClInclude Include="source\engine\renderer\scenePostProcess.h" />
+    <ClInclude Include="source\engine\server\simulationServer.h" />
+    <ClInclude Include="source\engine\renderer\gpuFrameTimer.h" />
+    <ClInclude Include="source\engine\core\camera.h" />
+    <ClInclude Include="source\engine\core\debug.h" />
+    <ClInclude Include="source\engine\core\player.h" />
+    <ClInclude Include="source\engine\core\playerPose.h" />
+    <ClInclude Include="source\engine\core\graphics.h" />
+    <ClInclude Include="source\engine\core\applicationPipeline.h" />
+    <ClInclude Include="source\engine\core\shader.h" />
+    <ClInclude Include="source\engine\core\utility.h" />
+    <ClInclude Include="source\engine\core\settingsStore.h" />
+    <ClInclude Include="source\engine\core\window.h" />
+    <ClInclude Include="dependencies\rapidjson\allocators.h" />
+    <ClInclude Include="dependencies\rapidjson\document.h" />
+    <ClInclude Include="dependencies\rapidjson\encodedstream.h" />
+    <ClInclude Include="dependencies\rapidjson\encodings.h" />
+    <ClInclude Include="dependencies\rapidjson\error\en.h" />
+    <ClInclude Include="dependencies\rapidjson\error\error.h" />
+    <ClInclude Include="dependencies\rapidjson\filereadstream.h" />
+    <ClInclude Include="dependencies\rapidjson\filewritestream.h" />
+    <ClInclude Include="dependencies\rapidjson\fwd.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\itoa.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\meta.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\pow10.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\regex.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\stack.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\strtod.h" />
+    <ClInclude Include="dependencies\rapidjson\internal\swap.h" />
+    <ClInclude Include="dependencies\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="dependencies\rapidjson\memorybuffer.h" />
+    <ClInclude Include="dependencies\rapidjson\memorystream.h" />
+    <ClInclude Include="dependencies\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="dependencies\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="dependencies\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="dependencies\rapidjson\pointer.h" />
+    <ClInclude Include="dependencies\rapidjson\prettywriter.h" />
+    <ClInclude Include="dependencies\rapidjson\rapidjson.h" />
+    <ClInclude Include="dependencies\rapidjson\reader.h" />
+    <ClInclude Include="dependencies\rapidjson\schema.h" />
+    <ClInclude Include="dependencies\rapidjson\stream.h" />
+    <ClInclude Include="dependencies\rapidjson\stringbuffer.h" />
+    <ClInclude Include="dependencies\rapidjson\writer.h" />
+    <ClInclude Include="source\engine\assets\gpuAsset.h" />
+    <ClInclude Include="source\engine\renderer\light.h" />
+    <ClInclude Include="source\engine\renderer\staticRenderer.h" />
+    <ClInclude Include="source\engine\renderer\dynamicRenderer.h" />
+    <ClInclude Include="source\engine\renderer\playerRenderer.h" />
+    <ClInclude Include="source\engine\ui\uiInputState.h" />
+    <ClInclude Include="source\engine\ui\uiScreens.h" />
+    <ClInclude Include="source\engine\audio\audioMixer.h" />
+    <ClInclude Include="source\engine\renderer\particleSystem.h" />
+    <ClInclude Include="source\engine\renderer\crosshairRenderer.h" />
+    <ClInclude Include="source\engine\world\fallingBlockPhysics.h" />
+    <ClInclude Include="source\engine\world\itemEntities.h" />
+    <ClInclude Include="source\engine\world\entitySystem.h" />
+    <ClInclude Include="source\engine\world\blockEntities.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shader\basic.hlsl" />
+    <None Include="assets\shader\staticVertex.hlsl" />
+    <None Include="assets\shader\staticPixel.hlsl" />
+	<None Include="assets\shader\sky.hlsl" />
+	<None Include="assets\shader\directionalShadowVertex.hlsl" />
+	<None Include="assets\shader\directionalFaceShadowVertex.hlsl" />
+    <None Include="assets\shader\playerShadow.hlsl" />
+    <None Include="assets\shader\pointShadowVertex.hlsl" />
+    <None Include="assets\shader\pointShadowPixel.hlsl" />
+    <None Include="assets\hitbox\cube.json" />
+    <None Include="assets\material\glass.json" />
+    <None Include="assets\material\grass.json" />
+    <None Include="assets\material\dirt.json" />
+    <None Include="assets\material\grass_side.json" />
+    <None Include="assets\material\stone.json" />
+    <None Include="assets\material\water.json" />
+    <None Include="assets\model\cube.json" />
+    <None Include="assets\model\door_closed.json" />
+    <None Include="assets\model\door_open.json" />
+    <None Include="assets\shader\chunkFaceMesher.hlsl" />
+    <None Include="assets\shader\chunkFaceVertex.hlsl" />
+    <None Include="assets\shader\chunkFaceShadowVertex.hlsl" />
+    <None Include="assets\shader\gpuTerrainGeneration.hlsl" />
+    <None Include="assets\shader\chunkVoxelHalo.hlsl" />
+    <None Include="assets\shader\player.hlsl" />
+    <None Include="assets\shader\blockOutline.hlsl" />
+    <None Include="assets\shader\crosshair.hlsl" />
+    <None Include="assets\shader\particle.hlsl" />
+    <None Include="assets\shader\entity.hlsl" />
+    <None Include="assets\shader\entityPathfinding.hlsl" />
+    <None Include="assets\shader\motionBlur.hlsl" />
+    <None Include="assets\block\blocks.json" />
+    <None Include="assets\pack.json" />
+    <None Include="assets\terrain\overworld.json" />
+    <None Include="assets\terrain\biomes.json" />
+    <None Include="assets\terrain\README.md" />
+    <None Include="assets\entities\entities.json" />
+    <None Include="assets\player\animation.json" />
+    <None Include="assets\player\held_items.json" />
+    <None Include="dependencies\DirectXTex\DirectXTex.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="dependencies\DirectXTex\lib\Release\DirectXTex.lib" />
+    <Library Include="dependencies\SDL3\lib\SDL3.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\textures\entity\player.png" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

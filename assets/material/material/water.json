@@ -1,0 +1,10 @@
+{
+  "id": 5,
+  "name": "water",
+  "albedo": "asset/texture/water_still.png",
+  "roughness": 0.15,
+  "metallic": 0.0,
+  "opacity": 0.62,
+  "renderMode": "translucent",
+  "doubleSided": false
+}

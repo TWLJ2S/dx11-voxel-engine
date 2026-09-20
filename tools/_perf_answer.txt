@@ -1,0 +1,223 @@
+## 1) Performance / frame rate
+
+### What dominates (measured scope)
+
+The HUD **"WORLD: X MS"** tracks `_lightingTimer`, which wraps almost the entire GPU world pipeline — shadows through translucents — not lighting CPU work alone:
+
+```4004:4004:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp
+			_lightingTimer.begin(_context);
+```
+
+```4532:4533:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp
+			_renderer.render();
+			_lightingTimer.end(_context);
+```
+
+```2363:2365:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp
+			const int gpuTenths = static_cast<int>(std::lround(_lightingTimer.milliseconds() * 10.0f));
+			_hud.get(_gpuTimePanel).text = "WORLD: " + std::to_string(gpuTenths / 10) + "." +
+				std::to_string(std::abs(gpuTenths % 10)) + " MS";
+```
+
+**Dominant GPU costs (in rough order):**
+
+| Subsystem | Why it hurts | Citations |
+|-----------|--------------|-----------|
+| **Shadows** | Celestial 2048² ortho pass; up to **8 point lights × 6 cubemap faces × 512²**, each iterating visible chunks + dynamic meshes | ```638:640:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` ```922:924:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` ```799:825:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` ```4065:4074:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` |
+| **Planar water reflection** | Full extra terrain + sky draw when near water | ```1577:1687:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` ```4342:4342:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` |
+| **Main opaque + translucent passes** | Per-chunk frustum cull + **`bindChunkLights()` CB update per chunk** | ```4367:4397:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` ```2329:2332:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` |
+| **Post-ish capture** | `_sceneRefraction.capture()` **twice** + motion blur | ```4506:4510:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` ```4568:4587:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` |
+| **Translucents** | Back-to-front sort + second `_renderer.render()` | ```4513:4532:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` |
+
+**Lower impact:** particles (billboard draw after timer ends, ```4560:4565:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp```), outline, UI.
+
+**CPU on update thread (can hitch, not in WORLD timer):**
+
+- `rebuildVoxelLighting()` — BFS + ray samples (1/3/5 by quality): ```2039:2042:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp```
+- `updateLightOcclusionVolumes()` — triple loop over chunks × lights: ```3761:3794:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp```
+- `updateReflectionVolume()` — 250 ms throttle: ```1511:1514:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp```
+- `_streamer.update()` called **twice** per frame: ```3831:3831``` and ```3989:3989:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp```
+
+**Streaming/meshing (latency, occasional upload spikes):**
+
+```94:96:D:\programming\dx11-voxel-engine-cpp\source\engine\world\worldStreamer.h
+		static constexpr size_t MAX_MESH_UPLOADS_PER_FRAME = 1;
+		static constexpr size_t MAX_GPU_TERRAIN_UPLOADS_PER_FRAME = 3;
+		static constexpr size_t MAX_REMESH_REQUESTS_PER_FRAME = 2;
+```
+
+GPU meshing remesh budget = 8/frame when enabled: ```481:481:D:\programming\dx11-voxel-engine-cpp\source\engine\world\worldStreamer.h```. Mesh generation is already async on worker threads (1–4): ```170:183:D:\programming\dx11-voxel-engine-cpp\source\engine\world\chunkWorker.h```.
+
+**Important mismatch:** streamer boots at **radius 16** but UI default view is **8** and `setViewDistance()` is never called at init:
+
+```4803:4811:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp
+	ac::worldStreamer streamer(..., 16, 18);
+```
+
+```1448:1448:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp
+		size_t _viewDistanceIndex = 2;
+```
+
+→ Effective load is ~4× more chunks than settings imply until user toggles view distance.
+
+### Existing knobs
+
+| Knob | Location | Default |
+|------|----------|---------|
+| Lighting quality (voxel samples, chunk light cap 16/32/64) | ```1434:1434``` ```2308:2309``` ```2039:2039:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` | Balanced (1) |
+| Point shadow max lights | ```640:640:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` | 8 |
+| Celestial shadow resolution / refresh | ```923:924``` ```1037:1040:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` | 2048, 10–20 Hz |
+| GPU terrain / meshing | ```4793:4801``` ```4788:4797:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` | GPU on unless `AC_CPU_*` env |
+| Upload/remesh budgets | `worldStreamer.h` above | 1/3/2 (CPU path) |
+
+### Safe high-impact wins (minimal diffs)
+
+1. **Sync view distance at startup** — call `_streamer.setViewDistance(VIEW_DISTANCES[_viewDistanceIndex])` in `voxelPipeline` ctor (~1 line). Fixes hidden 16-chunk radius.
+2. **Cap point shadows by lighting quality** — e.g. render only top 2/4/8 candidates when `_lightingQuality` is 0/1/2 (loop at ```4065:4074```). Celestial already throttled.
+3. **Skip planar reflection when not needed** — gate ```1577:1687``` on camera height above water + horizontal motion; keep volume fog data path.
+4. **Single `_sceneRefraction.capture()`** — remove second capture at ```4568:4572``` if motion blur can sample prior buffer.
+5. **Reduce `bindChunkLights` churn** — cache last chunk position; skip CB update when unchanged (same chunk grid cell).
+6. **Default lighting quality LOW (0)** for first-run — changes sample count and per-chunk light cap with minimal visual regression underground.
+7. **Merge duplicate `_streamer.update()`** — one call per frame after player position is final.
+8. **Defer `updateLightOcclusionVolumes`** when only localized block edit and no dynamic lights moved (already partial at ```3713:3726``` — extend skip cases).
+
+---
+
+## 2) Blocks: planks, slabs, stairs, fences
+
+### How `blocks.json` + models work
+
+- Registry: `D:\programming\dx11-voxel-engine-cpp\assets\block\blocks.json`, loaded via `blocks.loadValidated("assets/block", models)` at ```4758:4759:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp```.
+- Block fields parsed in `blockDefinition::load()`: `model`, `hitbox`, `solid`, `occludes`, `renderMode`, etc. ```311:352:D:\programming\dx11-voxel-engine-cpp\source\engine\assets\cpuAsset.h```
+- **Engine model IDs** (must exist in `modelManager`):
+
+```337:339:D:\programming\dx11-voxel-engine-cpp\source\engine\world\chunk.h
+	constexpr uint32_t MODEL_CUBE = 0;
+	constexpr uint32_t MODEL_DOOR = 1;
+	constexpr uint32_t MODEL_DOOR_OPEN = 2;
+```
+
+- Loaded at startup from **`assets/model/*.json`** (vertex/index meshes, not MC blockstates):
+
+```4747:4749:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp
+		models.load(loadRegisteredModel("assets/model/cube.json"), ac::MODEL_CUBE);
+		models.load(loadRegisteredModel("assets/model/door_closed.json"), ac::MODEL_DOOR);
+		models.load(loadRegisteredModel("assets/model/door_open.json"), ac::MODEL_DOOR_OPEN);
+```
+
+- Doors in `blocks.json` use `"model": 1` / `"model": 2` (e.g. IDs 104–107). Default model is **0 = cube** if omitted.
+- Validation requires every block's `_model` to resolve: ```375:381:D:\programming\dx11-voxel-engine-cpp\source\engine\assets\assetManager.h```
+
+### What already exists
+
+**Planks (registered, full cubes):**
+
+| ID | Name | Texture path in blocks.json |
+|----|------|----------------------------|
+| 16 | oak_planks | `assets/textures/block/planks_oak.png` |
+| 78 | spruce_planks | `planks_spruce.png` |
+| 79 | birch_planks | `planks_birch.png` |
+| 80 | jungle_planks | `planks_jungle.png` |
+| 81 | acacia_planks | `planks_acacia.png` |
+| 82 | dark_oak_planks | `planks_big_oak.png` |
+
+(See ```46:46```, ```200:204:D:\programming\dx11-voxel-engine-cpp\assets\block\blocks.json`.)
+
+**Slabs/stairs/fences:** Minecraft-style models exist under `assets/models/block/` (e.g. `oak_slab.json`, `oak_stairs.json`, `oak_fence_post.json`, plus spruce/birch/jungle/acacia/dark_oak variants). These use `"parent": "block/slab"` MC format — **not** consumed by the engine mesher today.
+
+**Engine-format custom meshes:** only `assets/model/cube.json`, `door_closed.json`, `door_open.json`.
+
+**Note:** No `.png` block textures are present in the workspace tree (likely external/LFS); paths are defined in `blocks.json`.
+
+### Collision, hitboxes, meshing for non-full cubes
+
+| Concern | Behavior |
+|---------|----------|
+| **Player collision** | Full-block AABB test on `definition->_solid` only — no hitbox shapes | ```3900:3905:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp``` |
+| **`hitbox` field** | Parsed (`optionalUint("hitbox", 0)`) but **`hitboxManager` unused** anywhere in gameplay | ```352:352:D:\programming\dx11-voxel-engine-cpp\source\engine\assets\cpuAsset.h``` |
+| **CPU face culling / AO** | Only `MODEL_CUBE` blocks go through greedy face mesher | ```805:807:D:\programming\dx11-voxel-engine-cpp\source\engine\world\chunk.h``` |
+| **Doors** | Separate `meshDoors()` emits prototype geometry | ```678:712:D:\programming\dx11-voxel-engine-cpp\source\engine\world\chunk.h``` |
+| **GPU mesher** | Only cubes (`MODEL_CUBE` → flag 8); no slab/stair path | ```194:194:D:\programming\dx11-voxel-engine-cpp\source\engine\world\gpuChunkMesher.h``` |
+| **Occlusion for lighting** | `cube()` uses `_occludes` + non-translucent, not shape | ```561:564:D:\programming\dx11-voxel-engine-cpp\source\engine\world\chunk.h``` |
+
+Doors: closed `solid: true`, open `solid: false` (IDs 104–107) — walk-through when open, full block when closed.
+
+### Next free block ID
+
+**Max ID = 107** (`oak_door_top_open`) → **next free = 108**.
+
+`MAX_BLOCK_TYPES = 256` in GPU mesher: ```62:62:D:\programming\dx11-voxel-engine-cpp\source\engine\world\gpuChunkMesher.h```
+
+### Minimal change plan for slabs/stairs/fences
+
+1. **Planks only (zero engine work):** already done for all 6 woods; add to hotbar/creative if needed.
+2. **Oak slab MVP (smallest vertical slice):**
+   - Add `MODEL_SLAB = 3`, convert `assets/models/block/oak_slab.json` → `assets/model/slab_bottom.json` (engine vertex format like `door_closed.json`).
+   - Register in `runVoxelApplication()` next to door loads.
+   - Extend `meshDoors()` → generic `meshCustomModels()` for `MODEL_SLAB`.
+   - Add block ID 108: `"model": 3`, `"solid": true`, half-height collision via `"solid": false` + custom collision **or** keep full-block collision initially.
+3. **Stairs/fences:** same pattern; fences need connect logic (MC blockstates) — defer to block-entity or variant states.
+4. **GPU path:** either keep non-cube blocks on CPU detail sections (`_opaqueSections`) or extend compute mesher beyond flag `8`.
+
+---
+
+## 3) Audio
+
+### How `audioMixer` works today
+
+- **No SDL audio callback.** Stream opened with `nullptr` callback:
+
+```357:367:D:\programming\dx11-voxel-engine-cpp\source\engine\audio\audioMixer.h
+		bool create() {
+			...
+			_stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &want, nullptr, nullptr);
+			...
+			_ready = SDL_ResumeAudioDevice(_device);
+```
+
+- **Per-frame pump on game thread** from `onUpdate`:
+
+```3810:3810:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp
+			_audio.update();
+```
+
+```437:444:D:\programming\dx11-voxel-engine-cpp\source\engine\audio\audioMixer.h
+		void update() {
+			if (!_ready || !_stream) return;
+			constexpr int frames = 1024;
+			float buffer[frames * 2];
+			while (SDL_GetAudioStreamQueued(_stream) < static_cast<int>(sizeof(buffer) * 2)) {
+				mixInto(buffer, frames);
+				SDL_PutAudioStreamData(_stream, buffer, static_cast<int>(sizeof(buffer)));
+			}
+		}
+```
+
+- **Mixing:** `mixInto()` fills stereo float, sums active voices, clamps — under `std::mutex` ```330:354:D:\programming\dx11-voxel-engine-cpp\source\engine\audio\audioMixer.h```
+- **Playback trigger:** `playClip()` also locks same mutex ```227:227:D:\programming\dx11-voxel-engine-cpp\source\engine\audio\audioMixer.h```
+
+### Thread model
+
+**All audio mixing runs on the main game/update thread** (same thread as `_audio.update()` in `onUpdate`). Render thread is the same pipeline (`applicationPipeline` calls update then render sequentially).
+
+### Clean migration to SDL callback / dedicated thread
+
+**Recommended: SDL3 audio callback (simplest, no extra thread)**
+
+1. Replace `nullptr` callback in `create()` with a static C callback + `userdata = this`.
+2. Callback **only** calls `mixInto()` + writes to SDL-provided buffer (or use stream API per SDL3 docs).
+3. Replace `std::mutex` on hot path with:
+   - **Command queue** (SPSC): game thread pushes `{play clip ptr, volume, loop}`; callback consumes.
+   - Voice state: atomic cursor/volume or double-buffer voice array swapped under brief lock.
+4. Remove `_audio.update()` from `onUpdate` (or keep as no-op fallback).
+5. `playClip()` becomes queue-only — never call `SDL_PutAudioStreamData` from game thread.
+
+**Alternative: dedicated mixer thread**
+
+- Same queue design; thread loops `mixInto` → `SDL_PutAudioStreamData`. Slightly more moving parts than callback; use if callback signature is awkward.
+
+**Files to touch:** `D:\programming\dx11-voxel-engine-cpp\source\engine\audio\audioMixer.h` (primary; `.cpp` is empty), remove/update call at ```3810:D:\programming\dx11-voxel-engine-cpp\source\app\VoxelApplication.cpp```.
+
+**Pitfall:** lazy sound loading (`ensureDig`, `ensureStep`, etc.) currently runs on game thread inside `play()` — keep loading on game thread; only mix/decode in callback.
+
+[REDACTED]

@@ -1,0 +1,53 @@
+# Visual Studio local files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build directories
+Debug/
+Release/
+x64/
+x86/
+build/
+out/
+
+# Intermediate compilation files
+*.obj
+*.o
+*.ilk
+*.pdb
+*.idb
+*.ipdb
+*.iobj
+
+# Visual Studio/MSBuild generated files
+*.VC.db
+*.VC.opendb
+*.opensdf
+*.sdf
+*.tlog
+*.lastbuildstate
+
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.orig
+*~
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Generated voxel chunk files
+world/

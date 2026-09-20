@@ -1,0 +1,19 @@
+{
+  "blocks": [
+    {
+      "id": 20,
+      "name": "valid_before_error",
+      "model": 0,
+      "material": 0,
+      "renderMode": "opaque"
+    },
+    {
+      "id": 21,
+      "name": "invalid_opacity",
+      "model": 0,
+      "material": 0,
+      "renderMode": "translucent",
+      "opacity": 1.5
+    }
+  ]
+}

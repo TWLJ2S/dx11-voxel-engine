@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36804.6
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "D3D11", "D3D11.vcxproj", "{D8CB6F95-E2C3-407C-A191-0AE5833E6AA7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReflectionProjectionTests", "tests\ReflectionProjectionTests.vcxproj", "{2A4F40B6-96F5-46A5-953D-54E10BAC1E1C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlayerFlightTests", "tests\PlayerFlightTests.vcxproj", "{1D684056-D438-4BE3-B3D8-4A332D944A35}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RedstonePhysicsTests", "tests\RedstonePhysicsTests.vcxproj", "{813C109E-EE75-4B74-B24F-B2ECE2B6B099}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D8CB6F95-E2C3-407C-A191-0AE5833E6AA7}.Debug|x64.ActiveCfg = Debug|x64
+		{D8CB6F95-E2C3-407C-A191-0AE5833E6AA7}.Debug|x64.Build.0 = Debug|x64
+		{D8CB6F95-E2C3-407C-A191-0AE5833E6AA7}.Release|x64.ActiveCfg = Release|x64
+		{D8CB6F95-E2C3-407C-A191-0AE5833E6AA7}.Release|x64.Build.0 = Release|x64
+		{2A4F40B6-96F5-46A5-953D-54E10BAC1E1C}.Debug|x64.ActiveCfg = Debug|x64
+		{2A4F40B6-96F5-46A5-953D-54E10BAC1E1C}.Debug|x64.Build.0 = Debug|x64
+		{2A4F40B6-96F5-46A5-953D-54E10BAC1E1C}.Release|x64.ActiveCfg = Release|x64
+		{2A4F40B6-96F5-46A5-953D-54E10BAC1E1C}.Release|x64.Build.0 = Release|x64
+		{1D684056-D438-4BE3-B3D8-4A332D944A35}.Debug|x64.ActiveCfg = Debug|x64
+		{1D684056-D438-4BE3-B3D8-4A332D944A35}.Debug|x64.Build.0 = Debug|x64
+		{1D684056-D438-4BE3-B3D8-4A332D944A35}.Release|x64.ActiveCfg = Release|x64
+		{1D684056-D438-4BE3-B3D8-4A332D944A35}.Release|x64.Build.0 = Release|x64
+		{813C109E-EE75-4B74-B24F-B2ECE2B6B099}.Debug|x64.ActiveCfg = Debug|x64
+		{813C109E-EE75-4B74-B24F-B2ECE2B6B099}.Debug|x64.Build.0 = Debug|x64
+		{813C109E-EE75-4B74-B24F-B2ECE2B6B099}.Release|x64.ActiveCfg = Release|x64
+		{813C109E-EE75-4B74-B24F-B2ECE2B6B099}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00927065-90FD-4DC4-888A-C58036ED099D}
+	EndGlobalSection
+EndGlobal

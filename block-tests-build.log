@@ -1,0 +1,8 @@
+MSBuild version 17.14.51+25f168cee for .NET Framework
+
+  blockLoadingTests.cpp
+D:\programming\dx11-voxel-engine-cpp\tests\blockLoadingTests.cpp(1,9): warning C4005: 'NOMINMAX': macro redefinition [D:\programming\dx11-voxel-engine-cpp\tests\BlockLoadingTests.vcxproj]
+      D:\programming\dx11-voxel-engine-cpp\tests\blockLoadingTests.cpp(1,9):
+      'NOMINMAX' previously declared on the command line
+  
+  BlockLoadingTests.vcxproj -> D:\programming\dx11-voxel-engine-cpp\x64\Debug\blockLoadingTests.exe

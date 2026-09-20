@@ -1,0 +1,109 @@
+{
+  "note": "Held-item layout. translation/fist are blocks. rotationDeg is XYZ Euler in degrees. scaleFirstPerson/scaleThirdPerson can be one number or [x,y,z].",
+  "tool": {
+    "translation": [0.22, 0.22, 0.0],
+    "rotationDeg": [90.0, -45.0, -90.0],
+    "scaleFirstPerson": 1.15,
+    "scaleThirdPerson": 1.28,
+    "fist": [-0.375, 0.76, 0.08]
+  },
+  "rod": {
+    "translation": [0.0, 0.32, 0.0],
+    "rotationDeg": [90.0, 0.0, 0.0],
+    "scaleFirstPerson": [0.28, 0.72, 0.28],
+    "scaleThirdPerson": [0.30, 0.78, 0.30],
+    "fist": [-0.375, 0.76, 0.06]
+  },
+  "cross": {
+    "translation": [0.0, 0.0, 0.0],
+    "rotationDeg": [8.0, -12.0, 8.0],
+    "scaleFirstPerson": 0.62,
+    "scaleThirdPerson": 0.68,
+    "fist": [-0.375, 0.76, 0.04]
+  },
+  "sprite": {
+    "translation": [0.0, 0.0, 0.0],
+    "rotationDeg": [10.0, 0.0, 0.0],
+    "scaleFirstPerson": 0.62,
+    "scaleThirdPerson": 0.68,
+    "fist": [-0.375, 0.76, 0.04]
+  },
+  "block": {
+    "translation": [0.0, 0.0, 0.0],
+    "rotationDeg": [75.0, 45.0, 0.0],
+    "scaleFirstPerson": 0.48,
+    "scaleThirdPerson": 0.52,
+    "fist": [-0.375, 0.80, 0.04]
+  },
+  "slab": {
+    "translation": [0.0, 0.0, 0.0],
+    "rotationDeg": [75.0, 45.0, 0.0],
+    "scaleFirstPerson": 0.48,
+    "scaleThirdPerson": 0.52,
+    "fist": [-0.375, 0.80, 0.04]
+  },
+  "twoHand": {
+    "right": {
+      "firstPerson": {
+        "pitchDeg": -41.3,
+        "yawDeg": 10.3,
+        "rollDeg": 13.8,
+        "chopDeg": 12.6,
+        "chopYawDeg": 3.4,
+        "chopRollDeg": 4.6
+      },
+      "thirdPerson": {
+        "pitchDeg": -40.1,
+        "yawDeg": 6.9,
+        "rollDeg": 19.5,
+        "chopDeg": 22.9,
+        "chopYawDeg": 3.4,
+        "chopRollDeg": 4.6
+      }
+    },
+    "left": {
+      "firstPerson": {
+        "pitchDeg": -43.5,
+        "yawDeg": -11.5,
+        "rollDeg": -14.9,
+        "chopDeg": 11.5,
+        "chopYawDeg": 2.9,
+        "chopRollDeg": 3.4
+      },
+      "thirdPerson": {
+        "pitchDeg": -44.7,
+        "yawDeg": -6.9,
+        "rollDeg": -18.3,
+        "chopDeg": 21.8,
+        "chopYawDeg": 2.9,
+        "chopRollDeg": 3.4
+      }
+    }
+  },
+  "viewmodel": {
+    "poseDeg": [-72.0, -20.0, 16.0],
+    "offset": [0.30, -0.40, 0.58],
+    "swingPitch": 0.70,
+    "swingPitchUse": 0.65,
+    "swingYaw": 0.38,
+    "swingRoll": 0.28,
+    "walkBobPitch": 0.10,
+    "walkBobRoll": 0.12,
+    "idlePitch": 0.045,
+    "idleYaw": 0.03,
+    "idleRoll": 0.04,
+    "idleRate": 1.7,
+    "idle2Rate": 2.3,
+    "idle2Phase": 0.8,
+    "airbornePitch": 0.08,
+    "airborneY": 0.03,
+    "airborneRate": 2.5,
+    "walkX": 0.028,
+    "walkY": 0.040,
+    "swingY": 0.20,
+    "swingZ": 0.16,
+    "idleX": 0.010,
+    "idleY": 0.014,
+    "idleZ": 0.008
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "blocks": [
+    {
+      "id": 40,
+      "name": "diamond_pickaxe_that_is_actually_cloth",
+      "model": 0,
+      "material": 0,
+      "hardness": 7.0,
+      "harvestLevel": 0,
+      "tool": "none",
+      "requiresTool": false,
+      "miningSpeed": 1.0,
+      "heldStyle": "sprite",
+      "soundMaterial": "cloth",
+      "armorReduction": 0.25,
+      "connectsToPanes": true,
+      "lightTransmission": [0.2, 0.4, 0.6],
+      "flatIcon": true,
+      "item": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "core",
+  "version": "1.0.0",
+  "dependencies": [],
+  "content": {
+    "models": "model",
+    "blocks": "block",
+    "recipes": "recipes.json",
+    "entities": "entities/entities.json",
+    "terrainBlocks": "terrain/overworld.json",
+    "biomes": "terrain/biomes.json"
+  }
+}

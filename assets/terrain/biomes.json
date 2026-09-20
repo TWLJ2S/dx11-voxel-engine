@@ -1,0 +1,115 @@
+{
+  "biomes": [
+    {
+      "id": 0,
+      "name": "plains",
+      "displayName": "PLAINS",
+      "aliases": ["plain"],
+      "water": "none",
+      "surface": { "top": "grass", "under": "dirt", "soilDepth": 3, "globalSnow": true },
+      "tree": { "kind": "oak", "chance": [1, 8], "variants": 4 }
+    },
+    {
+      "id": 1,
+      "name": "highlands",
+      "displayName": "HIGHLANDS",
+      "aliases": ["highland"],
+      "water": "none",
+      "surface": { "top": "grass", "under": "dirt", "soilDepth": 3, "globalSnow": true, "highlandRock": true, "highlandRockDepth": 12.0 }
+    },
+    {
+      "id": 2,
+      "name": "desert",
+      "displayName": "DESERT",
+      "aliases": ["arid"],
+      "water": "none",
+      "surface": { "top": "sand", "under": "sand", "soilDepth": 6 }
+    },
+    {
+      "id": 3,
+      "name": "alpine",
+      "displayName": "ALPINE",
+      "aliases": ["mountain", "mountains"],
+      "water": "none",
+      "surface": { "top": "grass", "under": "dirt", "soilDepth": 2, "globalSnow": true, "alpineSurface": true, "alpineRockDepth": 16.0 },
+      "tree": { "kind": "spruce", "chance": [1, 8], "variants": 4 }
+    },
+    {
+      "id": 4,
+      "name": "ocean",
+      "displayName": "OCEAN",
+      "aliases": ["sea"],
+      "water": "ocean",
+      "surface": { "top": "sand", "under": "sand", "soilDepth": 5 }
+    },
+    {
+      "id": 5,
+      "name": "forest",
+      "displayName": "FOREST",
+      "aliases": [],
+      "water": "none",
+      "surface": { "top": "grass", "under": "dirt", "soilDepth": 3, "globalSnow": true },
+      "tree": { "kind": "oak", "chance": [1, 1], "alternateKind": "birch", "alternateChance": [1, 4], "variants": 4 }
+    },
+    {
+      "id": 6,
+      "name": "taiga",
+      "displayName": "TAIGA",
+      "aliases": [],
+      "water": "none",
+      "surface": { "top": "grass", "under": "dirt", "soilDepth": 3, "globalSnow": true },
+      "tree": { "kind": "spruce", "chance": [1, 1], "variants": 4 }
+    },
+    {
+      "id": 7,
+      "name": "wetland",
+      "displayName": "WETLAND",
+      "aliases": ["swamp"],
+      "water": "wetland",
+      "surface": { "top": "grass", "under": "dirt", "soilDepth": 4, "floodedTop": "mud", "floodedUnder": "mud", "floodedSoilDepth": 4 },
+      "tree": { "kind": "dark_oak", "chance": [1, 8], "variants": 4 }
+    },
+    {
+      "id": 8,
+      "name": "savanna",
+      "displayName": "SAVANNA",
+      "aliases": ["savannah"],
+      "water": "none",
+      "surface": { "top": "grass", "under": "dirt", "soilDepth": 4, "globalSnow": true },
+      "tree": { "kind": "acacia", "chance": [1, 4], "variants": 4 }
+    },
+    {
+      "id": 9,
+      "name": "jungle",
+      "displayName": "JUNGLE",
+      "aliases": [],
+      "water": "none",
+      "surface": { "top": "grass", "under": "dirt", "soilDepth": 3, "globalSnow": true },
+      "tree": { "kind": "jungle", "chance": [1, 1], "variants": 4 }
+    },
+    {
+      "id": 10,
+      "name": "beach",
+      "displayName": "BEACH",
+      "aliases": [],
+      "water": "ocean",
+      "surface": { "top": "sand", "under": "sand", "soilDepth": 5 }
+    },
+    {
+      "id": 11,
+      "name": "tundra",
+      "displayName": "TUNDRA",
+      "aliases": ["snow", "frozen"],
+      "water": "none",
+      "surface": { "top": "snow", "under": "snow", "soilDepth": 2 }
+    },
+    {
+      "id": 12,
+      "name": "lake",
+      "displayName": "LAKE",
+      "aliases": [],
+      "water": "lake",
+      "surface": { "top": "gravel", "under": "gravel", "soilDepth": 4 }
+    }
+  ]
+}

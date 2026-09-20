@@ -1,0 +1,209 @@
+sea_lantern	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+oak_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+oak_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+oak_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+oak_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+white_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+orange_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+magenta_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+light_blue_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+yellow_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+lime_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+pink_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+gray_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+light_gray_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+cyan_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+purple_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+blue_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+brown_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+green_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+red_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+black_stained_glass_pane	nonsolid_cutout	(True, False, 'translucent') -> (False, False, 'translucent')
+jack_o_lantern	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+azalea_leaves	leaves_cutout	None
+cherry_leaves	leaves_cutout	None
+cobweb	set_model	0 -> 15
+cobweb	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+end_rod	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+end_rod_inv	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+glass_black	set_translucent_glass	None
+glass_blue	set_translucent_glass	None
+glass_brown	set_translucent_glass	None
+glass_cyan	set_translucent_glass	None
+glass_gray	set_translucent_glass	None
+glass_green	set_translucent_glass	None
+glass_light_blue	set_translucent_glass	None
+glass_lime	set_translucent_glass	None
+glass_magenta	set_translucent_glass	None
+glass_orange	set_translucent_glass	None
+glass_pink	set_translucent_glass	None
+glass_purple	set_translucent_glass	None
+glass_red	set_translucent_glass	None
+glass_silver	set_translucent_glass	None
+glass_white	set_translucent_glass	None
+glass_yellow	set_translucent_glass	None
+glow_lichen	set_model	0 -> 15
+glow_lichen	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+lightning_rod	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+lightning_rod_inv	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+mangrove_leaves	leaves_cutout	None
+orange_poplar_leaves	leaves_cutout	None
+pale_moss_carpet	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+pale_oak_leaves	leaves_cutout	None
+red_poplar_leaves	leaves_cutout	None
+redstone_wire	fixed_texture_keys	up/down -> top/bottom
+sniffer_egg_not_cracked_east	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+sniffer_egg_not_cracked_north	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+sniffer_egg_not_cracked_south	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+sniffer_egg_not_cracked_west	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+souls_glass_bottle	set_translucent_glass	None
+souls_glass_bottle_e	set_translucent_glass	None
+spore_blossom	set_model	0 -> 15
+spore_blossom	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+spore_blossom_base	set_model	0 -> 15
+spore_blossom_base	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+turtle_egg	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+turtle_egg_slightly_cracked	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+turtle_egg_very_cracked	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+yellow_poplar_leaves	leaves_cutout	None
+acacia_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+bamboo_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+bell	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+birch_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+cake	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+campfire	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+cherry_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+copper_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+crimson_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+dark_oak_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+double_plant_grass	set_model	0 -> 15
+double_plant_grass	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+double_plant_paeonia	set_model	0 -> 15
+double_plant_paeonia	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+double_plant_rose	set_model	0 -> 15
+double_plant_rose	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+double_plant_sunflower	set_model	0 -> 15
+double_plant_sunflower	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+double_plant_syringa	set_model	0 -> 15
+double_plant_syringa	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+ender_chest	set_interaction	none -> chest
+exposed_copper_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+iron_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+jungle_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+mangrove_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+oxidized_copper_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+pale_oak_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+poplar_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+potted_azalea_bush	set_model	0 -> 15
+potted_azalea_bush	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+potted_flowering_azalea_bush	set_model	0 -> 15
+potted_flowering_azalea_bush	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+scaffolding	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+sniffer_egg_not_cracked	nonsolid_cutout	(True, True, 'opaque') -> (False, False, 'cutout')
+spruce_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+warped_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+weathered_copper_door	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+iron_bars	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+acacia_trapdoor	trapdoor_needs_toggle	currently thin only
+acacia_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+bamboo_trapdoor	trapdoor_needs_toggle	currently thin only
+bamboo_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+birch_trapdoor	trapdoor_needs_toggle	currently thin only
+birch_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+cherry_trapdoor	trapdoor_needs_toggle	currently thin only
+cherry_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+copper_trapdoor	trapdoor_needs_toggle	currently thin only
+copper_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+crimson_trapdoor	trapdoor_needs_toggle	currently thin only
+crimson_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+dark_oak_trapdoor	trapdoor_needs_toggle	currently thin only
+dark_oak_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+exposed_copper_trapdoor	trapdoor_needs_toggle	currently thin only
+exposed_copper_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+iron_trapdoor	trapdoor_needs_toggle	currently thin only
+iron_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+jungle_trapdoor	trapdoor_needs_toggle	currently thin only
+jungle_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+mangrove_trapdoor	trapdoor_needs_toggle	currently thin only
+mangrove_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+oak_trapdoor	trapdoor_needs_toggle	currently thin only
+oak_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+oxidized_copper_trapdoor	trapdoor_needs_toggle	currently thin only
+oxidized_copper_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+pale_oak_trapdoor	trapdoor_needs_toggle	currently thin only
+pale_oak_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+poplar_trapdoor	trapdoor_needs_toggle	currently thin only
+poplar_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+spruce_trapdoor	trapdoor_needs_toggle	currently thin only
+spruce_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+warped_trapdoor	trapdoor_needs_toggle	currently thin only
+warped_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+weathered_copper_trapdoor	trapdoor_needs_toggle	currently thin only
+weathered_copper_trapdoor	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+acacia_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+acacia_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+acacia_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+bamboo_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+bamboo_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+bamboo_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+birch_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+birch_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+birch_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+cherry_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+cherry_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+cherry_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+copper_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+copper_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+copper_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+crimson_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+crimson_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+crimson_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+dark_oak_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+dark_oak_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+dark_oak_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+exposed_copper_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+exposed_copper_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+exposed_copper_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+iron_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+iron_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+iron_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+jungle_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+jungle_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+jungle_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+mangrove_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+mangrove_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+mangrove_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+oxidized_copper_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+oxidized_copper_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+oxidized_copper_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+pale_oak_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+pale_oak_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+pale_oak_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+poplar_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+poplar_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+poplar_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+spruce_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+spruce_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+spruce_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+warped_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+warped_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+warped_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+weathered_copper_door_open	nonsolid_cutout	(True, False, 'opaque') -> (False, False, 'cutout')
+weathered_copper_door_top	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+weathered_copper_door_top_open	nonsolid_cutout	(True, False, 'cutout') -> (False, False, 'cutout')
+note_block	no_ui_yet	present in pack, not wired
+beacon	no_ui_yet	present in pack, not wired
+anvil	no_ui_yet	present in pack, not wired
+barrel	no_ui_yet	present in pack, not wired
+blast_furnace	no_ui_yet	present in pack, not wired
+enchanting_table	no_ui_yet	present in pack, not wired
+furnace	no_ui_yet	present in pack, not wired
+grindstone	no_ui_yet	present in pack, not wired
+jukebox	no_ui_yet	present in pack, not wired
+lectern	no_ui_yet	present in pack, not wired
+loom	no_ui_yet	present in pack, not wired
+respawn_anchor	no_ui_yet	present in pack, not wired
+smithing_table	no_ui_yet	present in pack, not wired
+smoker	no_ui_yet	present in pack, not wired
+stonecutter	no_ui_yet	present in pack, not wired

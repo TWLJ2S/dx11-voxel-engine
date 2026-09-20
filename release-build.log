@@ -1,0 +1,35 @@
+Build started 11/09/2026 16:42:51.
+Logging verbosity is set to: Normal.
+     1>Project "D:\programming\dx11-voxel-engine-cpp\D3D11.sln" on node 1 (D3D11 target(s)).
+     1>ValidateSolutionConfiguration:
+         Building solution configuration "Release|x64".
+     1>Project "D:\programming\dx11-voxel-engine-cpp\D3D11.sln" (1) is building "D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj" (2) on node 1 (default targets).
+     2>PrepareForBuild:
+         Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+       InitializeBuildStatus:
+         Creating "D3D11\x64\Release\D3D11.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching "D3D11\x64\Release\D3D11.tlog\unsuccessfulbuild".
+       ComputeStdModulesCompileInputs:
+         Reading library manifest file 'C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\modules\modules.json' which provides data for library 'microsoft/STL'.
+         Adding module source 'C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\modules\std.ixx' from library 'microsoft/STL' to be built with this project.
+         Adding module source 'C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.51.36231\modules\std.compat.ixx' from library 'microsoft/STL' to be built with this project.
+       ClCompile:
+         All outputs are up-to-date.
+       Link:
+         All outputs are up-to-date.
+         D3D11.vcxproj -> D:\programming\dx11-voxel-engine-cpp\x64\Release\D3D11.exe
+       PostBuildEvent:
+         xcopy /D /E /I /Q /Y "D:\programming\dx11-voxel-engine-cpp\asset" "D:\programming\dx11-voxel-engine-cpp\x64\Release\asset\"
+         :VCEnd
+         0 File(s) copied
+       FinalizeBuildStatus:
+         Deleting file "D3D11\x64\Release\D3D11.tlog\unsuccessfulbuild".
+         Touching "D3D11\x64\Release\D3D11.tlog\D3D11.lastbuildstate".
+     2>Done Building Project "D:\programming\dx11-voxel-engine-cpp\D3D11.vcxproj" (default targets).
+     1>Done Building Project "D:\programming\dx11-voxel-engine-cpp\D3D11.sln" (D3D11 target(s)).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.47

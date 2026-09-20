@@ -1,0 +1,18 @@
+{
+  "vsync": false,
+  "fpsLimit": 0,
+  "lightingQuality": 2,
+  "gpuTerrain": false,
+  "gpuEntityPathfinding": false,
+  "viewDistance": 4,
+  "fxaa": true,
+  "motionBlur": true,
+  "shadows": false,
+  "fov": 85,
+  "antialiasing": 1,
+  "bloom": true,
+  "gtao": true,
+  "fog": true,
+  "renderScale": 100,
+  "lastWorld": "saves\\New_World"
+}

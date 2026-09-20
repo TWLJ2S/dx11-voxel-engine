@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "entities": [
+    {
+      "name": "core:pig", "behavior": "passive", "speed": 1.65, "acceleration": 6.2, "turnRate": 6.0, "scale": 1.0,
+      "model": "assets/models/entity/pig.json",
+      "texture": "assets/textures/entity/pig/pig.png", "textureSize": [64, 32],
+      "hitbox": { "width": 0.9, "height": 1.25 },
+      "animation": { "walkRate": 5.5, "walkAmplitude": 0.62, "headBob": 0.035 }
+    },
+    {
+      "name": "core:sheep", "behavior": "passive", "speed": 1.45, "acceleration": 5.6, "turnRate": 5.7, "scale": 1.0,
+      "model": "assets/models/entity/sheep.json",
+      "texture": "assets/textures/entity/sheep/sheep.png", "textureSize": [64, 32],
+      "hitbox": { "width": 0.9, "height": 1.35 },
+      "animation": { "walkRate": 5.0, "walkAmplitude": 0.58, "headBob": 0.045 }
+    },
+    {
+      "name": "core:zombie", "behavior": "hostile", "speed": 2.05, "acceleration": 7.4, "turnRate": 6.8, "scale": 1.0,
+      "model": "assets/models/entity/zombie.json",
+      "texture": "assets/textures/entity/zombie/zombie.png", "textureSize": [64, 64],
+      "hitbox": { "width": 0.6, "height": 2.02 },
+      "animation": { "walkRate": 6.2, "walkAmplitude": 0.72, "headBob": 0.025 }
+    }
+  ]
+}

@@ -1,0 +1,421 @@
+{
+  "recipes": [
+    { "unordered": true, "ingredients": ["log"], "result": "plank", "count": 4 },
+    {
+      "pattern": ["#", "#"],
+      "key": { "#": "plank" },
+      "result": "stick",
+      "count": 4
+    },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "plank" },
+      "result": "crafting_table"
+    },
+    {
+      "pattern": ["###", "###"],
+      "key": { "#": "plank" },
+      "result": "door",
+      "count": 3
+    },
+    {
+      "pattern": ["###"],
+      "key": { "#": "plank" },
+      "result": "slab",
+      "count": 6
+    },
+    {
+      "pattern": ["#  ", "## ", "###"],
+      "key": { "#": "plank" },
+      "result": "stairs",
+      "count": 4
+    },
+    {
+      "pattern": ["# #", "# #", "###"],
+      "key": { "#": "plank" },
+      "result": "fence",
+      "count": 3
+    },
+    {
+      "pattern": ["###", "# #", "###"],
+      "key": { "#": "plank" },
+      "result": "chest"
+    },
+    {
+      "pattern": ["###", " S ", " S "],
+      "key": { "#": "plank", "S": "stick" },
+      "result": "wooden_pickaxe"
+    },
+    {
+      "pattern": ["## ", "#S ", " S "],
+      "key": { "#": "plank", "S": "stick" },
+      "result": "wooden_axe"
+    },
+    {
+      "pattern": [" # ", " S ", " S "],
+      "key": { "#": "plank", "S": "stick" },
+      "result": "wooden_shovel"
+    },
+    {
+      "pattern": [" # ", " # ", " S "],
+      "key": { "#": "plank", "S": "stick" },
+      "result": "wooden_sword"
+    },
+    {
+      "pattern": ["## ", " S ", " S "],
+      "key": { "#": "plank", "S": "stick" },
+      "result": "wooden_hoe"
+    },
+    {
+      "pattern": ["###", "BBB", "###"],
+      "key": { "#": "plank", "B": "book" },
+      "result": "bookshelf"
+    },
+    {
+      "pattern": ["# #", " # "],
+      "key": { "#": "plank" },
+      "result": "bowl",
+      "count": 4
+    },
+    {
+      "pattern": ["###", "#R#", "###"],
+      "key": { "#": "plank", "R": "redstone" },
+      "result": "note_block"
+    },
+    {
+      "pattern": ["#", "#"],
+      "key": { "#": "bamboo_planks" },
+      "result": "bamboo_mosaic"
+    },
+    {
+      "pattern": ["###", " S ", " S "],
+      "key": { "#": "cobblestone", "S": "stick" },
+      "result": "stone_pickaxe"
+    },
+    {
+      "pattern": ["## ", "#S ", " S "],
+      "key": { "#": "cobblestone", "S": "stick" },
+      "result": "stone_axe"
+    },
+    {
+      "pattern": [" # ", " S ", " S "],
+      "key": { "#": "cobblestone", "S": "stick" },
+      "result": "stone_shovel"
+    },
+    {
+      "pattern": [" # ", " # ", " S "],
+      "key": { "#": "cobblestone", "S": "stick" },
+      "result": "stone_sword"
+    },
+    {
+      "pattern": ["## ", " S ", " S "],
+      "key": { "#": "cobblestone", "S": "stick" },
+      "result": "stone_hoe"
+    },
+    {
+      "pattern": ["###", " S ", " S "],
+      "key": { "#": "iron_ingot", "S": "stick" },
+      "result": "iron_pickaxe"
+    },
+    {
+      "pattern": ["## ", "#S ", " S "],
+      "key": { "#": "iron_ingot", "S": "stick" },
+      "result": "iron_axe"
+    },
+    {
+      "pattern": [" # ", " S ", " S "],
+      "key": { "#": "iron_ingot", "S": "stick" },
+      "result": "iron_shovel"
+    },
+    {
+      "pattern": [" # ", " # ", " S "],
+      "key": { "#": "iron_ingot", "S": "stick" },
+      "result": "iron_sword"
+    },
+    {
+      "pattern": ["## ", " S ", " S "],
+      "key": { "#": "iron_ingot", "S": "stick" },
+      "result": "iron_hoe"
+    },
+    {
+      "pattern": ["###", " S ", " S "],
+      "key": { "#": "gold_ingot", "S": "stick" },
+      "result": "golden_pickaxe"
+    },
+    {
+      "pattern": ["## ", "#S ", " S "],
+      "key": { "#": "gold_ingot", "S": "stick" },
+      "result": "golden_axe"
+    },
+    {
+      "pattern": [" # ", " S ", " S "],
+      "key": { "#": "gold_ingot", "S": "stick" },
+      "result": "golden_shovel"
+    },
+    {
+      "pattern": [" # ", " # ", " S "],
+      "key": { "#": "gold_ingot", "S": "stick" },
+      "result": "golden_sword"
+    },
+    {
+      "pattern": ["## ", " S ", " S "],
+      "key": { "#": "gold_ingot", "S": "stick" },
+      "result": "golden_hoe"
+    },
+    {
+      "pattern": ["###", " S ", " S "],
+      "key": { "#": "diamond", "S": "stick" },
+      "result": "diamond_pickaxe"
+    },
+    {
+      "pattern": ["## ", "#S ", " S "],
+      "key": { "#": "diamond", "S": "stick" },
+      "result": "diamond_axe"
+    },
+    {
+      "pattern": [" # ", " S ", " S "],
+      "key": { "#": "diamond", "S": "stick" },
+      "result": "diamond_shovel"
+    },
+    {
+      "pattern": [" # ", " # ", " S "],
+      "key": { "#": "diamond", "S": "stick" },
+      "result": "diamond_sword"
+    },
+    {
+      "pattern": ["## ", " S ", " S "],
+      "key": { "#": "diamond", "S": "stick" },
+      "result": "diamond_hoe"
+    },
+    {
+      "pattern": ["###", "# #"],
+      "key": { "#": "leather" },
+      "result": "leather_helmet"
+    },
+    {
+      "pattern": ["# #", "###", "###"],
+      "key": { "#": "leather" },
+      "result": "leather_chestplate"
+    },
+    {
+      "pattern": ["###", "# #", "# #"],
+      "key": { "#": "leather" },
+      "result": "leather_leggings"
+    },
+    {
+      "pattern": ["# #", "# #"],
+      "key": { "#": "leather" },
+      "result": "leather_boots"
+    },
+    {
+      "pattern": ["###", "# #"],
+      "key": { "#": "iron_ingot" },
+      "result": "iron_helmet"
+    },
+    {
+      "pattern": ["# #", "###", "###"],
+      "key": { "#": "iron_ingot" },
+      "result": "iron_chestplate"
+    },
+    {
+      "pattern": ["###", "# #", "# #"],
+      "key": { "#": "iron_ingot" },
+      "result": "iron_leggings"
+    },
+    {
+      "pattern": ["# #", "# #"],
+      "key": { "#": "iron_ingot" },
+      "result": "iron_boots"
+    },
+    {
+      "pattern": ["###", "# #"],
+      "key": { "#": "gold_ingot" },
+      "result": "golden_helmet"
+    },
+    {
+      "pattern": ["# #", "###", "###"],
+      "key": { "#": "gold_ingot" },
+      "result": "golden_chestplate"
+    },
+    {
+      "pattern": ["###", "# #", "# #"],
+      "key": { "#": "gold_ingot" },
+      "result": "golden_leggings"
+    },
+    {
+      "pattern": ["# #", "# #"],
+      "key": { "#": "gold_ingot" },
+      "result": "golden_boots"
+    },
+    {
+      "pattern": ["###", "# #"],
+      "key": { "#": "diamond" },
+      "result": "diamond_helmet"
+    },
+    {
+      "pattern": ["# #", "###", "###"],
+      "key": { "#": "diamond" },
+      "result": "diamond_chestplate"
+    },
+    {
+      "pattern": ["###", "# #", "# #"],
+      "key": { "#": "diamond" },
+      "result": "diamond_leggings"
+    },
+    {
+      "pattern": ["# #", "# #"],
+      "key": { "#": "diamond" },
+      "result": "diamond_boots"
+    },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "glass" },
+      "result": "glass_pane",
+      "count": 16
+    },
+    {
+      "unordered": true,
+      "ingredients": ["cobblestone", "cobblestone", "cobblestone", "cobblestone"],
+      "result": "stone_bricks",
+      "count": 4
+    },
+    {
+      "pattern": ["###", "###", "###"],
+      "key": { "#": "iron_ingot" },
+      "result": "iron_block"
+    },
+    { "unordered": true, "ingredients": ["iron_block"], "result": "iron_ingot", "count": 9 },
+    {
+      "pattern": ["###", "###", "###"],
+      "key": { "#": "gold_ingot" },
+      "result": "gold_block"
+    },
+    { "unordered": true, "ingredients": ["gold_block"], "result": "gold_ingot", "count": 9 },
+    {
+      "pattern": ["###", "###", "###"],
+      "key": { "#": "diamond" },
+      "result": "diamond_block"
+    },
+    { "unordered": true, "ingredients": ["diamond_block"], "result": "diamond", "count": 9 },
+    {
+      "pattern": ["###", "###", "###"],
+      "key": { "#": "emerald" },
+      "result": "emerald_block"
+    },
+    { "unordered": true, "ingredients": ["emerald_block"], "result": "emerald", "count": 9 },
+    {
+      "pattern": ["###", "###", "###"],
+      "key": { "#": "coal" },
+      "result": "coal_block"
+    },
+    { "unordered": true, "ingredients": ["coal_block"], "result": "coal", "count": 9 },
+    {
+      "pattern": ["###", "###", "###"],
+      "key": { "#": "lapis_lazuli" },
+      "result": "lapis_block"
+    },
+    { "unordered": true, "ingredients": ["lapis_block"], "result": "lapis_lazuli", "count": 9 },
+    {
+      "pattern": ["###", "###", "###"],
+      "key": { "#": "redstone" },
+      "result": "redstone_block"
+    },
+    { "unordered": true, "ingredients": ["redstone_block"], "result": "redstone", "count": 9 },
+    {
+      "pattern": ["###", "###", "###"],
+      "key": { "#": "slime_ball" },
+      "result": "slime_block"
+    },
+    { "unordered": true, "ingredients": ["slime_block"], "result": "slime_ball", "count": 9 },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "glowstone_dust" },
+      "result": "glowstone"
+    },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "brick" },
+      "result": "bricks"
+    },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "nether_brick" },
+      "result": "nether_bricks"
+    },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "quartz" },
+      "result": "quartz_block"
+    },
+    { "unordered": true, "ingredients": ["iron_ore"], "result": "iron_ingot" },
+    { "unordered": true, "ingredients": ["gold_ore"], "result": "gold_ingot" },
+    { "unordered": true, "ingredients": ["diamond_ore"], "result": "diamond" },
+    { "unordered": true, "ingredients": ["emerald_ore"], "result": "emerald" },
+    { "unordered": true, "ingredients": ["coal_ore"], "result": "coal" },
+    { "unordered": true, "ingredients": ["lapis_ore"], "result": "lapis_lazuli" },
+    { "unordered": true, "ingredients": ["redstone_ore"], "result": "redstone" },
+    { "unordered": true, "ingredients": ["nether_quartz_ore"], "result": "quartz" },
+    { "unordered": true, "ingredients": ["nether_gold_ore"], "result": "gold_ingot" },
+    { "unordered": true, "ingredients": ["raw_iron_block"], "result": "iron_ingot", "count": 9 },
+    { "unordered": true, "ingredients": ["raw_gold_block"], "result": "gold_ingot", "count": 9 },
+    { "unordered": true, "ingredients": ["raw_copper_block"], "result": "copper_block" },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "string" },
+      "result": "white_wool"
+    },
+    {
+      "unordered": true,
+      "ingredients": ["paper", "paper", "paper", "leather"],
+      "result": "book"
+    },
+    {
+      "pattern": ["###", "###", "###"],
+      "key": { "#": "bone" },
+      "result": "bone_block"
+    },
+    {
+      "unordered": true,
+      "ingredients": ["stone_bricks", "moss_block"],
+      "result": "mossy_stone_bricks"
+    },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "cobbled_deepslate" },
+      "result": "deepslate_bricks",
+      "count": 4
+    },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "cobbled_deepslate" },
+      "result": "polished_deepslate",
+      "count": 4
+    },
+    {
+      "pattern": ["##", "##"],
+      "key": { "#": "blackstone" },
+      "result": "polished_blackstone",
+      "count": 4
+    },
+    {
+      "unordered": true,
+      "ingredients": ["carved_pumpkin", "glowstone_dust"],
+      "result": "jack_o_lantern"
+    },
+    {
+      "pattern": ["R", "S"],
+      "key": { "R": "redstone", "S": "stick" },
+      "result": "redstone_torch"
+    },
+    {
+      "pattern": [" R ", "RGR", " R "],
+      "key": { "R": "redstone", "G": "glowstone" },
+      "result": "redstone_lamp"
+    },
+    {
+      "pattern": ["S", "#"],
+      "key": { "S": "stick", "#": "cobblestone" },
+      "result": "lever"
+    }
+  ]
+}

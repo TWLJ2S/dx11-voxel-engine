@@ -1,0 +1,11 @@
+{
+  "blocks": [
+    {
+      "id": 31,
+      "name": "missing_material",
+      "model": 0,
+      "material": 99,
+      "renderMode": "opaque"
+    }
+  ]
+}
