@@ -1,0 +1,104 @@
+{
+  "blocks": [
+    {
+      "id": 1,
+      "name": "stone",
+      "texture": "asset/texture/stone.png",
+      "roughness": 0.8
+    },
+    {
+      "id": 2,
+      "name": "dirt",
+      "texture": "asset/texture/dirt.png",
+      "roughness": 0.8
+    },
+    {
+      "id": 3,
+      "name": "grass",
+      "textures": {
+        "side": "asset/texture/grass_block_side.png",
+        "bottom": "asset/texture/dirt.png",
+        "top": "asset/texture/grass_block_top.png"
+      },
+      "roughness": 0.8
+    },
+    {
+      "id": 4,
+      "name": "bedrock",
+      "texture": "asset/texture/bedrock.png",
+      "roughness": 0.9
+    },
+    {
+      "id": 5,
+      "name": "water",
+      "texture": "asset/texture/water_still.png",
+      "roughness": 0.15,
+      "solid": false,
+      "occludes": false,
+      "renderMode": "translucent",
+      "opacity": 0.62
+    },
+    {
+      "id": 6,
+      "name": "sand",
+      "texture": "asset/texture/sand.png",
+      "roughness": 0.85
+    },
+    {
+      "id": 7,
+      "name": "snow",
+      "texture": "asset/texture/snow.png",
+      "roughness": 0.9
+    },
+    {
+      "id": 8,
+      "name": "deepslate",
+      "texture": "asset/texture/deepslate.png",
+      "roughness": 0.85
+    },
+    {
+      "id": 9,
+      "name": "gravel",
+      "texture": "asset/texture/gravel.png",
+      "roughness": 0.9
+    },
+    {
+      "id": 10,
+      "name": "oak_log",
+      "textures": {
+        "side": "asset/texture/oak_log.png",
+        "top": "asset/texture/oak_log_top.png",
+        "bottom": "asset/texture/oak_log_top.png"
+      },
+      "roughness": 0.85
+    },
+    {
+      "id": 11,
+      "name": "oak_leaves",
+      "texture": "asset/texture/oak_leaves.png",
+      "roughness": 0.9
+    },
+    {
+      "id": 12,
+      "name": "glass",
+      "texture": "asset/texture/glass.png",
+      "roughness": 0.08,
+      "occludes": false,
+      "renderMode": "translucent",
+      "opacity": 0.35
+    },
+    {
+      "id": 13,
+      "name": "glowstone",
+      "texture": "asset/texture/glowstone.png",
+      "roughness": 0.65,
+      "emission": {
+        "r": 1.0,
+        "g": 0.78,
+        "b": 0.42,
+		"intensity": 1.10,
+		"radius": 16.0
+      }
+    }
+  ]
+}
