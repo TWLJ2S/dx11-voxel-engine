@@ -1,0 +1,25 @@
+{
+  "id": 201,
+  "name": "golden_hoe",
+  "texture": "assets/textures/item/golden_hoe.png",
+  "roughness": 0.35,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "tool": "hoe",
+  "harvestLevel": 0,
+  "miningSpeed": 12,
+  "hardness": 0.0,
+  "requiresTool": false,
+  "toolHarvestLevel": 0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "tool"
+}

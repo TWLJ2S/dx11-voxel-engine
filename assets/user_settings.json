@@ -7,7 +7,7 @@
   "viewDistance": 4,
   "fxaa": true,
   "motionBlur": true,
-  "shadows": false,
+  "shadows": true,
   "fov": 85,
   "antialiasing": 1,
   "bloom": true,

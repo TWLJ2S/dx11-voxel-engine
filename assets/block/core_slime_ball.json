@@ -1,0 +1,25 @@
+{
+  "id": 183,
+  "name": "slime_ball",
+  "texture": "assets/textures/item/slime_ball.png",
+  "roughness": 0.7,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "hardness": 0.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "toolHarvestLevel": 0,
+  "heldStyle": "sprite"
+}

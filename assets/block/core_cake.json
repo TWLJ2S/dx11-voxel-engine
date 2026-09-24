@@ -1,0 +1,33 @@
+{
+  "id": 716,
+  "name": "cake",
+  "model": 20,
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/cake_side.png",
+    "top": "assets/textures/block/cake_top.png",
+    "bottom": "assets/textures/block/cake_bottom.png",
+    "west": "assets/textures/block/cake_side.png",
+    "east": "assets/textures/block/cake_side.png",
+    "north": "assets/textures/block/cake_side.png",
+    "south": "assets/textures/block/cake_side.png"
+  },
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

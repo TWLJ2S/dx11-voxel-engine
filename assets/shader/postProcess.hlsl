@@ -227,9 +227,10 @@ float4 compositePS(PSInput input) : SV_TARGET
 			float3 dyWorld = ddy(world);
 			float3 surfaceNormal = normalize(cross(dyWorld, dxWorld));
 			float horizontal = smoothstep(0.82, 0.985, abs(surfaceNormal.y));
-			// One bounded ellipse may occupy each large tile. Its radius and centre
-			// leave a guaranteed dry margin, so neighbouring puddles stay separate.
-			const float puddleTileSize = 4.5;
+			// Use broad terrain-scale cells so a mature pool spans several blocks.
+			// Stable cell seeds make each pool expand and contract in place rather
+			// than popping or sliding as the accumulated rain level changes.
+			const float puddleTileSize = 10.5;
 			float2 puddleCell = floor(world.xz / puddleTileSize);
 			float seed = weatherHash(puddleCell + 7.3);
 			float seedB = weatherHash(puddleCell * 1.91 + 31.7);
@@ -237,25 +238,26 @@ float4 compositePS(PSInput input) : SV_TARGET
 			// Eligibility never changes, preventing whole puddles from popping in.
 			// Each eligible pool has a stable threshold and grows continuously as
 			// accumulated surface wetness rises; drying naturally reverses the curve.
-			float eligible = step(0.70, seed);
-			float formationStart = lerp(0.045, 0.42, seedB);
+			float eligible = step(0.58, seed);
+			float formationStart = lerp(0.025, 0.38, seedB);
 			float formation = eligible * smoothstep(
-				formationStart, formationStart + 0.34, weatherWetness);
+				formationStart, min(formationStart + 0.42, 0.92), weatherWetness);
 			float2 local = frac(world.xz / puddleTileSize) - 0.5;
 			float2 centreOffset = float2(
 				weatherHash(puddleCell + 13.1), weatherHash(puddleCell + 47.9)) - 0.5;
-			local -= centreOffset * 0.16;
+			local -= centreOffset * 0.10;
 			float angle = seedB * 6.28318531;
 			float sineAngle = sin(angle), cosineAngle = cos(angle);
 			float2 curvedLocal = float2(
 				cosineAngle * local.x - sineAngle * local.y,
 				sineAngle * local.x + cosineAngle * local.y);
-			// Independent aspect, area, and curve powers produce everything from
-			// small round pools to broad, softly lobed ovals without reaching a tile edge.
-			float areaScale = lerp(0.48, 1.08, seedC * seedC);
+			// Radius is driven directly by accumulated wetness: a new pool starts as
+			// a small patch, grows to a 6-10 block basin, then shrinks back to nothing.
+			float sizeGrowth = pow(saturate(formation), 0.72);
+			float areaScale = lerp(0.74, 1.08, seedC * seedC);
 			float2 puddleRadius = float2(
-				lerp(0.17, 0.30, seed), lerp(0.11, 0.225, seedB)) * areaScale *
-				lerp(0.08, 1.0, formation);
+				lerp(0.34, 0.44, seed), lerp(0.24, 0.35, seedB)) * areaScale *
+				lerp(0.025, 1.0, sizeGrowth);
 			float2 normalizedPuddle = abs(curvedLocal / puddleRadius);
 			float curvePower = lerp(1.55, 3.15, weatherHash(puddleCell + 83.2));
 			float curvedDistance = pow(

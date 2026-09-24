@@ -1,0 +1,29 @@
+{
+  "id": 729,
+  "name": "daylight_detector",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/daylight_detector_side.png",
+    "top": "assets/textures/block/daylight_detector_top.png",
+    "bottom": "assets/textures/block/daylight_detector_top.png",
+    "west": "assets/textures/block/daylight_detector_side.png",
+    "east": "assets/textures/block/daylight_detector_side.png",
+    "north": "assets/textures/block/daylight_detector_side.png",
+    "south": "assets/textures/block/daylight_detector_side.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

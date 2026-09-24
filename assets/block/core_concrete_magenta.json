@@ -1,0 +1,21 @@
+{
+  "id": 398,
+  "name": "concrete_magenta",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/concrete_magenta.png",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

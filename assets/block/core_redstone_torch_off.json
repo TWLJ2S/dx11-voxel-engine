@@ -1,0 +1,29 @@
+{
+  "id": 699,
+  "name": "redstone_torch_off",
+  "texture": "assets/textures/block/redstone_torch_off.png",
+  "roughness": 0.55,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "model": 14,
+  "behavior": {
+    "placement": "wall_or_floor",
+    "redstone": "torch"
+  },
+  "hardness": 0.2,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "rod"
+}

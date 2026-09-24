@@ -1,0 +1,29 @@
+{
+  "id": 758,
+  "name": "lectern",
+  "model": 34,
+  "roughness": 0.8,
+  "textures": {
+    "top": "assets/textures/block/lectern_top.png",
+    "bottom": "assets/textures/block/lectern_top.png",
+    "north": "assets/textures/block/lectern_front.png",
+    "west": "assets/textures/block/lectern_front.png",
+    "east": "assets/textures/block/lectern_front.png",
+    "south": "assets/textures/block/lectern_front.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

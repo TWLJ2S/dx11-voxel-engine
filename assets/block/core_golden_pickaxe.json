@@ -1,0 +1,25 @@
+{
+  "id": 197,
+  "name": "golden_pickaxe",
+  "texture": "assets/textures/item/golden_pickaxe.png",
+  "roughness": 0.35,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "tool": "pickaxe",
+  "harvestLevel": 0,
+  "miningSpeed": 12,
+  "hardness": 0.0,
+  "requiresTool": false,
+  "toolHarvestLevel": 0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "tool"
+}

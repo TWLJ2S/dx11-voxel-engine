@@ -1,0 +1,26 @@
+{
+  "id": 628,
+  "name": "souls_glass_bottle_e",
+  "solid": false,
+  "model": 15,
+  "roughness": 0.8,
+  "texture": "assets/textures/block/souls_glass_bottle_e.png",
+  "renderMode": "translucent",
+  "occludes": false,
+  "opacity": 0.35,
+  "hardness": 0.3,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "glass",
+  "armorReduction": 0.0,
+  "connectsToPanes": true,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "cross"
+}

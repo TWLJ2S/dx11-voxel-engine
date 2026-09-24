@@ -1,0 +1,29 @@
+{
+  "id": 62,
+  "name": "snowy_dirt",
+  "textures": {
+    "side": "assets/textures/block/grass_side_snowed.png",
+    "bottom": "assets/textures/block/dirt.png",
+    "top": "assets/textures/block/snow.png",
+    "west": "assets/textures/block/grass_side_snowed.png",
+    "east": "assets/textures/block/grass_side_snowed.png",
+    "north": "assets/textures/block/grass_side_snowed.png",
+    "south": "assets/textures/block/grass_side_snowed.png"
+  },
+  "roughness": 0.85,
+  "hardness": 0.2,
+  "harvestLevel": 0,
+  "tool": "shovel",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "snow",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

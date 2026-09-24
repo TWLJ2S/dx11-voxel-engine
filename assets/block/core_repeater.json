@@ -1,0 +1,26 @@
+{
+  "id": 937,
+  "name": "repeater",
+  "model": 43,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "texture": "assets/textures/item/repeater.png",
+  "textures": {
+    "bottom": "assets/textures/block/smooth_stone.png",
+    "top": "assets/textures/block/repeater.png",
+    "west": "assets/textures/block/redstone_torch_off.png",
+    "east": "assets/textures/block/redstone_torch.png",
+    "north": "assets/textures/block/bedrock.png",
+    "south": "assets/textures/block/repeater_on.png"
+  },
+  "behavior": {
+    "placement": "horizontal_facing",
+    "use": "configure_diode",
+    "redstone": "repeater"
+  },
+  "hardness": 0.0,
+  "roughness": 0.8,
+  "soundMaterial": "stone",
+  "flatIcon": true
+}

@@ -14,6 +14,7 @@
 #include <cmath>
 
 #include "gpuAsset.h"
+#include <core/animationTimeline.h>
 
 namespace ac {
 
@@ -42,15 +43,17 @@ namespace ac {
 		sword
 	};
 
-	enum class heldItemStyle : uint8_t {
-		none,
-		block,
-		slab,
-		sprite,
-		tool,
-		rod,
-		cross
-	};
+		enum class heldItemStyle : uint8_t {
+			none,
+			block,
+			slab,
+			sprite,
+			tool,
+			rod,
+			cross,
+			axe,
+			sword
+		};
 
 	enum class blockSoundMaterial : uint8_t {
 		stone = 0,
@@ -122,6 +125,7 @@ namespace ac {
 		none,
 		toggleOpen,
 		togglePowered,
+		configureDiode,
 		container,
 		crafting
 	};
@@ -139,6 +143,8 @@ namespace ac {
 		torch,
 		lamp,
 		switchSource,
+		repeater,
+		comparator,
 		listener
 	};
 
@@ -174,6 +180,8 @@ namespace ac {
         float roughness = 0.8f;
         float metallic = 0.0f;
 		DirectX::XMFLOAT4 emissionUvBounds{ 0.0f, 0.0f, 1.0f, 1.0f };
+		uint32_t emissionWarmMask = 0;
+		float padding[3]{};
     };
 
     struct shader {
@@ -208,8 +216,13 @@ namespace ac {
     struct keyframe {
         float _time = 0.0f;
         DirectX::XMFLOAT3 _position = {};
-        DirectX::XMFLOAT4 _rotation = {};
+        DirectX::XMFLOAT4 _rotation = { 0.0f, 0.0f, 0.0f, 1.0f };
         DirectX::XMFLOAT3 _scale = { 1.0f, 1.0f, 1.0f };
+		DirectX::XMFLOAT3 _positionInTangent = {};
+		DirectX::XMFLOAT3 _positionOutTangent = {};
+		DirectX::XMFLOAT3 _scaleInTangent = {};
+		DirectX::XMFLOAT3 _scaleOutTangent = {};
+		animationInterpolation _interpolation = animationInterpolation::linear;
     };
 
     struct animationChannel {
@@ -221,6 +234,8 @@ namespace ac {
         float _duration = 0.0f;
         float _ticksPerSecond = 24.0f;
         std::vector<animationChannel> _channels;
+		std::vector<animationTimingSegment> _timing;
+		animationCurve _timeCurve;
         bool _loop = true;
     };
 
@@ -274,6 +289,9 @@ namespace ac {
 		// Normalized texture region that visibly glows. This is independent of
 		// the physical source volume so a flame can glow without the wooden stem.
 		DirectX::XMFLOAT4 uvBounds = { 0.0f, 0.0f, 1.0f, 1.0f };
+		uint32_t faceMask = 0x3fu;
+		bool warmMask = false;
+		bool darkMask = false;
 		bool wallPositionSpecified = false;
     };
 
@@ -309,6 +327,7 @@ namespace ac {
         std::string _name;
 		std::string _texture;
 		std::array<std::string, BLOCK_FACE_COUNT> _faceTextures;
+		std::array<uint16_t, BLOCK_FACE_COUNT> _faceRotations{};
 		std::array<std::string, BLOCK_FACE_COUNT> _faceOverlays;
 		std::array<uint32_t, BLOCK_FACE_COUNT> _faceOverlayMaterials = {
 			NO_OVERLAY_MATERIAL,
@@ -359,8 +378,19 @@ namespace ac {
 
 		bool isFood() const { return _foodHunger > 0.0f || _foodSaturation > 0.0f; }
 		bool isMiningTool() const { return _item && _preferredTool != blockToolClass::none && _toolHarvestLevel >= 0; }
+		uint32_t maxStack() const {
+			const auto style = heldStyle();
+			return isMiningTool() || style == heldItemStyle::tool ||
+				style == heldItemStyle::axe || style == heldItemStyle::sword ? 1u : 64u;
+		}
 
-		heldItemStyle heldStyle() const { return _heldStyle; }
+		heldItemStyle heldStyle() const {
+			if (_heldStyle == heldItemStyle::tool) {
+				if (_preferredTool == blockToolClass::axe) return heldItemStyle::axe;
+				if (_preferredTool == blockToolClass::sword) return heldItemStyle::sword;
+			}
+			return _heldStyle;
+		}
 
         uint32_t materialForFace(uint32_t face) const {
             if (face >= _faceMaterials.size() ||
@@ -447,7 +477,7 @@ namespace ac {
 				"interaction", "item", "hardness", "harvestLevel", "toolHarvestLevel",
 				"tool", "requiresTool", "miningSpeed", "food", "armorReduction",
 				"heldStyle", "soundMaterial", "lightTransmission", "connectsToPanes",
-				"flatIcon", "behavior"
+				"flatIcon", "behavior", "textureRotation"
 				}, "block");
 
             auto requiredUint = [&](const char* key) -> uint32_t {
@@ -525,6 +555,20 @@ namespace ac {
 				setTexture("top", BLOCK_FACE_UP);
 				setTexture("north", BLOCK_FACE_NORTH);
 				setTexture("south", BLOCK_FACE_SOUTH);
+			}
+			if (doc.HasMember("textureRotation")) {
+				const auto& rotations = doc["textureRotation"];
+				if (!rotations.IsObject()) throw std::runtime_error("Block field 'textureRotation' must be an object");
+				validateMembers(rotations, { "west", "east", "bottom", "top", "north", "south" }, "textureRotation");
+				auto loadRotation = [&](const char* name, BLOCK_FACE face) {
+					if (!rotations.HasMember(name)) return;
+					if (!rotations[name].IsUint() || rotations[name].GetUint() % 90u != 0u)
+						throw std::runtime_error("Block texture rotation must be 0, 90, 180, or 270 degrees");
+					_faceRotations[face] = static_cast<uint16_t>(rotations[name].GetUint() % 360u);
+				};
+				loadRotation("west", BLOCK_FACE_WEST); loadRotation("east", BLOCK_FACE_EAST);
+				loadRotation("bottom", BLOCK_FACE_DOWN); loadRotation("top", BLOCK_FACE_UP);
+				loadRotation("north", BLOCK_FACE_NORTH); loadRotation("south", BLOCK_FACE_SOUTH);
 			}
 			if (hasTextures()) {
 				for (uint32_t face = 0; face < BLOCK_FACE_COUNT; ++face) {
@@ -693,6 +737,7 @@ namespace ac {
 					if (value == "none") _behavior.use = blockUseBehavior::none;
 					else if (value == "toggle_open") _behavior.use = blockUseBehavior::toggleOpen;
 					else if (value == "toggle_powered") _behavior.use = blockUseBehavior::togglePowered;
+					else if (value == "configure_diode") _behavior.use = blockUseBehavior::configureDiode;
 					else if (value == "container") _behavior.use = blockUseBehavior::container;
 					else if (value == "crafting") _behavior.use = blockUseBehavior::crafting;
 					else throw std::runtime_error("Unknown block behavior use '" + value + "'");
@@ -711,6 +756,8 @@ namespace ac {
 					else if (value == "torch") _behavior.redstone = blockRedstoneBehavior::torch;
 					else if (value == "lamp") _behavior.redstone = blockRedstoneBehavior::lamp;
 					else if (value == "switch") _behavior.redstone = blockRedstoneBehavior::switchSource;
+					else if (value == "repeater") _behavior.redstone = blockRedstoneBehavior::repeater;
+					else if (value == "comparator") _behavior.redstone = blockRedstoneBehavior::comparator;
 					else if (value == "listener") _behavior.redstone = blockRedstoneBehavior::listener;
 					else throw std::runtime_error("Unknown block behavior redstone role '" + value + "'");
 				}
@@ -822,7 +869,7 @@ namespace ac {
 					throw std::runtime_error("Block field 'emission' must be an object");
 				validateMembers(emission, {
 					"r", "g", "b", "intensity", "radius",
-					"position", "wallPosition", "halfExtent", "uvBounds"
+					"position", "wallPosition", "halfExtent", "uvBounds", "faces", "warmMask", "darkMask", "textureRotation"
 				}, "emission");
 				auto emissionValue = [&](const char* key) {
 					if (!emission.HasMember(key)) return 0.0f;
@@ -839,6 +886,32 @@ namespace ac {
                 _emission.color.z = emissionValue("b");
 				_emission.intensity = emissionValue("intensity");
 				_emission.radius = emissionValue("radius");
+				if (emission.HasMember("warmMask")) {
+					if (!emission["warmMask"].IsBool())
+						throw std::runtime_error("Block emission field 'warmMask' must be a boolean");
+					_emission.warmMask = emission["warmMask"].GetBool();
+				}
+				if (emission.HasMember("darkMask")) {
+					if (!emission["darkMask"].IsBool())
+						throw std::runtime_error("Block emission field 'darkMask' must be a boolean");
+					_emission.darkMask = emission["darkMask"].GetBool();
+				}
+				if (emission.HasMember("faces")) {
+					const auto& faces = emission["faces"];
+					if (!faces.IsArray())
+						throw std::runtime_error("Block emission field 'faces' must be an array");
+					_emission.faceMask = 0;
+					for (const auto& face : faces.GetArray()) {
+						if (!face.IsString())
+							throw std::runtime_error("Block emission faces must be strings");
+						const std::string name = face.GetString();
+						const char* names[] = { "west", "east", "down", "up", "north", "south" };
+						bool found = false;
+						for (uint32_t i = 0; i < BLOCK_FACE_COUNT; ++i)
+							if (name == names[i]) { _emission.faceMask |= 1u << i; found = true; break; }
+						if (!found) throw std::runtime_error("Unknown block emission face: " + name);
+					}
+				}
 				auto emissionVector = [&](const char* key, DirectX::XMFLOAT3 fallback,
 					float minimum, float maximum) {
 					if (!emission.HasMember(key)) return fallback;
@@ -972,7 +1045,10 @@ namespace ac {
 				else if (value == "tool") _heldStyle = heldItemStyle::tool;
 				else if (value == "rod") _heldStyle = heldItemStyle::rod;
 				else if (value == "cross") _heldStyle = heldItemStyle::cross;
-				else throw std::runtime_error("Block heldStyle must be block, slab, sprite, tool, rod, or cross");
+				else if (value == "axe") _heldStyle = heldItemStyle::axe;
+				else if (value == "sword") _heldStyle = heldItemStyle::sword;
+				else throw std::runtime_error(
+					"Block heldStyle must be block, slab, sprite, tool, rod, cross, axe, or sword");
 			}
 			if (doc.HasMember("soundMaterial")) {
 				if (!doc["soundMaterial"].IsString())

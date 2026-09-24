@@ -1,0 +1,21 @@
+{
+  "id": 599,
+  "name": "red_sandstone_carved",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/red_sandstone_carved.png",
+  "hardness": 0.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "sand",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

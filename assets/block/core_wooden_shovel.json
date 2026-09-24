@@ -1,0 +1,25 @@
+{
+  "id": 186,
+  "name": "wooden_shovel",
+  "texture": "assets/textures/item/wooden_shovel.png",
+  "roughness": 0.7,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "tool": "shovel",
+  "harvestLevel": 0,
+  "miningSpeed": 2,
+  "hardness": 0.0,
+  "requiresTool": false,
+  "toolHarvestLevel": 0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "tool"
+}

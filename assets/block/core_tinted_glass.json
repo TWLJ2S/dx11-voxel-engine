@@ -1,0 +1,24 @@
+{
+  "id": 318,
+  "name": "tinted_glass",
+  "roughness": 0.08,
+  "texture": "assets/textures/block/tinted_glass.png",
+  "occludes": false,
+  "renderMode": "translucent",
+  "opacity": 0.55,
+  "hardness": 0.3,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "glass",
+  "armorReduction": 0.0,
+  "connectsToPanes": true,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

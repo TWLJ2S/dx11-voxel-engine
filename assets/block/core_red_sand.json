@@ -1,0 +1,22 @@
+{
+  "id": 29,
+  "name": "red_sand",
+  "texture": "assets/textures/block/red_sand.png",
+  "roughness": 0.86,
+  "gravity": true,
+  "hardness": 0.5,
+  "harvestLevel": 0,
+  "tool": "shovel",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "sand",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

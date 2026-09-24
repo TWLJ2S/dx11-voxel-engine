@@ -1,0 +1,21 @@
+{
+  "id": 294,
+  "name": "crying_obsidian",
+  "roughness": 0.35,
+  "texture": "assets/textures/block/crying_obsidian.png",
+  "hardness": 50.0,
+  "harvestLevel": 3,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

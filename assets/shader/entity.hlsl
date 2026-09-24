@@ -17,7 +17,8 @@ struct VSOutput {
 cbuffer ObjectBuffer : register(b0) {
     matrix world;
     uint textured;
-    float3 objectPadding;
+    float hurtAmount;
+    float2 objectPadding;
 };
 cbuffer CameraBuffer : register(b1) {
     matrix view;
@@ -42,7 +43,7 @@ cbuffer DaylightBuffer : register(b7) {
     float cloudCoverage;
     float cloudDensity;
     float cloudShadowStrength;
-    float daylightPadding;
+    float cloudTime;
 };
 Texture2D entityTexture : register(t0);
 SamplerState entitySampler : register(s0);
@@ -70,7 +71,7 @@ float entityCloudNoise(float2 p) {
 float entityCloudVisibility(float3 worldPosition) {
     if (sunDirection.y <= 0.035 || sunIntensity <= 0.001) return 1.0;
     float2 cloudPoint = worldPosition.xz + sunDirection.xz * ((135.0 - worldPosition.y) / max(sunDirection.y, 0.035));
-    float2 p = (cloudPoint + float2(abs(waterTime) * 2.15, abs(waterTime) * 0.72)) / 420.0;
+    float2 p = (cloudPoint + float2(cloudTime * 2.15, cloudTime * 0.72)) / 420.0;
     float2 baseP = p;
     float value = 0.0, weight = 0.52;
     [unroll] for (uint octave = 0u; octave < 4u; ++octave) {
@@ -81,6 +82,9 @@ float entityCloudVisibility(float3 worldPosition) {
     float thicknessVariation = entityCloudNoise(baseP * 0.43 - 19.2);
     float opacity = smoothstep(threshold - 0.055, threshold + 0.13, value - (1.0 - cloudDensity) * 0.08);
     opacity *= lerp(0.28, 1.0, thicknessVariation * thicknessVariation);
+    float phase = frac(cloudTime / 110.0 + entityCloudNoise(baseP * 0.31 + float2(13.7, -8.4)));
+    float moisture = smoothstep(0.12, 0.34, phase) * (1.0 - smoothstep(0.72, 0.96, phase));
+    opacity *= lerp(0.42, 1.22, moisture);
     return 1.0 - opacity * saturate(cloudShadowStrength);
 }
 
@@ -97,5 +101,7 @@ float4 pixelMain(VSOutput input) : SV_TARGET {
     if (textured != 0)
         albedo *= entityTexture.Sample(entitySampler, input.uv);
     clip(albedo.a - 0.01);
+    albedo.rgb = lerp(albedo.rgb, float3(1.0, 0.13, 0.13),
+        saturate(hurtAmount) * 0.68);
     return float4(albedo.rgb * max(light, 0.12), albedo.a);
 }

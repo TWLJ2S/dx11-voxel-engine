@@ -1,0 +1,22 @@
+{
+  "id": 287,
+  "name": "weathered_copper",
+  "roughness": 0.45,
+  "texture": "assets/textures/block/weathered_copper.png",
+  "metallic": 0.75,
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

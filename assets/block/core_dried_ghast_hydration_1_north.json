@@ -1,0 +1,21 @@
+{
+  "id": 451,
+  "name": "dried_ghast_hydration_1_north",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/dried_ghast_hydration_1_north.png",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -255,14 +255,15 @@ VSOutput main(uint vertexId : SV_VertexID, uint instanceId : SV_InstanceID)
     output.normal = normalize(mul(normal, (float3x3)world));
     output.uv = (flipV ? flippedUV[corner] : standardUV[corner]) * float2(faceWidth, faceHeight);
     output.material = face.material;
+    const uint surfaceFlags = fluidLevel == 0u ? (face.ao & ~255u) : 0u;
     if (flipV) {
         uint a0 = face.ao & 3u;
         uint a1 = (face.ao >> 2) & 3u;
         uint a2 = (face.ao >> 4) & 3u;
         uint a3 = (face.ao >> 6) & 3u;
-        output.aoCorners = a3 | (a2 << 2) | (a1 << 4) | (a0 << 6);
+        output.aoCorners = a3 | (a2 << 2) | (a1 << 4) | (a0 << 6) | surfaceFlags;
     }
-    else output.aoCorners = face.ao;
+    else output.aoCorners = (face.ao & 255u) | surfaceFlags;
     output.opacity = face.opacity;
 	output.reflectionClipDistance = reflectionClipEnabled > 0.5
 		? worldPosition.y - reflectionClipHeight + 0.01

@@ -262,6 +262,33 @@ namespace ac {
 			if (files.empty())
 				throw std::runtime_error("No block JSON files found in: " + root.string());
 
+			// Keep runtime allocation stable without encoding numbers in filenames.
+			// Unlisted definitions are appended in alphabetical order.
+			const auto orderPath = root / "registry.order";
+			if (std::filesystem::exists(orderPath)) {
+				std::ifstream orderFile(orderPath);
+				if (!orderFile) throw std::runtime_error("Cannot read " + orderPath.string());
+				std::unordered_map<std::string, size_t> order;
+				std::unordered_set<std::string> available;
+				for (const auto& path : files)
+					available.insert(path.lexically_relative(root).generic_string());
+				std::string name;
+				while (std::getline(orderFile, name)) {
+					if (!name.empty() && name.back() == '\r') name.pop_back();
+					if (name.empty()) continue;
+					if (!available.contains(name) || !order.emplace(name, order.size()).second)
+						throw std::runtime_error(orderPath.string() + ": missing or duplicate block file '" + name + "'");
+				}
+				if (orderFile.bad()) throw std::runtime_error("Cannot read " + orderPath.string());
+				const auto rank = [&](const std::filesystem::path& path) {
+					const auto found = order.find(path.lexically_relative(root).generic_string());
+					return found == order.end() ? order.size() : found->second;
+				};
+				std::stable_sort(files.begin(), files.end(), [&](const auto& a, const auto& b) {
+					return rank(a) < rank(b);
+				});
+			}
+
 			struct stagedBlock {
 				std::unique_ptr<blockDefinition> definition;
 				std::string source;
@@ -552,13 +579,17 @@ namespace ac {
 					entry.roughness = block->_roughness;
 					entry.metallic = block->_metallic;
 					entry.emissionUvBounds = block->_emission.uvBounds;
+					entry.emissionWarmMask =
+						(block->_emission.faceMask & (1u << face)) ?
+						(block->_emission.darkMask ? 2u : (block->_emission.warmMask ? 1u : 0u)) : 0u;
 
 					const bool interesting = entry.tintMode != TINT_MODE_NONE ||
 						entry.overlayMaterial != NO_OVERLAY_MATERIAL ||
 						entry.metallic > 0.001f ||
 						std::abs(entry.roughness - 0.8f) > 0.001f ||
 						entry.emissionUvBounds.x > 0.0f || entry.emissionUvBounds.y > 0.0f ||
-						entry.emissionUvBounds.z < 1.0f || entry.emissionUvBounds.w < 1.0f;
+						entry.emissionUvBounds.z < 1.0f || entry.emissionUvBounds.w < 1.0f ||
+						entry.emissionWarmMask != 0;
 					if (!interesting) {
 						// Still publish scalar surface params for shared textures.
 						table[material].roughness = entry.roughness;
@@ -574,7 +605,8 @@ namespace ac {
 							table[material].emissionUvBounds.x != entry.emissionUvBounds.x ||
 							table[material].emissionUvBounds.y != entry.emissionUvBounds.y ||
 							table[material].emissionUvBounds.z != entry.emissionUvBounds.z ||
-							table[material].emissionUvBounds.w != entry.emissionUvBounds.w))
+							table[material].emissionUvBounds.w != entry.emissionUvBounds.w ||
+							table[material].emissionWarmMask != entry.emissionWarmMask))
 						throw std::runtime_error(
 							"Blocks '" + *owner[material] + "' and '" + block->_name +
 							"' disagree on properties of shared texture '" +

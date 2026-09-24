@@ -1,0 +1,21 @@
+{
+  "id": 634,
+  "name": "stonebrick_mossy",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/stonebrick_mossy.png",
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "grass",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

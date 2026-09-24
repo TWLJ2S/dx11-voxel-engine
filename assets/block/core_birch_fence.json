@@ -1,0 +1,24 @@
+{
+  "id": 122,
+  "name": "birch_fence",
+  "texture": "assets/textures/block/planks_birch.png",
+  "model": 5,
+  "roughness": 0.78,
+  "occludes": false,
+  "solid": true,
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

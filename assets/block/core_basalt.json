@@ -1,0 +1,29 @@
+{
+  "id": 27,
+  "name": "basalt",
+  "textures": {
+    "side": "assets/textures/block/basalt_side.png",
+    "top": "assets/textures/block/basalt_top.png",
+    "bottom": "assets/textures/block/basalt_top.png",
+    "west": "assets/textures/block/basalt_side.png",
+    "east": "assets/textures/block/basalt_side.png",
+    "north": "assets/textures/block/basalt_side.png",
+    "south": "assets/textures/block/basalt_side.png"
+  },
+  "roughness": 0.9,
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

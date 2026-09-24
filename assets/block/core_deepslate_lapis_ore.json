@@ -1,0 +1,21 @@
+{
+  "id": 68,
+  "name": "deepslate_lapis_ore",
+  "texture": "assets/textures/block/deepslate_lapis_ore.png",
+  "roughness": 0.84,
+  "hardness": 4.5,
+  "harvestLevel": 1,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

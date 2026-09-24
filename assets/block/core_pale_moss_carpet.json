@@ -1,0 +1,25 @@
+{
+  "id": 572,
+  "name": "pale_moss_carpet",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/pale_moss_carpet.png",
+  "model": 16,
+  "solid": true,
+  "occludes": false,
+  "renderMode": "cutout",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "grass",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "sprite"
+}

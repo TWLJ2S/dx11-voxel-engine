@@ -636,6 +636,7 @@ namespace ac {
 				const blockDefinition* definition = definitions.get(id);
 				if (!definition || definition->_emission.intensity <= 0.0f) continue;
 				for (uint32_t face = 0; face < BLOCK_FACE_COUNT; ++face) {
+					if ((definition->_emission.faceMask & (1u << face)) == 0) continue;
 					const uint32_t material = definition->materialForFace(face);
 					if (material >= emissions.size()) continue;
 					emissions[material] = {

@@ -58,6 +58,8 @@ struct MaterialProperties
     float roughness;
     float metallic;
 	float4 emissionUvBounds;
+	uint emissionWarmMask;
+	float3 materialPadding;
 };
 StructuredBuffer<MaterialProperties> materialProperties : register(t13);
 
@@ -180,11 +182,13 @@ bool traceVoxelReflection(
 	float3 direction,
 	out uint hitMaterial,
 	out float3 hitPosition,
-	out float3 hitNormal)
+	out float3 hitNormal,
+	out float hitEmissionScale)
 {
 	hitMaterial = 0u;
 	hitPosition = 0.0;
 	hitNormal = 0.0;
+	hitEmissionScale = 0.0;
 	const float3 start = surfacePosition + surfaceNormal * 0.012 + direction * 0.018;
 	int3 voxel = (int3)floor(start);
 	if (!reflectionVoxelInside(voxel)) return false;
@@ -220,6 +224,7 @@ bool traceVoxelReflection(
 		if ((packed & 0x80000000u) != 0u)
 		{
 			hitMaterial = packed & 0xFFFFu;
+			hitEmissionScale = float((packed >> 16u) & 15u) / 15.0;
 			hitPosition = start + direction * nearest;
 			hitNormal = crossX ? float3(-step.x, 0.0, 0.0) :
 				(crossY ? float3(0.0, -step.y, 0.0) : float3(0.0, 0.0, -step.z));
@@ -512,7 +517,7 @@ cbuffer DaylightBuffer : register(b7)
 	float cloudCoverage;
 	float cloudDensity;
 	float cloudShadowStrength;
-	float daylightPadding;
+	float cloudTime;
 };
 
 float cloudShadowHash(float2 p)
@@ -535,7 +540,7 @@ float cloudSunVisibility(float3 worldPosition)
 	if (sunDirection.y <= 0.035 || sunIntensity <= 0.001) return 1.0;
 	float2 cloudPoint = worldPosition.xz + sunDirection.xz *
 		((135.0 - worldPosition.y) / max(sunDirection.y, 0.035));
-	float2 p = (cloudPoint + float2(abs(waterTime) * 2.15, abs(waterTime) * 0.72)) / 420.0;
+	float2 p = (cloudPoint + float2(cloudTime * 2.15, cloudTime * 0.72)) / 420.0;
 	float2 baseP = p;
 	float value = 0.0, weight = 0.52;
 	[unroll] for (uint octave = 0u; octave < 4u; ++octave) {
@@ -548,6 +553,9 @@ float cloudSunVisibility(float3 worldPosition)
 	float opacity = smoothstep(threshold - 0.055, threshold + 0.13,
 		value - (1.0 - cloudDensity) * 0.08);
 	opacity *= lerp(0.28, 1.0, thicknessVariation * thicknessVariation);
+	float phase = frac(cloudTime / 110.0 + cloudShadowNoise(baseP * 0.31 + float2(13.7, -8.4)));
+	float moisture = smoothstep(0.12, 0.34, phase) * (1.0 - smoothstep(0.72, 0.96, phase));
+	opacity *= lerp(0.42, 1.22, moisture);
 	return 1.0 - opacity * saturate(cloudShadowStrength);
 }
 
@@ -1274,6 +1282,14 @@ float4 main(PSInput input) : SV_TARGET
 	materialEmission.a *= step(emissionBounds.x, emissionUv.x) *
 		step(emissionBounds.y, emissionUv.y) * step(emissionUv.x, emissionBounds.z) *
 		step(emissionUv.y, emissionBounds.w);
+	if (properties.emissionWarmMask == 1u)
+		materialEmission.a *= smoothstep(0.45, 0.72, albedo.r) *
+			smoothstep(0.12, 0.30, albedo.g) *
+			(1.0 - smoothstep(0.35, 0.55, albedo.b));
+	if (properties.emissionWarmMask == 2u)
+		materialEmission.a *= smoothstep(0.32, 0.62, dot(albedo, float3(0.2126, 0.7152, 0.0722)));
+	if ((input.aoCorners & 0x4000u) != 0u)
+		materialEmission.a *= float((input.aoCorners >> 9u) & 0xfu) / 15.0;
 	if (redstoneDustSurface)
 	{
 		materialEmission = float4(
@@ -1555,11 +1571,12 @@ float4 main(PSInput input) : SV_TARGET
 		// Planar open-sky water already captures the mirrored scene; a voxel hit
 		// there is a second, misplaced copy of nearby emitters.
 		uint reflectedMaterial = 0u;
+		float reflectedEmissionScale = 0.0;
 		float3 reflectedHitPosition = 0.0;
 		float3 reflectedHitNormal = 0.0;
 		if ((!isWater || !waterPlanarSurface) && traceVoxelReflection(
 			reflectionSurfacePosition, geometricReflectionNormal, tracedReflectionDirection,
-			reflectedMaterial, reflectedHitPosition, reflectedHitNormal) &&
+			reflectedMaterial, reflectedHitPosition, reflectedHitNormal, reflectedEmissionScale) &&
 			dot(reflectedHitPosition - reflectionSurfacePosition,
 				geometricReflectionNormal) > 0.08)
 		{
@@ -1582,12 +1599,20 @@ float4 main(PSInput input) : SV_TARGET
 				lerp(0.08, ambientIntensity, celestialVisibility) +
 				sunColor * reflectedDaylight * 0.82;
 			float4 reflectedEmission = materialEmissions[reflectedMaterial];
+			reflectedEmission.a *= reflectedEmissionScale;
 			const float2 repeatedReflectedUv = frac(reflectedUv);
 			const float4 reflectedBounds = reflectedProperties.emissionUvBounds;
 			reflectedEmission.a *= step(reflectedBounds.x, repeatedReflectedUv.x) *
 				step(reflectedBounds.y, repeatedReflectedUv.y) *
 				step(repeatedReflectedUv.x, reflectedBounds.z) *
 				step(repeatedReflectedUv.y, reflectedBounds.w);
+			if (reflectedProperties.emissionWarmMask == 1u)
+				reflectedEmission.a *= smoothstep(0.45, 0.72, reflectedAlbedo.r) *
+					smoothstep(0.12, 0.30, reflectedAlbedo.g) *
+					(1.0 - smoothstep(0.35, 0.55, reflectedAlbedo.b));
+			if (reflectedProperties.emissionWarmMask == 2u)
+				reflectedEmission.a *= smoothstep(0.32, 0.62,
+					dot(reflectedAlbedo, float3(0.2126, 0.7152, 0.0722)));
 			reflectionColor = reflectedAlbedo * (
 				saturate(reflectedLighting + 0.12) +
 				reflectedEmission.rgb * reflectedEmission.a);

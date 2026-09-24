@@ -1,0 +1,54 @@
+{
+  "id": 936,
+  "name": "blast_furnace_lit",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/blast_furnace_side.png",
+    "top": "assets/textures/block/blast_furnace_top.png",
+    "bottom": "assets/textures/block/blast_furnace_top.png",
+    "north": "assets/textures/block/blast_furnace_front_on.png",
+    "west": "assets/textures/block/blast_furnace_side.png",
+    "east": "assets/textures/block/blast_furnace_side.png",
+    "south": "assets/textures/block/blast_furnace_side.png"
+  },
+  "interaction": "crafting",
+  "behavior": {
+    "drop": "blast_furnace"
+  },
+  "emission": {
+    "r": 1.0,
+    "g": 0.55,
+    "b": 0.2,
+    "intensity": 0.55,
+    "radius": 9.0,
+    "position": [
+      0.5,
+      0.5,
+      0.04
+    ],
+    "halfExtent": [
+      0.42,
+      0.42,
+      0.04
+    ],
+    "faces": [
+      "north"
+    ],
+    "warmMask": true
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

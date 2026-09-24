@@ -133,10 +133,11 @@ namespace ac {
 		bool _submerged = false;
 		bool _swimming = false;
 		float _swimBlend = 0.0f;
+		float _crouchBlend = 0.0f;
 		uint32_t _jumpCooldownTicks = 0u;
 		float _landingDragRemaining = 0.0f;
-		float _landingDragDuration = .30f;
-		float _landingMomentumRetention = .55f;
+		float _landingDragDuration = 0.0f;
+		float _landingMomentumRetention = 0.0f;
 		float _flightToggleRemaining = 0.0f;
 
 		playerCollisionBox currentBox() const {
@@ -149,8 +150,9 @@ namespace ac {
 			const playerCollisionBox& box,
 			Fluid&& fluid
 		) {
-			return fluid(eye.x, eye.y - box.feetBelowEye + 0.12f, eye.z) ||
-				fluid(eye.x, eye.y - box.feetBelowEye * 0.5f, eye.z) ||
+			const auto& water = playerController().water;
+			return fluid(eye.x, eye.y - box.feetBelowEye + water.feetSampleOffset, eye.z) ||
+				fluid(eye.x, eye.y - box.feetBelowEye * water.torsoSampleFraction, eye.z) ||
 				fluid(eye.x, eye.y, eye.z);
 		}
 
@@ -208,7 +210,9 @@ namespace ac {
 			bool allowStepUp = false
 		) {
 			if (std::abs(distance) < 1.0e-7f) return;
-			const uint32_t steps = (std::max)(1u, static_cast<uint32_t>(std::ceil(std::abs(distance) / .08f)));
+			const auto& tuning = playerController();
+			const uint32_t steps = (std::max)(1u, static_cast<uint32_t>(std::ceil(
+				std::abs(distance) / tuning.collision.maximumMoveStep)));
 			const float step = distance / static_cast<float>(steps);
 			for (uint32_t i = 0; i < steps; ++i) {
 				dx::XMFLOAT3 candidate = position;
@@ -218,11 +222,10 @@ namespace ac {
 				if (collides(candidate, solid)) {
 					// Auto-step onto slabs and other short ledges without jumping.
 					if (allowStepUp && !_swimming && axis != 1u) {
-						constexpr float stepHeight = 0.55f;
 						dx::XMFLOAT3 raised = position;
-						raised.y += stepHeight;
+						raised.y += tuning.collision.stepHeight;
 						dx::XMFLOAT3 raisedMove = candidate;
-						raisedMove.y += stepHeight;
+						raisedMove.y += tuning.collision.stepHeight;
 						if (!collides(raised, solid) && !collides(raisedMove, solid)) {
 							position = raisedMove;
 							continue;
@@ -242,8 +245,11 @@ namespace ac {
 
     public:
         player(const dx::XMFLOAT3& pos, const dx::XMFLOAT3& target, float fov, float aspect, float nearZ)
-            : _camera(pos, target, fov, aspect, nearZ), _angle(0.0f, 0.0f), _velocity(0.0f, 0.0f, 0.0f), _sensitivity(0.0007f)
+            : _camera(pos, target, fov, aspect, nearZ), _angle(0.0f, 0.0f), _velocity(0.0f, 0.0f, 0.0f),
+			  _sensitivity(playerController().look.sensitivity)
         {
+			_landingDragDuration = playerController().landing.initialDuration;
+			_landingMomentumRetention = playerController().landing.initialMomentumRetention;
             dx::XMVECTOR vPos = dx::XMLoadFloat3(&pos);
             dx::XMVECTOR vTarget = dx::XMLoadFloat3(&target);
             dx::XMVECTOR vDir = dx::XMVector3Normalize(dx::XMVectorSubtract(vTarget, vPos));
@@ -259,13 +265,13 @@ namespace ac {
 		void update(const serverInput& input, const dx::XMFLOAT3& friction,
 			float speedMul, float dt, Solid&& solid, Fluid&& fluid,
 			bool spectator = false, bool creative = false) {
+			const auto& tuning = playerController();
 			_justLanded = false;
             // 1. Update Rotation Angles
-			constexpr float maximumViewPitch = 1.55334306f;
 			_angle.y = std::clamp(
 				_angle.y + (input.lookY * _sensitivity),
-				-maximumViewPitch,
-				 maximumViewPitch
+				-tuning.look.maximumPitch,
+				 tuning.look.maximumPitch
 			);
 
             // Keep yaw within 0 to 2PI range
@@ -288,17 +294,17 @@ namespace ac {
 			dx::XMFLOAT3 startPosition = _camera._gpuData._position;
 			const playerCollisionBox poseForWater = currentBox();
 			const bool feetInWater = !spectator && fluid(
-				startPosition.x, startPosition.y - poseForWater.feetBelowEye + 0.12f, startPosition.z);
+				startPosition.x, startPosition.y - poseForWater.feetBelowEye + tuning.water.feetSampleOffset, startPosition.z);
 			const bool torsoInWater = !spectator && fluid(
 				startPosition.x,
-				startPosition.y - poseForWater.feetBelowEye * 0.5f,
+				startPosition.y - poseForWater.feetBelowEye * tuning.water.torsoSampleFraction,
 				startPosition.z);
 			const bool headInWater = !spectator && fluid(
 				startPosition.x, startPosition.y, startPosition.z);
 			const bool bodyInWater = feetInWater || torsoInWater || headInWater;
 			const bool submerged = headInWater;
 			const bool surfaceTouch = _swimming && !spectator && fluid(
-				startPosition.x, startPosition.y - 0.85f, startPosition.z);
+				startPosition.x, startPosition.y - tuning.water.surfaceSampleOffset, startPosition.z);
 			const bool inWater = bodyInWater || surfaceTouch;
 			_inWater = inWater;
 			_submerged = submerged;
@@ -321,7 +327,7 @@ namespace ac {
 					_jumpCooldownTicks = 0u;
 				}
 				else {
-					_flightToggleRemaining = 0.30f;
+					_flightToggleRemaining = tuning.flight.toggleWindow;
 				}
 			}
 			const bool flying = creative && _flying && !spectator;
@@ -337,6 +343,7 @@ namespace ac {
 				_swimming = false;
 				_crouching = false;
 				_swimBlend = 0.0f;
+				_crouchBlend = 0.0f;
 			}
 			else {
 				const playerCollisionBox poseBefore = currentBox();
@@ -367,6 +374,13 @@ namespace ac {
 				}
 				startPosition = blendedEye;
 			}
+			const float crouchTarget = _crouching && !_swimming ? 1.0f : 0.0f;
+			const float crouchRate = crouchTarget > _crouchBlend
+				? playerPose().crouch.enterRate : playerPose().crouch.exitRate;
+			const float crouchResponse = 1.0f - std::exp(-crouchRate * dt);
+			_crouchBlend += (crouchTarget - _crouchBlend) * crouchResponse;
+			if (std::abs(_crouchBlend - crouchTarget) < 0.0001f)
+				_crouchBlend = crouchTarget;
 
 			const dx::XMVECTOR waterForward = _swimming ? vLookDir : vMoveForward;
             if (input.forward) vInput = dx::XMVectorAdd(vInput, movementInWater ? waterForward : vMoveForward);
@@ -397,19 +411,22 @@ namespace ac {
 			// Ground movement is responsive, but airborne movement preserves
 			// takeoff inertia and permits only small course corrections.
 			const float movementControl = spectator || flying || _grounded ? 1.0f :
-				(movementInWater ? .82f : .15f);
+				(movementInWater ? tuning.water.control : tuning.movement.airControl);
 			const dx::XMVECTOR horizontalInput = dx::XMVectorSetY(vInput, 0.0f);
 			const bool hasHorizontalInput = dx::XMVectorGetX(dx::XMVector3LengthSq(horizontalInput)) > 1.0e-6f;
 			_sprinting = !spectator && !movementInWater && !_swimming && !_crouching &&
 				hasHorizontalInput && input.sprint;
-			const float movementScale = spectator ? 1.8f :
-				(flying ? (_sprinting ? 3.6f : 1.8f) :
-					(_crouching ? .24f : (_sprinting ? 1.25f : 1.0f)));
+			const float movementScale = spectator ?
+				(_sprinting ? tuning.flight.spectatorSprintScale : tuning.flight.spectatorNormalScale) :
+				(flying ? (_sprinting ? tuning.flight.sprintScale : tuning.flight.normalScale) :
+					(_crouching ? tuning.movement.crouchScale :
+						(_sprinting ? tuning.movement.sprintScale : 1.0f)));
             if (dx::XMVector3Greater(dx::XMVector3LengthSq(vInput), dx::XMVectorZero())) {
 				const dx::XMVECTOR axisScale = _swimming
-					? dx::XMVectorReplicate(0.72f)
+					? dx::XMVectorReplicate(tuning.water.swimInputScale)
 					: (movementInWater
-						? dx::XMVectorSet(.28f, 1.20f, .28f, 0.0f)
+						? dx::XMVectorSet(tuning.water.horizontalInputScale,
+							tuning.water.verticalInputScale, tuning.water.horizontalInputScale, 0.0f)
 						: dx::XMVectorReplicate(movementScale));
 				vVel = dx::XMVectorAdd(vVel, dx::XMVectorMultiply(
 					vInput,
@@ -420,17 +437,20 @@ namespace ac {
 			// Releasing movement keys applies a strong braking coefficient. From
 			// the 7-block/s cap this stops in about 0.6 block, while held input
 			// keeps the normal traction curve and top speed.
-			const float groundRetentionX = hasHorizontalInput ? friction.x * .30f : 1.0e-5f;
-			const float groundRetentionZ = hasHorizontalInput ? friction.z * .30f : 1.0e-5f;
-			const float waterRetention = _swimming ? .05f : .018f;
+			const float groundRetentionX = hasHorizontalInput
+				? friction.x * tuning.movement.groundInputRetention : tuning.movement.groundStopRetention;
+			const float groundRetentionZ = hasHorizontalInput
+				? friction.z * tuning.movement.groundInputRetention : tuning.movement.groundStopRetention;
+			const float waterRetention = _swimming ? tuning.water.swimRetention : tuning.water.wadeRetention;
 			const float horizontalRetention = spectator || flying ? friction.x :
-				(movementInWater ? waterRetention : (_grounded ? groundRetentionX : .90f));
+				(movementInWater ? waterRetention : (_grounded ? groundRetentionX : tuning.movement.airRetention));
             dx::XMVECTOR vFricPower = dx::XMVectorSet(
 				std::pow(horizontalRetention, dt),
 				spectator || flying ? std::pow(friction.y, dt) :
-					(movementInWater ? std::pow(_swimming ? .05f : .09f, dt) : 1.0f),
+					(movementInWater ? std::pow(_swimming ? tuning.water.swimVerticalRetention :
+						tuning.water.wadeVerticalRetention, dt) : 1.0f),
 				std::pow(spectator || flying ? friction.z :
-					(movementInWater ? waterRetention : (_grounded ? groundRetentionZ : .90f)), dt),
+					(movementInWater ? waterRetention : (_grounded ? groundRetentionZ : tuning.movement.airRetention)), dt),
                 1.0f
             );
             vVel = dx::XMVectorMultiply(vVel, vFricPower);
@@ -471,40 +491,42 @@ namespace ac {
 				_velocity.z *= landingRetention;
 				_landingDragRemaining = nextRemaining;
 				if (_landingDragRemaining <= 0.0f) {
-					_jumpCooldownTicks = 12u;
+					_jumpCooldownTicks = tuning.jump.landingCooldownSubticks;
 				}
 			}
 			if (_grounded && !hasHorizontalInput) {
-				if (std::abs(_velocity.x) < .02f) _velocity.x = 0.0f;
-				if (std::abs(_velocity.z) < .02f) _velocity.z = 0.0f;
+				if (std::abs(_velocity.x) < tuning.movement.stopSnapSpeed) _velocity.x = 0.0f;
+				if (std::abs(_velocity.z) < tuning.movement.stopSnapSpeed) _velocity.z = 0.0f;
 			}
 			const float horizontalSpeed = std::sqrt(_velocity.x * _velocity.x + _velocity.z * _velocity.z);
 			if (_swimming) {
-				constexpr float maximumSwimSpeed = 3.4f;
 				const float swimSpeed = std::sqrt(
 					_velocity.x * _velocity.x +
 					_velocity.y * _velocity.y +
 					_velocity.z * _velocity.z);
-				if (swimSpeed > maximumSwimSpeed) {
-					const float scale = maximumSwimSpeed / swimSpeed;
+				if (swimSpeed > tuning.water.maximumSwimSpeed) {
+					const float scale = tuning.water.maximumSwimSpeed / swimSpeed;
 					_velocity.x *= scale;
 					_velocity.y *= scale;
 					_velocity.z *= scale;
 				}
 			}
 			else {
-				const float maximumSpeed = spectator ? 12.0f :
-					(flying ? (_sprinting ? 21.84f : 10.92f) :
-					(movementInWater ? 2.2f :
-						(_crouching ? 1.2f : (_sprinting ? 5.75f : 4.0f))));
+				const float maximumSpeed = spectator ? tuning.flight.maximumSpectatorSpeed :
+					(flying ? (_sprinting ? tuning.flight.maximumSprintSpeed : tuning.flight.maximumNormalSpeed) :
+					(movementInWater ? tuning.water.maximumWadeSpeed :
+						(_crouching ? tuning.movement.crouchSpeed :
+							(_sprinting ? tuning.movement.sprintSpeed : tuning.movement.walkSpeed))));
 				if (horizontalSpeed > maximumSpeed) {
 					const float scale = maximumSpeed / horizontalSpeed;
 					_velocity.x *= scale;
 					_velocity.z *= scale;
 				}
 			}
-			if (spectator) _velocity.y = std::clamp(_velocity.y, -12.0f, 12.0f);
-			else if (flying) _velocity.y = std::clamp(_velocity.y, -10.92f, 10.92f);
+			if (spectator) _velocity.y = std::clamp(_velocity.y,
+				-tuning.flight.maximumSpectatorVerticalSpeed, tuning.flight.maximumSpectatorVerticalSpeed);
+			else if (flying) _velocity.y = std::clamp(_velocity.y,
+				-tuning.flight.maximumVerticalSpeed, tuning.flight.maximumVerticalSpeed);
 
             // 5. Update Position
 			dx::XMFLOAT3 position = startPosition;
@@ -526,7 +548,7 @@ namespace ac {
 				// frame, while still preventing any mid-air jump.
 				if (!flying && !movementInWater && jumpDown && _grounded && _landingDragRemaining <= 0.0f &&
 					_jumpCooldownTicks == 0u) {
-					_velocity.y = 7.5f;
+					_velocity.y = tuning.jump.velocity;
 					_grounded = false;
 				}
 				_jumpHeld = jumpDown;
@@ -535,12 +557,13 @@ namespace ac {
 					_jumpCooldownTicks = 0u;
 				}
 				else if (!movementInWater) {
-					_velocity.y += -25.0f * dt;
-					_velocity.y = (std::max)(_velocity.y, -40.0f);
+					_velocity.y += tuning.jump.gravity * dt;
+					_velocity.y = (std::max)(_velocity.y, tuning.jump.terminalVelocity);
 				}
 				else if (!_swimming)
-					_velocity.y += -1.5f * dt;
-				if (movementInWater) _velocity.y = std::clamp(_velocity.y, -7.0f, 8.8f);
+					_velocity.y += tuning.water.wadeGravity * dt;
+				if (movementInWater) _velocity.y = std::clamp(_velocity.y,
+					tuning.water.minimumVerticalSpeed, tuning.water.maximumVerticalSpeed);
 				// Capture the complete pre-collision velocity. Landing recovery should
 				// account for sprinting and lateral momentum as well as fall speed.
 				const float impactVelocitySquared =
@@ -553,7 +576,7 @@ namespace ac {
 				moveAxis(position, _velocity.y * dt, 1u, solid, false);
 				if (!spectator) {
 					_inWater = sampleInWater(position, currentBox(), fluid) ||
-						(_swimming && fluid(position.x, position.y - 0.85f, position.z));
+						(_swimming && fluid(position.x, position.y - tuning.water.surfaceSampleOffset, position.z));
 					_submerged = fluid(position.x, position.y, position.z);
 				}
 				if (flying && _grounded) {
@@ -568,19 +591,23 @@ namespace ac {
 					_jumpCooldownTicks = 0u;
 					// Total impact speed now scales both the strength and duration of the
 					// penalty. Fast sprint-jumps therefore need visibly more recovery.
-					constexpr float minimumPenaltyVelocitySquared = 2.0f * 2.0f;
+					const float minimumPenaltyVelocitySquared = tuning.landing.minimumImpactSpeed *
+						tuning.landing.minimumImpactSpeed;
 					// Reach full severity at 10 blocks/s so ordinary sprint-jumps and hard
 					// falls produce a clearly different response from gentle landings.
-					constexpr float maximumPenaltyVelocitySquared = 10.0f * 10.0f;
+					const float maximumPenaltyVelocitySquared = tuning.landing.maximumImpactSpeed *
+						tuning.landing.maximumImpactSpeed;
 					const float impactSeverity = std::clamp(
 						(impactVelocitySquared - minimumPenaltyVelocitySquared) /
 						(maximumPenaltyVelocitySquared - minimumPenaltyVelocitySquared),
 						0.0f,
 						1.0f
 					);
-					const float momentumLoss = .70f + (.998f - .70f) * impactSeverity;
+					const float momentumLoss = tuning.landing.minimumMomentumLoss +
+						(tuning.landing.maximumMomentumLoss - tuning.landing.minimumMomentumLoss) * impactSeverity;
 					_landingMomentumRetention = 1.0f - momentumLoss;
-					_landingDragDuration = .15f + (1.00f - .15f) * impactSeverity;
+					_landingDragDuration = tuning.landing.minimumDuration +
+						(tuning.landing.maximumDuration - tuning.landing.minimumDuration) * impactSeverity;
 					_landingDragRemaining = _landingDragDuration;
 				}
 			}
@@ -616,6 +643,7 @@ namespace ac {
 		bool isSubmerged() const { return _submerged; }
 		bool isSwimming() const { return _swimming; }
 		float swimBlend() const { return _swimBlend; }
+		float crouchBlend() const { return _crouchBlend; }
 		playerCollisionBox collisionBox() const { return currentBox(); }
 
 		void addVelocity(const dx::XMFLOAT3& delta) {
@@ -637,16 +665,17 @@ namespace ac {
 			_submerged = false;
 			_swimming = false;
 			_swimBlend = 0.0f;
+			_crouchBlend = 0.0f;
 			_jumpCooldownTicks = 0u;
 			_flightToggleRemaining = 0.0f;
 			_landingDragRemaining = 0.0f;
-			_landingDragDuration = .30f;
-			_landingMomentumRetention = .55f;
+			_landingDragDuration = playerController().landing.initialDuration;
+			_landingMomentumRetention = playerController().landing.initialMomentumRetention;
 		}
 
 		void restoreState(const dx::XMFLOAT3& eyePosition, const dx::XMFLOAT3& velocity,
 			float yaw, float pitch, bool grounded, bool flying = false) {
-			constexpr float maximumViewPitch = 1.55334306f;
+			const float maximumViewPitch = playerController().look.maximumPitch;
 			_camera._gpuData._position = eyePosition;
 			_velocity = velocity;
 			_angle.x = std::remainder(yaw, dx::XM_2PI);
@@ -661,6 +690,7 @@ namespace ac {
 			_submerged = false;
 			_swimming = false;
 			_swimBlend = 0.0f;
+			_crouchBlend = 0.0f;
 			_jumpCooldownTicks = 0u;
 			_flightToggleRemaining = 0.0f;
 			_landingDragRemaining = 0.0f;
@@ -694,9 +724,10 @@ namespace ac {
 			_jumpHeld = false;
 			_swimming = false;
 			_swimBlend = 0.0f;
+			_crouchBlend = 0.0f;
 			_landingDragRemaining = 0.0f;
-			_landingDragDuration = .30f;
-			_landingMomentumRetention = .55f;
+			_landingDragDuration = playerController().landing.initialDuration;
+			_landingMomentumRetention = playerController().landing.initialMomentumRetention;
 			_jumpCooldownTicks = 0u;
 			_flightToggleRemaining = 0.0f;
 		}

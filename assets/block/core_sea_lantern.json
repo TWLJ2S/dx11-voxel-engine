@@ -1,0 +1,31 @@
+{
+  "id": 98,
+  "name": "sea_lantern",
+  "texture": "assets/textures/block/sea_lantern.png",
+  "roughness": 0.4,
+  "emission": {
+    "r": 0.62,
+    "g": 0.92,
+    "b": 0.94,
+    "intensity": 0.95,
+    "radius": 14.0
+  },
+  "solid": true,
+  "occludes": true,
+  "renderMode": "opaque",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": true,
+  "heldStyle": "block"
+}

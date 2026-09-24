@@ -1,0 +1,24 @@
+{
+  "id": 606,
+  "name": "redstone_lamp",
+  "texture": "assets/textures/block/redstone_lamp.png",
+  "roughness": 0.55,
+  "behavior": {
+    "redstone": "lamp"
+  },
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

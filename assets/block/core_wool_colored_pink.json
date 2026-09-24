@@ -1,0 +1,21 @@
+{
+  "id": 689,
+  "name": "wool_colored_pink",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/wool_colored_pink.png",
+  "hardness": 0.8,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "cloth",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

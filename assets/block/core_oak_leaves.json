@@ -1,0 +1,24 @@
+{
+  "id": 11,
+  "name": "oak_leaves",
+  "texture": "assets/textures/block/leaves_oak.png",
+  "tint": "foliage",
+  "roughness": 0.9,
+  "occludes": false,
+  "renderMode": "cutout",
+  "hardness": 0.2,
+  "tool": "hoe",
+  "harvestLevel": 0,
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "grass",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

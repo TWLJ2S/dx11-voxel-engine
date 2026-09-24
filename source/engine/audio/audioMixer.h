@@ -63,6 +63,20 @@ namespace ac {
 		count
 	};
 
+	enum class weatherSound : uint32_t {
+		wind = 0,
+		rain,
+		snow,
+		thunder
+	};
+
+	struct soundVoiceHandle {
+		uint32_t index = UINT32_MAX;
+		uint32_t generation = 0;
+
+		explicit operator bool() const { return index != UINT32_MAX; }
+	};
+
 	struct soundPos {
 		float x = 0.0f;
 		float y = 0.0f;
@@ -96,6 +110,7 @@ namespace ac {
 			bool loop = false;
 			bool active = false;
 			bool spatial = false;
+			uint32_t generation = 0;
 		};
 
 		struct listenerPose {
@@ -124,6 +139,10 @@ namespace ac {
 		std::vector<soundClip> _fallBig;
 		std::vector<soundClip> _swim;
 		std::vector<soundClip> _splash;
+		std::vector<soundClip> _weatherRain;
+		std::vector<soundClip> _weatherThunder;
+		soundClip _weatherWind;
+		soundClip _weatherSnow;
 		float _masterVolume = 0.55f;
 		listenerPose _listener{};
 		bool _ready = false;
@@ -151,6 +170,41 @@ namespace ac {
 					sample = std::sin(6.2831853f * frequency * t) * envelope;
 				}
 				clip.samples[i] = sample * volume;
+			}
+			return clip;
+		}
+
+		static soundClip synthesizeWind(float brightness) {
+			soundClip clip;
+			clip.sampleRate = 48000;
+			clip.channels = 1;
+			constexpr size_t sampleCount = 4u * 48000u;
+			clip.samples.resize(sampleCount);
+			std::vector<float> noise(sampleCount);
+			uint32_t state = 0x57A7E12Du ^ static_cast<uint32_t>(brightness * 1000.0f);
+			for (float& sample : noise) {
+				state = state * 1664525u + 1013904223u;
+				sample = static_cast<float>((state >> 8) & 0x00ffffffu) / 8388607.5f - 1.0f;
+			}
+			const int radius = std::clamp(static_cast<int>(90.0f - brightness * 62.0f), 18, 90);
+			float filtered = 0.0f;
+			for (int tap = -radius; tap <= radius; ++tap) {
+				const int64_t wrapped =
+					(static_cast<int64_t>(tap) + static_cast<int64_t>(sampleCount)) %
+					static_cast<int64_t>(sampleCount);
+				filtered += noise[static_cast<size_t>(wrapped)];
+			}
+			for (size_t i = 0; i < sampleCount; ++i) {
+				const float t = static_cast<float>(i) / 48000.0f;
+				const float gust = 0.58f + 0.24f * std::sin(6.2831853f * t * 0.25f) +
+					0.18f * std::sin(6.2831853f * t * 0.75f + 1.7f);
+				clip.samples[i] = filtered / static_cast<float>(radius * 2 + 1) *
+					gust * (0.75f + brightness * 1.35f);
+				const size_t removeAt =
+					(i + sampleCount - static_cast<size_t>(radius)) % sampleCount;
+				const size_t addAt =
+					(i + static_cast<size_t>(radius) + 1u) % sampleCount;
+				filtered += noise[addAt] - noise[removeAt];
 			}
 			return clip;
 		}
@@ -331,21 +385,24 @@ namespace ac {
 			return &clips[dist(_rng)];
 		}
 
-		void playClip(
+		soundVoiceHandle playClip(
 			const soundClip* clip,
 			float volume,
 			bool loop = false,
 			const soundPos* pos = nullptr
 		) {
-			if (!_ready || !clip || clip->samples.empty()) return;
+			if (!_ready || !clip || clip->samples.empty()) return {};
 			std::lock_guard lock(_mutex);
-			for (voice& voice : _voices) {
+			for (size_t index = 0; index < _voices.size(); ++index) {
+				voice& voice = _voices[index];
 				if (voice.active) continue;
 				voice.clip = clip;
 				voice.cursor = 0;
 				voice.volume = volume;
 				voice.loop = loop;
 				voice.active = true;
+				++voice.generation;
+				if (voice.generation == 0u) ++voice.generation;
 				if (pos) {
 					voice.spatial = true;
 					voice.x = pos->x;
@@ -357,8 +414,9 @@ namespace ac {
 					voice.spatial = false;
 					voice.maxDistance = 16.0f;
 				}
-				return;
+				return { static_cast<uint32_t>(index), voice.generation };
 			}
+			return {};
 		}
 
 		void stereoGains(const voice& voice, float& left, float& right) const {
@@ -425,6 +483,7 @@ namespace ac {
 		bool _uiReady = false;
 		bool _hurtReady = false;
 		bool _waterReady = false;
+		bool _weatherReady = false;
 
 		void ensureUiSounds() {
 			if (_uiReady) return;
@@ -557,6 +616,21 @@ namespace ac {
 			loadMatchingSounds(_splash, "assets/audio", { "splash" }, true);
 			if (_splash.empty())
 				_splash.push_back(synthesizeTone(110.0f, 0.22f, 0.45f, true));
+		}
+
+		void ensureWeatherSounds() {
+			if (_weatherReady) return;
+			_weatherReady = true;
+			loadVariantFolder(
+				_weatherRain, "assets/sounds/ambient/weather", "rain", 8);
+			loadVariantFolder(
+				_weatherThunder, "assets/sounds/ambient/weather", "thunder", 3);
+			if (_weatherRain.empty())
+				_weatherRain.push_back(synthesizeTone(95.0f, 2.0f, 0.18f, true));
+			if (_weatherThunder.empty())
+				_weatherThunder.push_back(synthesizeTone(42.0f, 1.8f, 0.75f, true));
+			_weatherWind = synthesizeWind(0.28f);
+			_weatherSnow = synthesizeWind(0.62f);
 		}
 
 		void mixInto(float* dst, int frames) {
@@ -758,6 +832,43 @@ namespace ac {
 		) {
 			std::lock_guard lock(_mutex);
 			_listener = { x, y, z, fx, fy, fz, ux, uy, uz };
+		}
+
+		soundVoiceHandle playWeatherLoop(weatherSound sound, float volume = 0.0f) {
+			if (!_ready || sound == weatherSound::thunder) return {};
+			ensureWeatherSounds();
+			const soundClip* clip = nullptr;
+			switch (sound) {
+			case weatherSound::rain: clip = pick(_weatherRain); break;
+			case weatherSound::snow: clip = &_weatherSnow; break;
+			default: clip = &_weatherWind; break;
+			}
+			return playClip(clip, volume, true, nullptr);
+		}
+
+		void playWeatherThunder(const soundPos& position, float volume = 1.0f) {
+			if (!_ready) return;
+			ensureWeatherSounds();
+			playClip(pick(_weatherThunder), volume, false, &position);
+		}
+
+		bool setVoiceVolume(soundVoiceHandle handle, float volume) {
+			std::lock_guard lock(_mutex);
+			if (handle.index >= _voices.size()) return false;
+			voice& selected = _voices[handle.index];
+			if (!selected.active || selected.generation != handle.generation) return false;
+			selected.volume = std::clamp(volume, 0.0f, 1.5f);
+			return true;
+		}
+
+		void stopVoice(soundVoiceHandle& handle) {
+			std::lock_guard lock(_mutex);
+			if (handle.index < _voices.size()) {
+				voice& selected = _voices[handle.index];
+				if (selected.generation == handle.generation)
+					selected.active = false;
+			}
+			handle = {};
 		}
 
 		void play(soundId id, float volume = 1.0f, bool loop = false) {

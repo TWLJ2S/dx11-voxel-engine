@@ -1,0 +1,33 @@
+{
+  "id": 603,
+  "name": "redstone_wire",
+  "textures": {
+    "side": "assets/textures/block/redstone_dust_line0.png",
+    "top": "assets/textures/block/redstone_dust_dot.png",
+    "bottom": "assets/textures/block/redstone_dust_dot.png"
+  },
+  "model": 16,
+  "roughness": 0.55,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "behavior": {
+    "drop": "redstone",
+    "redstone": "wire"
+  },
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "sprite"
+}

@@ -1,0 +1,21 @@
+{
+  "id": 408,
+  "name": "copper_grate",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/copper_grate.png",
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

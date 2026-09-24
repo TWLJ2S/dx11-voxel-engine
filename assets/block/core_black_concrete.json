@@ -1,0 +1,21 @@
+{
+  "id": 257,
+  "name": "black_concrete",
+  "roughness": 0.7,
+  "texture": "assets/textures/block/black_concrete.png",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

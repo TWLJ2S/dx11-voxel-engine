@@ -1,0 +1,21 @@
+{
+  "id": 345,
+  "name": "black_glazed_terracotta",
+  "roughness": 0.35,
+  "texture": "assets/textures/block/black_glazed_terracotta.png",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

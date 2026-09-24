@@ -1,0 +1,61 @@
+{
+  "userSettingsPath": "assets/user_settings.json",
+  "options": {
+    "fpsLimits": [30, 60, 120, 144, 240, 300, 0],
+    "viewDistances": [4, 6, 8, 10, 12],
+    "fovDegrees": [70, 75, 80, 85, 90, 100, 110],
+    "renderScales": [50, 75, 100, 125, 150],
+    "dayCycleScales": [0.0, 0.35, 1.0, 3.0]
+  },
+  "world": {
+    "dayLengthSeconds": 240.0,
+    "initialDayTimeSeconds": 600.0
+  },
+  "gameplay": {
+    "footstepSpeedThreshold": 1.15,
+    "inventoryDoubleClickSeconds": 0.35,
+    "playerVitals": {
+      "maximumHealth": 20.0,
+      "maximumHunger": 20.0,
+      "maximumSaturation": 20.0,
+      "maximumAir": 10.0,
+      "safeFallDistance": 3.0,
+      "hurtCooldown": 0.5,
+      "saturatedRegenSeconds": 2.0,
+      "hungryRegenSeconds": 8.0,
+      "eatSeconds": 1.61,
+      "exhaustionUnit": 4.0
+    }
+  },
+  "blocks": {
+    "water": "core:water",
+    "craftingTable": "core:crafting_table",
+    "redstone": "core:redstone",
+    "redstoneBlock": "core:redstone_block",
+    "redstoneWire": "core:redstone_wire",
+    "redstoneLamp": "core:redstone_lamp",
+    "redstoneLampOn": "core:redstone_lamp_on",
+    "redstoneTorch": "core:redstone_torch",
+    "redstoneTorchOff": "core:redstone_torch_off",
+    "lever": "core:lever",
+    "leverOn": "core:lever_on",
+    "repeater": "core:repeater",
+    "comparator": "core:comparator",
+    "observer": "core:observer",
+    "chest": "core:chest",
+    "furnace": "core:furnace",
+    "blastFurnace": "core:blast_furnace",
+    "furnaceLit": "core:furnace_lit",
+    "blastFurnaceLit": "core:blast_furnace_lit",
+    "oakDoor": "core:oak_door",
+    "oakSlab": "core:oak_slab",
+    "oakStairs": "core:oak_stairs",
+    "oakFence": "core:oak_fence",
+    "magma": "core:magma_block"
+  },
+  "defaultHotbar": [
+    "core:grass", "core:oak_planks", "core:oak_slab",
+    "core:oak_stairs", "core:oak_fence", "core:oak_log",
+    "core:chest", "core:oak_door", "core:bricks"
+  ]
+}

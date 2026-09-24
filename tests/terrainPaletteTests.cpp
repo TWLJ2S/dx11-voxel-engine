@@ -13,25 +13,30 @@ int main() {
         ac::terrainBiomeConfig biomes = ac::terrainBiomeConfig::load(
             "assets/terrain/biomes.json", definitions);
 
-        if (palette.STONE_BLOCK != definitions.getId("stone") ||
-            palette.WATER_BLOCK != definitions.getId("water") ||
-            palette.BEDROCK_BLOCK != definitions.getId("bedrock")) {
+        if (palette.require("stone") != definitions.getId("stone") ||
+            palette.require("water") != definitions.getId("water") ||
+            palette.require("bedrock") != definitions.getId("bedrock") ||
+            palette.requireSetting("seaLevel") != 63.0f ||
+            !palette.inGroup("treeLogs", definitions.getId("oak_log")) ||
+            palette.lithology.empty()) {
             std::cerr << "terrain palette did not resolve block names\n";
             return 1;
         }
-        ac::TERRAIN_BIOME parsed = ac::BIOME_PLAINS;
-        if (!biomes.parse("swamp", parsed) || parsed != ac::BIOME_WETLAND ||
+        ac::TERRAIN_BIOME parsed = biomes.id("plains");
+        if (!biomes.parse("swamp", parsed) || parsed != biomes.id("wetland") ||
             std::string(biomes.displayName(parsed)) != "WETLAND" ||
-            biomes.definitions[ac::BIOME_WETLAND].gpu.floodedTopBlock !=
+            biomes.definitions[biomes.id("wetland")].generation.floodedTopBlock !=
                 definitions.getId("mud") ||
-			biomes.definitions[ac::BIOME_FOREST].gpu.alternateTreeKind != ac::TREE_BIRCH ||
-			((biomes.definitions[ac::BIOME_FOREST].gpu.flags & ac::BIOME_TREE_VARIANT_MASK) >>
-				ac::BIOME_TREE_VARIANT_SHIFT) + 1u != 4u) {
+			biomes.definitions[biomes.id("forest")].generation.alternateTreeKind != "birch" ||
+			biomes.definitions[biomes.id("forest")].generation.alternateTreeLogBlock !=
+				definitions.getId("birch_log") ||
+			biomes.definitions[biomes.id("forest")].generation.treeVariants != 4u ||
+			biomes.definitions[biomes.id("forest")].generation.climateSelectors.empty()) {
             std::cerr << "biome JSON data was not loaded\n";
             return 2;
         }
 
-        palette.BEDROCK_BLOCK = definitions.getId("dirt");
+        palette.set("bedrock", definitions.getId("dirt"));
         ac::terrainGenerator generator(123456789ULL, palette, biomes);
         auto generated = std::make_unique<ac::chunk>();
         generated->_position = { 0, 0, 0 };
@@ -39,7 +44,7 @@ int main() {
 
         for (uint32_t z = 0; z < CHUNK_LENGTH; ++z) {
             for (uint32_t x = 0; x < CHUNK_WIDTH; ++x) {
-                if (generated->getBlock(x, 0, z) != palette.DIRT_BLOCK) {
+                if (generated->getBlock(x, 0, z) != palette.require("dirt")) {
                     std::cerr << "terrain generator ignored remapped bedrock\n";
                     return 3;
                 }

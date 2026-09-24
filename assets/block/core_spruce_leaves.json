@@ -1,0 +1,28 @@
+{
+  "id": 40,
+  "name": "spruce_leaves",
+  "texture": "assets/textures/block/leaves_spruce.png",
+  "tint": {
+    "r": 0.38,
+    "g": 0.6,
+    "b": 0.38
+  },
+  "roughness": 0.9,
+  "occludes": false,
+  "renderMode": "cutout",
+  "hardness": 0.2,
+  "harvestLevel": 0,
+  "tool": "hoe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "grass",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

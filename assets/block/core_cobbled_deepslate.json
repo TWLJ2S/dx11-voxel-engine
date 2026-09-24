@@ -1,0 +1,21 @@
+{
+  "id": 300,
+  "name": "cobbled_deepslate",
+  "roughness": 0.9,
+  "texture": "assets/textures/block/cobbled_deepslate.png",
+  "hardness": 3.0,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

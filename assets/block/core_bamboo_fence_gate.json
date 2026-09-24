@@ -1,0 +1,26 @@
+{
+  "id": 357,
+  "name": "bamboo_fence_gate",
+  "renderMode": "cutout",
+  "solid": true,
+  "occludes": false,
+  "interaction": "fence_gate",
+  "model": 32,
+  "roughness": 0.8,
+  "texture": "assets/textures/block/bamboo_fence_gate.png",
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

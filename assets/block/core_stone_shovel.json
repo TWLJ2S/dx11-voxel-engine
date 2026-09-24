@@ -1,0 +1,25 @@
+{
+  "id": 190,
+  "name": "stone_shovel",
+  "texture": "assets/textures/item/stone_shovel.png",
+  "roughness": 0.75,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "tool": "shovel",
+  "harvestLevel": 1,
+  "miningSpeed": 4,
+  "hardness": 0.0,
+  "requiresTool": false,
+  "toolHarvestLevel": 1,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "tool"
+}

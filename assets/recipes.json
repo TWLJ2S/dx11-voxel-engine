@@ -42,6 +42,11 @@
       "result": "chest"
     },
     {
+      "pattern": ["###", "# #", "###"],
+      "key": { "#": "cobblestone" },
+      "result": "furnace"
+    },
+    {
       "pattern": ["###", " S ", " S "],
       "key": { "#": "plank", "S": "stick" },
       "result": "wooden_pickaxe"
@@ -347,8 +352,6 @@
       "key": { "#": "quartz" },
       "result": "quartz_block"
     },
-    { "unordered": true, "ingredients": ["iron_ore"], "result": "iron_ingot" },
-    { "unordered": true, "ingredients": ["gold_ore"], "result": "gold_ingot" },
     { "unordered": true, "ingredients": ["diamond_ore"], "result": "diamond" },
     { "unordered": true, "ingredients": ["emerald_ore"], "result": "emerald" },
     { "unordered": true, "ingredients": ["coal_ore"], "result": "coal" },
@@ -356,8 +359,6 @@
     { "unordered": true, "ingredients": ["redstone_ore"], "result": "redstone" },
     { "unordered": true, "ingredients": ["nether_quartz_ore"], "result": "quartz" },
     { "unordered": true, "ingredients": ["nether_gold_ore"], "result": "gold_ingot" },
-    { "unordered": true, "ingredients": ["raw_iron_block"], "result": "iron_ingot", "count": 9 },
-    { "unordered": true, "ingredients": ["raw_gold_block"], "result": "gold_ingot", "count": 9 },
     { "unordered": true, "ingredients": ["raw_copper_block"], "result": "copper_block" },
     {
       "pattern": ["##", "##"],
@@ -416,6 +417,50 @@
       "pattern": ["S", "#"],
       "key": { "S": "stick", "#": "cobblestone" },
       "result": "lever"
+    },
+    {
+      "pattern": ["TRT", "SSS"],
+      "key": { "T": "redstone_torch", "R": "redstone", "S": "stone" },
+      "result": "repeater"
+    },
+    {
+      "pattern": [" T ", "TQT", "SSS"],
+      "key": { "T": "redstone_torch", "Q": "quartz", "S": "stone" },
+      "result": "comparator"
+    },
+    {
+      "pattern": [" #", "# "],
+      "key": { "#": "iron_ingot" },
+      "result": "shears"
     }
+  ],
+  "smelting": [
+    { "input": "iron_ore", "result": "iron_ingot", "seconds": 10.0 },
+    { "input": "gold_ore", "result": "gold_ingot", "seconds": 10.0 },
+    { "input": "raw_iron_block", "result": "iron_block", "count": 1, "seconds": 10.0 },
+    { "input": "raw_gold_block", "result": "gold_block", "count": 1, "seconds": 10.0 },
+    { "input": "sand", "result": "glass", "seconds": 10.0 },
+    { "input": "cobblestone", "result": "stone", "seconds": 10.0 },
+    { "input": "stone", "result": "smooth_stone", "seconds": 10.0 },
+    { "input": "clay", "result": "brick", "seconds": 10.0 },
+    { "input": "oak_log", "result": "charcoal", "seconds": 10.0 },
+    { "input": "spruce_log", "result": "charcoal", "seconds": 10.0 },
+    { "input": "birch_log", "result": "charcoal", "seconds": 10.0 },
+    { "input": "jungle_log", "result": "charcoal", "seconds": 10.0 },
+    { "input": "acacia_log", "result": "charcoal", "seconds": 10.0 },
+    { "input": "dark_oak_log", "result": "charcoal", "seconds": 10.0 },
+    { "input": "beef", "result": "cooked_beef", "seconds": 10.0 },
+    { "input": "porkchop", "result": "cooked_porkchop", "seconds": 10.0 },
+    { "input": "chicken", "result": "cooked_chicken", "seconds": 10.0 },
+    { "input": "mutton", "result": "cooked_mutton", "seconds": 10.0 },
+    { "input": "potato", "result": "baked_potato", "seconds": 10.0 }
+  ],
+  "fuels": [
+    { "item": "coal", "seconds": 80.0 },
+    { "item": "charcoal", "seconds": 80.0 },
+    { "item": "coal_block", "seconds": 800.0 },
+    { "item": "log", "seconds": 15.0 },
+    { "item": "plank", "seconds": 15.0 },
+    { "item": "stick", "seconds": 5.0 }
   ]
 }

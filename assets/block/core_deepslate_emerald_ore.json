@@ -1,0 +1,21 @@
+{
+  "id": 70,
+  "name": "deepslate_emerald_ore",
+  "texture": "assets/textures/block/deepslate_emerald_ore.png",
+  "roughness": 0.82,
+  "hardness": 4.5,
+  "harvestLevel": 2,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

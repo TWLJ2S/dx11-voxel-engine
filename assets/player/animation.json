@@ -13,7 +13,30 @@
     "referenceSwim": 3.4,
     "referenceSprint": 5.75,
     "referenceCrouch": 1.6,
-    "referenceWalk": 4.0
+    "referenceWalk": 4.0,
+    "timeCurve": {
+      "keys": [
+        { "time": 0.0, "value": 0.0, "outTangent": 0.0, "interpolation": "cubic" },
+        { "time": 0.2375, "value": 0.25, "inTangent": 0.0, "interpolation": "step" },
+        { "time": 0.25, "value": 0.25, "outTangent": 0.0, "interpolation": "cubic" },
+        { "time": 0.4875, "value": 0.5, "inTangent": 0.0, "interpolation": "step" },
+        { "time": 0.5, "value": 0.5, "outTangent": 0.0, "interpolation": "cubic" },
+        { "time": 0.7375, "value": 0.75, "inTangent": 0.0, "interpolation": "step" },
+        { "time": 0.75, "value": 0.75, "outTangent": 0.0, "interpolation": "cubic" },
+        { "time": 0.9875, "value": 1.0, "inTangent": 0.0, "interpolation": "step" },
+        { "time": 1.0, "value": 1.0 }
+      ]
+    },
+    "timing": [
+      { "duration": 0.2375, "speed": 1.0, "easing": "smoothStep" },
+      { "duration": 0.0125, "speed": 0.0 },
+      { "duration": 0.2375, "speed": 1.0, "easing": "smoothStep" },
+      { "duration": 0.0125, "speed": 0.0 },
+      { "duration": 0.2375, "speed": 1.0, "easing": "smoothStep" },
+      { "duration": 0.0125, "speed": 0.0 },
+      { "duration": 0.2375, "speed": 1.0, "easing": "smoothStep" },
+      { "duration": 0.0125, "speed": 0.0 }
+    ]
   },
   "swim": {
     "enterRate": 3.6,
@@ -53,13 +76,40 @@
     "toolDuration": 0.32,
     "toolPitchDeg": 31.5,
     "toolRollDeg": 9.2,
+    "axeDuration": 0.44,
+    "axePitchDeg": 55.0,
+    "axeYawDeg": 4.5,
+    "axeRollDeg": 12.5,
+    "axeMoveY": 1.25,
+    "axeMoveZ": 0.72,
+    "axeTiming": [
+      { "duration": 0.40, "speed": 1.0, "easing": "easeIn" },
+      { "duration": 0.14, "speed": 0.0 },
+      { "duration": 0.46, "speed": 0.87, "easing": "easeOut" }
+    ],
+    "swordDuration": 0.34,
+    "swordPitchDeg": 24.0,
+    "swordYawDeg": 86.0,
+    "swordRollDeg": 68.0,
+    "swordMoveY": 0.88,
+    "swordMoveZ": 0.46,
+    "swordTiming": [
+      { "duration": 0.44, "speed": 1.0, "easing": "easeOut" },
+      { "duration": 0.05, "speed": 0.0 },
+      { "duration": 0.51, "speed": 0.862745, "easing": "easeIn" }
+    ],
     "handDuration": 0.28,
     "handPitchDeg": 69.9,
     "handRollDeg": 35.5
   },
   "crouch": {
-    "torsoPitchDeg": 6.9,
-    "legPitchDeg": -11.5
+    "enterRate": 11.0,
+    "exitRate": 9.0,
+    "torsoPitchDeg": 35.0,
+    "legPitchDeg": -18.0,
+    "upperBodyY": -0.18,
+    "upperBodyZ": 0.00,
+    "legZ": 0.055
   },
   "airborne": {
     "armPitchDeg": -8.0,
@@ -69,7 +119,7 @@
     "pitchFollow": 0.75
   },
   "toolRaise": {
-    "raiseSeconds": 0.20,
+    "raiseSeconds": 0.3,
     "lowerSeconds": 0.16,
     "walkDampen": 0.88,
     "bob": 0.06
@@ -77,6 +127,31 @@
   "camera": {
     "faceOffset": 0.20,
     "swimOffset": 0.22,
-    "radius": 0.075
+    "radius": 0.075,
+    "hipPivotY": 0.75,
+    "crouchForwardOffset": 0.20,
+    "motionReferenceSpeed": 5.0,
+    "walkBobY": 0.045,
+    "walkBobRoll": 0.018,
+    "sprintFovScale": 1.07,
+    "fovResponse": 7.0,
+    "shakeDecay": 2.8,
+    "motionResponse": 8.0,
+    "tiltResponse": 14.0,
+    "idleClockRate": 4.0,
+    "movementClockRate": 3.0,
+    "walkingRoll": 0.007,
+    "turnRoll": 0.035,
+    "lateralRoll": 0.010,
+    "maximumRoll": 0.18,
+    "forwardPitch": 0.010,
+    "maximumPitchLean": 0.14,
+    "landingPitchRetention": 0.75,
+    "landingRollRetention": 0.90,
+    "thirdPersonDistance": 3.25,
+    "thirdPersonShoulder": 0.72,
+    "thirdPersonHeight": 0.22,
+    "thirdPersonFocusDistance": 8.0,
+    "frontFocusDrop": 0.18
   }
 }

@@ -1,0 +1,31 @@
+{
+  "id": 793,
+  "name": "stonecutter",
+  "model": 36,
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/stonecutter_side.png",
+    "top": "assets/textures/block/stonecutter_top.png",
+    "bottom": "assets/textures/block/stonecutter_bottom.png",
+    "north": "assets/textures/block/stonecutter_front.png",
+    "west": "assets/textures/block/stonecutter_side.png",
+    "east": "assets/textures/block/stonecutter_side.png",
+    "south": "assets/textures/block/stonecutter_side.png"
+  },
+  "interaction": "crafting",
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -1,0 +1,29 @@
+{
+  "id": 319,
+  "name": "bookshelf",
+  "roughness": 0.75,
+  "textures": {
+    "side": "assets/textures/block/bookshelf.png",
+    "west": "assets/textures/block/bookshelf.png",
+    "east": "assets/textures/block/bookshelf.png",
+    "north": "assets/textures/block/bookshelf.png",
+    "south": "assets/textures/block/bookshelf.png",
+    "top": "assets/textures/block/planks_oak.png",
+    "bottom": "assets/textures/block/planks_oak.png"
+  },
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

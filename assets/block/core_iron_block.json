@@ -1,0 +1,22 @@
+{
+  "id": 45,
+  "name": "iron_block",
+  "texture": "assets/textures/block/iron_block.png",
+  "roughness": 0.22,
+  "metallic": 0.96,
+  "hardness": 5.0,
+  "harvestLevel": 1,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

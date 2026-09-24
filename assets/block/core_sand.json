@@ -1,0 +1,22 @@
+{
+  "id": 6,
+  "name": "sand",
+  "texture": "assets/textures/block/sand.png",
+  "roughness": 0.85,
+  "gravity": true,
+  "hardness": 0.5,
+  "tool": "shovel",
+  "harvestLevel": 0,
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "sand",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -1,0 +1,25 @@
+{
+  "id": 202,
+  "name": "diamond_axe",
+  "texture": "assets/textures/item/diamond_axe.png",
+  "roughness": 0.3,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "tool": "axe",
+  "harvestLevel": 3,
+  "miningSpeed": 8,
+  "hardness": 0.0,
+  "requiresTool": false,
+  "toolHarvestLevel": 3,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "tool"
+}

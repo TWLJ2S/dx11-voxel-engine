@@ -1,0 +1,26 @@
+{
+  "id": 938,
+  "name": "comparator",
+  "model": 59,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "texture": "assets/textures/item/comparator.png",
+  "textures": {
+    "bottom": "assets/textures/block/smooth_stone.png",
+    "top": "assets/textures/block/comparator.png",
+    "west": "assets/textures/block/redstone_torch_off.png",
+    "east": "assets/textures/block/redstone_torch.png",
+    "north": "assets/textures/block/bedrock.png",
+    "south": "assets/textures/block/comparator_on.png"
+  },
+  "behavior": {
+    "placement": "horizontal_facing",
+    "use": "configure_diode",
+    "redstone": "comparator"
+  },
+  "hardness": 0.0,
+  "roughness": 0.8,
+  "soundMaterial": "stone",
+  "flatIcon": true
+}

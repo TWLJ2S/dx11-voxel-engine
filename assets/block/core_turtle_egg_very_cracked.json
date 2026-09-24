@@ -1,0 +1,25 @@
+{
+  "id": 666,
+  "name": "turtle_egg_very_cracked",
+  "model": 27,
+  "roughness": 0.8,
+  "texture": "assets/textures/block/turtle_egg_very_cracked.png",
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

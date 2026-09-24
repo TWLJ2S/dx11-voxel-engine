@@ -1,0 +1,25 @@
+{
+  "id": 560,
+  "name": "open_eyeblossom_emissive",
+  "renderMode": "cutout",
+  "occludes": false,
+  "solid": false,
+  "model": 15,
+  "roughness": 0.8,
+  "texture": "assets/textures/block/open_eyeblossom_emissive.png",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "cross"
+}

@@ -1,0 +1,25 @@
+{
+  "id": 553,
+  "name": "mushroom_block_skin_red",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/mushroom_block_skin_red.png",
+  "model": 15,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "hardness": 0.2,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "cross"
+}

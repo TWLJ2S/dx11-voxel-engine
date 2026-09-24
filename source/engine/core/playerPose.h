@@ -4,6 +4,7 @@
 #include <rapidjson/document.h>
 
 #include <core/settingsStore.h>
+#include <core/animationTimeline.h>
 
 namespace ac {
 
@@ -24,8 +25,8 @@ namespace ac {
 		float yaw = 0.0f;
 		float roll = 0.0f;
 		float chop = 0.0f;
-		float chopYaw = 0.06f;
-		float chopRoll = 0.08f;
+		float chopYaw = 0.0f;
+		float chopRoll = 0.0f;
 	};
 
 	struct heldItemPose {
@@ -33,202 +34,225 @@ namespace ac {
 		poseVec3 rotationDeg{};
 		poseScale scaleFirst{ 1.0f, 1.0f, 1.0f };
 		poseScale scaleThird{ 1.0f, 1.0f, 1.0f };
-		poseVec3 fist{ -0.375f, 0.76f, 0.04f };
+		poseVec3 fist{};
 	};
 
 	struct playerPoseConfig {
 		struct {
-			float armSwing = 0.78f;
-			float legSwing = 0.72f;
-			float strideCrouch = 0.30f;
-			float strideSprint = 0.185f;
-			float strideWalk = 0.18f;
-			float airborneKeep = 0.82f;
-			float airborneMin = 0.22f;
-			float poseResponse = 7.0f;
-			float airborneStrideMin = 0.45f;
-			float referenceSwim = 3.4f;
-			float referenceSprint = 5.75f;
-			float referenceCrouch = 1.6f;
-			float referenceWalk = 4.0f;
+			float armSwing = 0.0f;
+			float legSwing = 0.0f;
+			float strideCrouch = 0.0f;
+			float strideSprint = 0.0f;
+			float strideWalk = 0.0f;
+			float airborneKeep = 0.0f;
+			float airborneMin = 0.0f;
+			float poseResponse = 0.0f;
+			float airborneStrideMin = 0.0f;
+			float referenceSwim = 0.0f;
+			float referenceSprint = 0.0f;
+			float referenceCrouch = 0.0f;
+			float referenceWalk = 0.0f;
+			std::vector<animationTimingSegment> timing;
+			animationCurve timeCurve;
 		} walk;
 
 		struct {
-			float enterRate = 3.6f;
-			float exitRate = 2.8f;
-			float eyePivotBase = 1.625f;
-			float eyePivotLift = 0.22f;
-			float standFeet = 1.625f;
-			float crouchFeet = 1.27f;
-			float strideSpeed = 0.28f;
-			float strideMin = 0.62f;
-			float bodyPitch = 0.04f;
-			float headPitch = 0.06f;
+			float enterRate = 0.0f;
+			float exitRate = 0.0f;
+			float eyePivotBase = 0.0f;
+			float eyePivotLift = 0.0f;
+			float standFeet = 0.0f;
+			float crouchFeet = 0.0f;
+			float strideSpeed = 0.0f;
+			float strideMin = 0.0f;
+			float bodyPitch = 0.0f;
+			float headPitch = 0.0f;
 			float armPitch = 0.0f;
-			float armYaw = 0.10f;
-			float armSpread = 0.18f;
-			float armSweep = DirectX::XM_PIDIV2;
-			float armTuck = 0.104719755f;
-			float holdForward = 0.18f;
-			float sweepEnd = 0.58f;
-			float holdBack = 0.66f;
-			float legPitch = 0.08f;
-			float legKick = 0.40f;
-			float legRoll = 0.08f;
-			float legRollKick = 0.10f;
-			float twoHandLimit = 0.45f;
+			float armYaw = 0.0f;
+			float armSpread = 0.0f;
+			float armSweep = 0.0f;
+			float armTuck = 0.0f;
+			float holdForward = 0.0f;
+			float sweepEnd = 0.0f;
+			float holdBack = 0.0f;
+			float legPitch = 0.0f;
+			float legKick = 0.0f;
+			float legRoll = 0.0f;
+			float legRollKick = 0.0f;
+			float twoHandLimit = 0.0f;
 		} swim;
 
 		struct {
-			float retrigger = 0.05f;
-			float toolDuration = 0.42f;
-			float toolPitch = 0.85f;
-			float toolRoll = 0.22f;
-			float handDuration = 0.40f;
-			float handPitch = 0.62f;
-			float handRoll = 0.18f;
+			float retrigger = 0.0f;
+			float toolDuration = 0.0f;
+			float toolPitch = 0.0f;
+			float toolRoll = 0.0f;
+			float handDuration = 0.0f;
+			float handPitch = 0.0f;
+			float handRoll = 0.0f;
+			std::vector<animationTimingSegment> toolTiming;
+			std::vector<animationTimingSegment> handTiming;
+			animationCurve toolCurve;
+			animationCurve handCurve;
 		} use;
 
 		struct {
-			float toolDuration = 0.32f;
-			float toolPitch = 0.55f;
-			float toolRoll = 0.16f;
-			float handDuration = 0.28f;
-			float handPitch = 1.22f;
-			float handRoll = 0.62f;
+			float toolDuration = 0.0f;
+			float toolPitch = 0.0f;
+			float toolRoll = 0.0f;
+			float axeDuration = 0.0f;
+			float axePitch = 0.0f;
+			float axeYaw = 0.0f;
+			float axeRoll = 0.0f;
+			float axeMoveY = 0.0f;
+			float axeMoveZ = 0.0f;
+			float swordDuration = 0.0f;
+			float swordPitch = 0.0f;
+			float swordYaw = 0.0f;
+			float swordRoll = 0.0f;
+			float swordMoveY = 0.0f;
+			float swordMoveZ = 0.0f;
+			float handDuration = 0.0f;
+			float handPitch = 0.0f;
+			float handRoll = 0.0f;
+			std::vector<animationTimingSegment> toolTiming;
+			std::vector<animationTimingSegment> axeTiming;
+			std::vector<animationTimingSegment> swordTiming;
+			std::vector<animationTimingSegment> handTiming;
+			animationCurve toolCurve;
+			animationCurve axeCurve;
+			animationCurve swordCurve;
+			animationCurve handCurve;
 		} attack;
 
 		struct {
-			float torsoPitch = 0.12f;
-			float legPitch = -0.20f;
+			float enterRate = 0.0f;
+			float exitRate = 0.0f;
+			float torsoPitch = 0.0f;
+			float legPitch = 0.0f;
+			float upperBodyY = 0.0f;
+			float upperBodyZ = 0.0f;
+			float legZ = 0.0f;
 		} crouch;
 
 		struct {
-			float armPitch = -0.14f;
-			float legPitch = 0.18f;
+			float armPitch = 0.0f;
+			float legPitch = 0.0f;
 		} airborne;
 
 		struct {
-			float pitchFollow = 0.75f;
+			float pitchFollow = 0.0f;
 		} head;
 
 		struct {
-			float raiseSeconds = 0.20f;
-			float lowerSeconds = 0.16f;
-			float walkDampen = 0.88f;
-			float bob = 0.06f;
+			float raiseSeconds = 0.0f;
+			float lowerSeconds = 0.0f;
+			float walkDampen = 0.0f;
+			float bob = 0.0f;
 		} toolRaise;
 
 		struct {
-			armReadyPose rightFirst{ -0.72f, 0.18f, 0.24f, 0.22f, 0.06f, 0.08f };
-			armReadyPose rightThird{ -0.70f, 0.12f, 0.34f, 0.40f, 0.06f, 0.08f };
-			armReadyPose leftFirst{ -0.76f, -0.20f, -0.26f, 0.20f, 0.05f, 0.06f };
-			armReadyPose leftThird{ -0.78f, -0.12f, -0.32f, 0.38f, 0.05f, 0.06f };
+			armReadyPose rightFirst{};
+			armReadyPose rightThird{};
+			armReadyPose leftFirst{};
+			armReadyPose leftThird{};
 		} twoHand;
 
-		heldItemPose tool{
-			{ 0.22f, 0.22f, 0.0f },
-			{ 90.0f, -45.0f, -90.0f },
-			{ 1.15f, 1.15f, 1.15f },
-			{ 1.28f, 1.28f, 1.28f },
-			{ -0.375f, 0.76f, 0.08f }
-		};
-		heldItemPose rod{
-			{ 0.0f, 0.32f, 0.0f },
-			{ 90.0f, 0.0f, 0.0f },
-			{ 0.28f, 0.72f, 0.28f },
-			{ 0.30f, 0.78f, 0.30f },
-			{ -0.375f, 0.76f, 0.06f }
-		};
-		heldItemPose cross{
-			{},
-			{ 8.0f, -12.0f, 8.0f },
-			{ 0.62f, 0.62f, 0.62f },
-			{ 0.68f, 0.68f, 0.68f },
-			{ -0.375f, 0.76f, 0.04f }
-		};
-		heldItemPose sprite{
-			{},
-			{ 10.0f, 0.0f, 0.0f },
-			{ 0.62f, 0.62f, 0.62f },
-			{ 0.68f, 0.68f, 0.68f },
-			{ -0.375f, 0.76f, 0.04f }
-		};
-		heldItemPose block{
-			{},
-			{ 75.0f, 45.0f, 0.0f },
-			{ 0.48f, 0.48f, 0.48f },
-			{ 0.52f, 0.52f, 0.52f },
-			{ -0.375f, 0.80f, 0.04f }
-		};
-		heldItemPose slab{
-			{},
-			{ 75.0f, 45.0f, 0.0f },
-			{ 0.48f, 0.48f, 0.48f },
-			{ 0.52f, 0.52f, 0.52f },
-			{ -0.375f, 0.80f, 0.04f }
-		};
+		heldItemPose tool{};
+		heldItemPose rod{};
+		heldItemPose cross{};
+		heldItemPose sprite{};
+		heldItemPose block{};
+		heldItemPose slab{};
 
 		struct {
-			poseVec3 poseDeg{ -1.25663706f, -0.34906585f, 0.27925268f };
-			poseVec3 offset{ 0.30f, -0.40f, 0.58f };
-			float swingPitch = 0.70f;
-			float swingPitchUse = 0.65f;
-			float swingYaw = 0.38f;
-			float swingRoll = 0.28f;
-			float walkBobPitch = 0.10f;
-			float walkBobRoll = 0.12f;
-			float idlePitch = 0.045f;
-			float idleYaw = 0.03f;
-			float idleRoll = 0.04f;
-			float idleRate = 1.7f;
-			float idle2Rate = 2.3f;
-			float idle2Phase = 0.8f;
-			float airbornePitch = 0.08f;
-			float airborneY = 0.03f;
-			float airborneRate = 2.5f;
-			float walkX = 0.028f;
-			float walkY = 0.040f;
-			float swingY = 0.20f;
-			float swingZ = 0.16f;
-			float idleX = 0.010f;
-			float idleY = 0.014f;
-			float idleZ = 0.008f;
+			poseVec3 poseDeg{};
+			poseVec3 offset{};
+			float swingPitch = 0.0f;
+			float swingPitchUse = 0.0f;
+			float swingYaw = 0.0f;
+			float swingRoll = 0.0f;
+			float walkBobPitch = 0.0f;
+			float walkBobRoll = 0.0f;
+			float idlePitch = 0.0f;
+			float idleYaw = 0.0f;
+			float idleRoll = 0.0f;
+			float idleRate = 0.0f;
+			float idle2Rate = 0.0f;
+			float idle2Phase = 0.0f;
+			float airbornePitch = 0.0f;
+			float airborneY = 0.0f;
+			float airborneRate = 0.0f;
+			float walkX = 0.0f;
+			float walkY = 0.0f;
+			float swingY = 0.0f;
+			float swingZ = 0.0f;
+			float idleX = 0.0f;
+			float idleY = 0.0f;
+			float idleZ = 0.0f;
 		} viewmodel;
 
 		struct {
-			float faceOffset = 0.20f;
-			float swimOffset = 0.22f;
-			float radius = 0.075f;
+			float faceOffset = 0.0f;
+			float swimOffset = 0.0f;
+			float radius = 0.0f;
+			float hipPivotY = 0.0f;
+			float crouchForwardOffset = 0.0f;
+			float motionReferenceSpeed = 0.0f;
+			float walkBobY = 0.0f;
+			float walkBobRoll = 0.0f;
+			float sprintFovScale = 0.0f;
+			float fovResponse = 0.0f;
+			float shakeDecay = 0.0f;
+			float motionResponse = 0.0f;
+			float tiltResponse = 0.0f;
+			float idleClockRate = 0.0f;
+			float movementClockRate = 0.0f;
+			float walkingRoll = 0.0f;
+			float turnRoll = 0.0f;
+			float lateralRoll = 0.0f;
+			float maximumRoll = 0.0f;
+			float forwardPitch = 0.0f;
+			float maximumPitchLean = 0.0f;
+			float landingPitchRetention = 0.0f;
+			float landingRollRetention = 0.0f;
+			float thirdPersonDistance = 0.0f;
+			float thirdPersonShoulder = 0.0f;
+			float thirdPersonHeight = 0.0f;
+			float thirdPersonFocusDistance = 0.0f;
+			float frontFocusDrop = 0.0f;
 		} camera;
 	};
 
 	inline float jsonNumber(const rapidjson::Value& object, const char* key, float fallback) {
+		(void)fallback;
 		if (!object.IsObject() || !object.HasMember(key) || !object[key].IsNumber())
-			return fallback;
+			throw std::runtime_error(std::string("player pose: missing numeric '") + key + "'");
 		return object[key].GetFloat();
 	}
 
 	inline float jsonDegrees(const rapidjson::Value& object, const char* key, float fallbackRadians) {
+		(void)fallbackRadians;
 		if (!object.IsObject() || !object.HasMember(key) || !object[key].IsNumber())
-			return fallbackRadians;
+			throw std::runtime_error(std::string("player pose: missing degree value '") + key + "'");
 		return DirectX::XMConvertToRadians(object[key].GetFloat());
 	}
 
 	inline const rapidjson::Value* jsonChild(const rapidjson::Value& object, const char* key) {
 		if (!object.IsObject() || !object.HasMember(key) || !object[key].IsObject())
-			return nullptr;
+			throw std::runtime_error(std::string("player pose: missing object '") + key + "'");
 		return &object[key];
 	}
 
 	inline poseVec3 jsonVec3(const rapidjson::Value& object, const char* key, poseVec3 fallback) {
+		(void)fallback;
 		if (!object.IsObject() || !object.HasMember(key) || !object[key].IsArray() || object[key].Size() < 3)
-			return fallback;
+			throw std::runtime_error(std::string("player pose: missing vec3 '") + key + "'");
 		const auto& array = object[key];
+		if (!array[0].IsNumber() || !array[1].IsNumber() || !array[2].IsNumber())
+			throw std::runtime_error(std::string("player pose: vec3 must be numeric '") + key + "'");
 		return {
-			array[0].IsNumber() ? array[0].GetFloat() : fallback.x,
-			array[1].IsNumber() ? array[1].GetFloat() : fallback.y,
-			array[2].IsNumber() ? array[2].GetFloat() : fallback.z
+			array[0].GetFloat(), array[1].GetFloat(), array[2].GetFloat()
 		};
 	}
 
@@ -246,21 +270,22 @@ namespace ac {
 	}
 
 	inline poseScale jsonScale(const rapidjson::Value& object, const char* key, poseScale fallback) {
+		(void)fallback;
 		if (!object.IsObject() || !object.HasMember(key))
-			return fallback;
+			throw std::runtime_error(std::string("player pose: missing scale '") + key + "'");
 		const auto& value = object[key];
 		if (value.IsNumber()) {
 			const float scale = value.GetFloat();
 			return { scale, scale, scale };
 		}
 		if (value.IsArray() && value.Size() >= 3) {
+			if (!value[0].IsNumber() || !value[1].IsNumber() || !value[2].IsNumber())
+				throw std::runtime_error(std::string("player pose: scale must be numeric '") + key + "'");
 			return {
-				value[0].IsNumber() ? value[0].GetFloat() : fallback.x,
-				value[1].IsNumber() ? value[1].GetFloat() : fallback.y,
-				value[2].IsNumber() ? value[2].GetFloat() : fallback.z
+				value[0].GetFloat(), value[1].GetFloat(), value[2].GetFloat()
 			};
 		}
-		return fallback;
+		throw std::runtime_error(std::string("player pose: invalid scale '") + key + "'");
 	}
 
 	inline void loadArmReady(const rapidjson::Value& object, armReadyPose& pose) {
@@ -295,6 +320,10 @@ namespace ac {
 			config.walk.referenceSprint = jsonNumber(*walk, "referenceSprint", config.walk.referenceSprint);
 			config.walk.referenceCrouch = jsonNumber(*walk, "referenceCrouch", config.walk.referenceCrouch);
 			config.walk.referenceWalk = jsonNumber(*walk, "referenceWalk", config.walk.referenceWalk);
+			if (walk->HasMember("timing"))
+				config.walk.timing = loadAnimationTiming((*walk)["timing"], "player walk animation");
+			if (walk->HasMember("timeCurve"))
+				config.walk.timeCurve = loadAnimationCurve((*walk)["timeCurve"], "player walk animation");
 		}
 		if (const rapidjson::Value* swim = jsonChild(document, "swim")) {
 			config.swim.enterRate = jsonNumber(*swim, "enterRate", config.swim.enterRate);
@@ -332,18 +361,59 @@ namespace ac {
 			config.use.handDuration = jsonNumber(*use, "handDuration", config.use.handDuration);
 			config.use.handPitch = jsonDegrees(*use, "handPitchDeg", config.use.handPitch);
 			config.use.handRoll = jsonDegrees(*use, "handRollDeg", config.use.handRoll);
+			if (use->HasMember("toolTiming"))
+				config.use.toolTiming = loadAnimationTiming((*use)["toolTiming"], "player tool-use animation");
+			if (use->HasMember("handTiming"))
+				config.use.handTiming = loadAnimationTiming((*use)["handTiming"], "player hand-use animation");
+			if (use->HasMember("toolCurve"))
+				config.use.toolCurve = loadAnimationCurve((*use)["toolCurve"], "player tool-use animation");
+			if (use->HasMember("handCurve"))
+				config.use.handCurve = loadAnimationCurve((*use)["handCurve"], "player hand-use animation");
 		}
 		if (const rapidjson::Value* attack = jsonChild(document, "attack")) {
 			config.attack.toolDuration = jsonNumber(*attack, "toolDuration", config.attack.toolDuration);
 			config.attack.toolPitch = jsonDegrees(*attack, "toolPitchDeg", config.attack.toolPitch);
 			config.attack.toolRoll = jsonDegrees(*attack, "toolRollDeg", config.attack.toolRoll);
+			config.attack.axeDuration = jsonNumber(*attack, "axeDuration", config.attack.axeDuration);
+			config.attack.axePitch = jsonDegrees(*attack, "axePitchDeg", config.attack.axePitch);
+			config.attack.axeYaw = jsonDegrees(*attack, "axeYawDeg", config.attack.axeYaw);
+			config.attack.axeRoll = jsonDegrees(*attack, "axeRollDeg", config.attack.axeRoll);
+			config.attack.axeMoveY = jsonNumber(*attack, "axeMoveY", config.attack.axeMoveY);
+			config.attack.axeMoveZ = jsonNumber(*attack, "axeMoveZ", config.attack.axeMoveZ);
+			config.attack.swordDuration = jsonNumber(*attack, "swordDuration", config.attack.swordDuration);
+			config.attack.swordPitch = jsonDegrees(*attack, "swordPitchDeg", config.attack.swordPitch);
+			config.attack.swordYaw = jsonDegrees(*attack, "swordYawDeg", config.attack.swordYaw);
+			config.attack.swordRoll = jsonDegrees(*attack, "swordRollDeg", config.attack.swordRoll);
+			config.attack.swordMoveY = jsonNumber(*attack, "swordMoveY", config.attack.swordMoveY);
+			config.attack.swordMoveZ = jsonNumber(*attack, "swordMoveZ", config.attack.swordMoveZ);
 			config.attack.handDuration = jsonNumber(*attack, "handDuration", config.attack.handDuration);
 			config.attack.handPitch = jsonDegrees(*attack, "handPitchDeg", config.attack.handPitch);
 			config.attack.handRoll = jsonDegrees(*attack, "handRollDeg", config.attack.handRoll);
+			if (attack->HasMember("toolTiming"))
+				config.attack.toolTiming = loadAnimationTiming((*attack)["toolTiming"], "player tool attack");
+			if (attack->HasMember("axeTiming"))
+				config.attack.axeTiming = loadAnimationTiming((*attack)["axeTiming"], "player axe attack");
+			if (attack->HasMember("swordTiming"))
+				config.attack.swordTiming = loadAnimationTiming((*attack)["swordTiming"], "player sword attack");
+			if (attack->HasMember("handTiming"))
+				config.attack.handTiming = loadAnimationTiming((*attack)["handTiming"], "player hand attack");
+			if (attack->HasMember("toolCurve"))
+				config.attack.toolCurve = loadAnimationCurve((*attack)["toolCurve"], "player tool attack");
+			if (attack->HasMember("axeCurve"))
+				config.attack.axeCurve = loadAnimationCurve((*attack)["axeCurve"], "player axe attack");
+			if (attack->HasMember("swordCurve"))
+				config.attack.swordCurve = loadAnimationCurve((*attack)["swordCurve"], "player sword attack");
+			if (attack->HasMember("handCurve"))
+				config.attack.handCurve = loadAnimationCurve((*attack)["handCurve"], "player hand attack");
 		}
 		if (const rapidjson::Value* crouch = jsonChild(document, "crouch")) {
+			config.crouch.enterRate = jsonNumber(*crouch, "enterRate", config.crouch.enterRate);
+			config.crouch.exitRate = jsonNumber(*crouch, "exitRate", config.crouch.exitRate);
 			config.crouch.torsoPitch = jsonDegrees(*crouch, "torsoPitchDeg", config.crouch.torsoPitch);
 			config.crouch.legPitch = jsonDegrees(*crouch, "legPitchDeg", config.crouch.legPitch);
+			config.crouch.upperBodyY = jsonNumber(*crouch, "upperBodyY", config.crouch.upperBodyY);
+			config.crouch.upperBodyZ = jsonNumber(*crouch, "upperBodyZ", config.crouch.upperBodyZ);
+			config.crouch.legZ = jsonNumber(*crouch, "legZ", config.crouch.legZ);
 		}
 		if (const rapidjson::Value* airborne = jsonChild(document, "airborne")) {
 			config.airborne.armPitch = jsonDegrees(*airborne, "armPitchDeg", config.airborne.armPitch);
@@ -361,6 +431,31 @@ namespace ac {
 			config.camera.faceOffset = jsonNumber(*camera, "faceOffset", config.camera.faceOffset);
 			config.camera.swimOffset = jsonNumber(*camera, "swimOffset", config.camera.swimOffset);
 			config.camera.radius = jsonNumber(*camera, "radius", config.camera.radius);
+			config.camera.hipPivotY = jsonNumber(*camera, "hipPivotY", config.camera.hipPivotY);
+			config.camera.crouchForwardOffset = jsonNumber(*camera, "crouchForwardOffset", config.camera.crouchForwardOffset);
+			config.camera.motionReferenceSpeed = jsonNumber(*camera, "motionReferenceSpeed", config.camera.motionReferenceSpeed);
+			config.camera.walkBobY = jsonNumber(*camera, "walkBobY", config.camera.walkBobY);
+			config.camera.walkBobRoll = jsonNumber(*camera, "walkBobRoll", config.camera.walkBobRoll);
+			config.camera.sprintFovScale = jsonNumber(*camera, "sprintFovScale", config.camera.sprintFovScale);
+			config.camera.fovResponse = jsonNumber(*camera, "fovResponse", config.camera.fovResponse);
+			config.camera.shakeDecay = jsonNumber(*camera, "shakeDecay", config.camera.shakeDecay);
+			config.camera.motionResponse = jsonNumber(*camera, "motionResponse", config.camera.motionResponse);
+			config.camera.tiltResponse = jsonNumber(*camera, "tiltResponse", config.camera.tiltResponse);
+			config.camera.idleClockRate = jsonNumber(*camera, "idleClockRate", config.camera.idleClockRate);
+			config.camera.movementClockRate = jsonNumber(*camera, "movementClockRate", config.camera.movementClockRate);
+			config.camera.walkingRoll = jsonNumber(*camera, "walkingRoll", config.camera.walkingRoll);
+			config.camera.turnRoll = jsonNumber(*camera, "turnRoll", config.camera.turnRoll);
+			config.camera.lateralRoll = jsonNumber(*camera, "lateralRoll", config.camera.lateralRoll);
+			config.camera.maximumRoll = jsonNumber(*camera, "maximumRoll", config.camera.maximumRoll);
+			config.camera.forwardPitch = jsonNumber(*camera, "forwardPitch", config.camera.forwardPitch);
+			config.camera.maximumPitchLean = jsonNumber(*camera, "maximumPitchLean", config.camera.maximumPitchLean);
+			config.camera.landingPitchRetention = jsonNumber(*camera, "landingPitchRetention", config.camera.landingPitchRetention);
+			config.camera.landingRollRetention = jsonNumber(*camera, "landingRollRetention", config.camera.landingRollRetention);
+			config.camera.thirdPersonDistance = jsonNumber(*camera, "thirdPersonDistance", config.camera.thirdPersonDistance);
+			config.camera.thirdPersonShoulder = jsonNumber(*camera, "thirdPersonShoulder", config.camera.thirdPersonShoulder);
+			config.camera.thirdPersonHeight = jsonNumber(*camera, "thirdPersonHeight", config.camera.thirdPersonHeight);
+			config.camera.thirdPersonFocusDistance = jsonNumber(*camera, "thirdPersonFocusDistance", config.camera.thirdPersonFocusDistance);
+			config.camera.frontFocusDrop = jsonNumber(*camera, "frontFocusDrop", config.camera.frontFocusDrop);
 		}
 	}
 
@@ -421,11 +516,13 @@ namespace ac {
 
 	inline void loadPlayerPoseFiles(playerPoseConfig& config) {
 		rapidjson::Document animation;
-		if (loadJsonFile("assets/player/animation.json", animation))
-			loadAnimationJson(config, animation);
+		if (!loadJsonFile("assets/player/animation.json", animation))
+			throw std::runtime_error("assets/player/animation.json: missing or invalid player animation config");
+		loadAnimationJson(config, animation);
 		rapidjson::Document held;
-		if (loadJsonFile("assets/player/held_items.json", held))
-			loadHeldItemsJson(config, held);
+		if (!loadJsonFile("assets/player/held_items.json", held))
+			throw std::runtime_error("assets/player/held_items.json: missing or invalid held-item config");
+		loadHeldItemsJson(config, held);
 	}
 
 	inline const playerPoseConfig& playerPose() {

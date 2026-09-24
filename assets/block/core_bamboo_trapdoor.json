@@ -1,0 +1,26 @@
+{
+  "id": 832,
+  "name": "bamboo_trapdoor",
+  "interaction": "trapdoor",
+  "texture": "assets/textures/block/bamboo_trapdoor.png",
+  "model": 24,
+  "solid": true,
+  "occludes": false,
+  "renderMode": "cutout",
+  "roughness": 0.8,
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

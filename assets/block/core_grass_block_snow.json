@@ -1,0 +1,21 @@
+{
+  "id": 510,
+  "name": "grass_block_snow",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/grass_block_snow.png",
+  "hardness": 0.2,
+  "harvestLevel": 0,
+  "tool": "shovel",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "snow",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -9,9 +9,13 @@
 #include <core/shader.h>
 #include <core/texture.h>
 #include <core/settingsStore.h>
+#include <core/applicationConfig.h>
 #include <assets/assetManager.h>
 #include <assets/contentPack.h>
 #include <server/simulationServer.h>
+#include <modding/gameApiAdapters.h>
+#include <modding/modHost.h>
+#include <modding/wasmtimeBackend.h>
 #include <world/worldStreamer.h>
 #include <world/gpuChunkMesher.h>
 
@@ -110,13 +114,58 @@ namespace {
 	constexpr int HUD_CHEST_COLUMNS = 9;
 	constexpr int HUD_CHEST_ROWS = 3;
 	constexpr int HUD_CHEST_SLOTS = HUD_CHEST_COLUMNS * HUD_CHEST_ROWS;
-	constexpr float DOUBLE_CLICK_SECONDS = 0.35f;
-	ac::blockId BLOCK_CHEST = 103;
-	ac::blockId BLOCK_OAK_DOOR = 104;
-	ac::blockId BLOCK_OAK_SLAB = 108;
-	ac::blockId BLOCK_OAK_STAIRS = 114;
-	ac::blockId BLOCK_OAK_FENCE = 120;
-	ac::blockId BLOCK_MAGMA = 89;
+	const ac::applicationConfig& APPLICATION_CONFIG = ac::appConfig();
+	const std::vector<int>& FPS_LIMITS = APPLICATION_CONFIG.fpsLimits;
+	const std::vector<int>& VIEW_DISTANCES = APPLICATION_CONFIG.viewDistances;
+	const std::vector<int>& FOV_DEGREES = APPLICATION_CONFIG.fovDegrees;
+	const std::vector<int>& RENDER_SCALES = APPLICATION_CONFIG.renderScales;
+	const std::vector<float>& DAY_CYCLE_SCALES = APPLICATION_CONFIG.dayCycleScales;
+	const float DAY_LENGTH_SECONDS = APPLICATION_CONFIG.dayLengthSeconds;
+	const float DOUBLE_CLICK_SECONDS = APPLICATION_CONFIG.inventoryDoubleClickSeconds;
+	const float FOOTSTEP_SPEED_THRESHOLD = APPLICATION_CONFIG.footstepSpeedThreshold;
+	const std::string& USER_SETTINGS_PATH = APPLICATION_CONFIG.userSettingsPath;
+	ac::blockId BLOCK_CHEST = 0;
+	ac::blockId BLOCK_FURNACE = 0;
+	ac::blockId BLOCK_BLAST_FURNACE = 0;
+	ac::blockId BLOCK_FURNACE_LIT = 0;
+	ac::blockId BLOCK_BLAST_FURNACE_LIT = 0;
+	ac::blockId BLOCK_OAK_DOOR = 0;
+	ac::blockId BLOCK_OAK_SLAB = 0;
+	ac::blockId BLOCK_OAK_STAIRS = 0;
+	ac::blockId BLOCK_OAK_FENCE = 0;
+	ac::blockId BLOCK_MAGMA = 0;
+	const std::string& blockAlias(const char* key) {
+		const auto found = APPLICATION_CONFIG.blockAliases.find(key);
+		if (found == APPLICATION_CONFIG.blockAliases.end())
+			throw std::runtime_error(std::string("assets/application.json: missing block alias '") + key + "'");
+		return found->second;
+	}
+	void bindBlockAliases(const ac::staticAssetManager& blocks) {
+		ac::WATER_BLOCK_TYPE = blocks.getId(blockAlias("water"));
+		ac::BLOCK_CRAFTING_TABLE = blocks.getId(blockAlias("craftingTable"));
+		ac::BLOCK_REDSTONE = blocks.getId(blockAlias("redstone"));
+		ac::BLOCK_REDSTONE_BLOCK = blocks.getId(blockAlias("redstoneBlock"));
+		ac::BLOCK_REDSTONE_WIRE = blocks.getId(blockAlias("redstoneWire"));
+		ac::BLOCK_REDSTONE_LAMP = blocks.getId(blockAlias("redstoneLamp"));
+		ac::BLOCK_REDSTONE_LAMP_ON = blocks.getId(blockAlias("redstoneLampOn"));
+		ac::BLOCK_REDSTONE_TORCH = blocks.getId(blockAlias("redstoneTorch"));
+		ac::BLOCK_REDSTONE_TORCH_OFF = blocks.getId(blockAlias("redstoneTorchOff"));
+		ac::BLOCK_LEVER = blocks.getId(blockAlias("lever"));
+		ac::BLOCK_LEVER_ON = blocks.getId(blockAlias("leverOn"));
+		ac::BLOCK_REPEATER = blocks.getId(blockAlias("repeater"));
+		ac::BLOCK_COMPARATOR = blocks.getId(blockAlias("comparator"));
+		ac::BLOCK_OBSERVER = blocks.getId(blockAlias("observer"));
+		BLOCK_CHEST = blocks.getId(blockAlias("chest"));
+		BLOCK_FURNACE = blocks.getId(blockAlias("furnace"));
+		BLOCK_BLAST_FURNACE = blocks.getId(blockAlias("blastFurnace"));
+		BLOCK_FURNACE_LIT = blocks.getId(blockAlias("furnaceLit"));
+		BLOCK_BLAST_FURNACE_LIT = blocks.getId(blockAlias("blastFurnaceLit"));
+		BLOCK_OAK_DOOR = blocks.getId(blockAlias("oakDoor"));
+		BLOCK_OAK_SLAB = blocks.getId(blockAlias("oakSlab"));
+		BLOCK_OAK_STAIRS = blocks.getId(blockAlias("oakStairs"));
+		BLOCK_OAK_FENCE = blocks.getId(blockAlias("oakFence"));
+		BLOCK_MAGMA = blocks.getId(blockAlias("magma"));
+	}
 	constexpr int HUD_CRAFT2_SLOTS = 4;
 	constexpr int HUD_CRAFT3_SLOTS = 9;
 	constexpr int HUD_VITAL_PIPS = 10;
@@ -194,9 +243,6 @@ namespace {
 			!isDoorTopName(definition->_name) &&
 			!isDoorOpenName(definition->_name);
 	}
-	constexpr float BASE_PLAYER_FOV = 1.48352986f;
-	constexpr float FOOTSTEP_SPEED_THRESHOLD = 1.15f;
-
 	struct voxelCoordinate {
 		int32_t x = 0;
 		int32_t y = 0;
@@ -1568,12 +1614,24 @@ namespace {
 		pointShadowMap& _shadowMap;
 		directionalShadowMap _celestialShadow;
 		ac::staticRenderer& _renderer;
+		ac::textureLibrary& _textures;
 		ac::blockTextureSet& _blockTextures;
 		ac::staticAssetManager& _blocks;
 		ac::modelManager& _models;
+		ac::contentPackSet& _contentPacks;
 		ac::itemIconAtlas _itemIcons;
 		ac::world& _world;
 		ac::worldStreamer& _streamer;
+		ac::modding::callbackBlockRegistryPort _modBlocks;
+		ac::modding::callbackWorldPort _modWorld;
+		ac::modding::callbackEntityPort _modEntities;
+		ac::modding::callbackPresentationPort _modPresentation;
+		ac::modding::callbackUiPort _modUi;
+		ac::modding::directoryStoragePort _modStorage;
+		ac::modding::callbackRegistryCatalogPort _modRegistries;
+		ac::modding::callbackNetworkPort _modNetwork;
+		ac::modding::streamLogPort _modLog;
+		ac::modding::gameModHost _modHost;
 		ac::player& _player;
 		ac::worldStreamer::blockReadCache _blockReadCache;
 		std::vector<ac::fallingBlockEntity> _crushedFallingScratch;
@@ -1653,6 +1711,7 @@ namespace {
 		ac::texture _guiInventory;
 		ac::texture _guiCrafting;
 		ac::texture _guiChest;
+		ac::texture _guiFurnace;
 		ac::texture _guiCreativeItems;
 		ac::texture _guiCreativeInv;
 		bool _guiReady = false;
@@ -1676,6 +1735,7 @@ namespace {
 		bool _chooserFilterActive = false;
 		bool _chooserScrollDragging = false;
 		bool _chooserSearchFocus = false;
+		struct nk_rect _chooserSearchRect = {};
 		int _chooserScroll = 0;
 		std::string _consoleBuffer;
 		static constexpr int CONSOLE_LINE_CHARS = static_cast<int>(UINT16_MAX);
@@ -1688,6 +1748,12 @@ namespace {
 		std::array<std::string, 32> _consoleHistory{};
 		size_t _consoleHistoryCount = 0;
 		ac::audioMixer _audio;
+		ac::soundVoiceHandle _weatherWindVoice{};
+		ac::soundVoiceHandle _weatherPrecipitationVoice{};
+		ac::weatherSound _weatherPrecipitationSound = ac::weatherSound::rain;
+		float _weatherWindGain = 0.0f;
+		float _weatherPrecipitationGain = 0.0f;
+		float _previousWeatherLightning = 0.0f;
 		ac::particleSystem _particles;
 		ac::weatherSystem _weather;
 		ac::fallingBlockRenderer _fallingBlocks;
@@ -1707,8 +1773,9 @@ namespace {
 		std::string _lastWorldPath;
 		float _autosaveTimer = 0.0f;
 		dx::XMINT3 _openChestBlock{};
+		dx::XMINT3 _openFurnaceBlock{};
 		float _walkBobPhase = 0.0f;
-		float _sprintFov = BASE_PLAYER_FOV;
+		float _sprintFov = 0.0f;
 		float _cameraShake = 0.0f;
 		float _footstepTimer = 0.0f;
 		float _fpsElapsed = 0.0f;
@@ -1724,27 +1791,16 @@ namespace {
 		float _waterAnimationTime = 0.0f;
 		uint32_t _waterMaterial = UINT32_MAX;
 		bool _cameraUnderwater = false;
-		float _dayTimeSeconds = 600.0f;
+		float _dayTimeSeconds = APPLICATION_CONFIG.initialDayTimeSeconds;
 		size_t _sunLightIndex = 0u;
 		dx::XMFLOAT3 _celestialDirection{ 0.0f, 1.0f, 0.0f };
 		float _celestialIntensity = 0.0f;
 		dx::XMFLOAT3 _fogSkyColor{ 0.25f, 0.45f, 0.72f };
-		inline static constexpr float DAY_LENGTH_SECONDS = 240.0f;
-		inline static constexpr std::array<int, 7> FPS_LIMITS = { 30, 60, 120, 144, 240, 300, 0 };
-		inline static constexpr std::array<int, 5> VIEW_DISTANCES = { 4, 6, 8, 10, 12 };
-		inline static constexpr std::array<int, 7> FOV_DEGREES = { 70, 75, 80, 85, 90, 100, 110 };
-		inline static constexpr std::array<float, 7> FOV_RADIANS = {
-			1.22173047f, 1.30899693f, 1.39626340f, 1.48352986f,
-			1.57079633f, 1.74532925f, 1.91986218f
-		};
-		inline static constexpr std::array<int, 5> RENDER_SCALES = { 50, 75, 100, 125, 150 };
-		inline static constexpr std::array<float, 4> DAY_CYCLE_SCALES = { 0.0f, 0.35f, 1.0f, 3.0f };
-		inline static constexpr const char* USER_SETTINGS_PATH = "assets/user_settings.json";
-		size_t _fpsLimitIndex = 5;
-		size_t _viewDistanceIndex = 2;
-		size_t _fovIndex = 3;
-		size_t _renderScaleIndex = 2;
-		size_t _dayCycleIndex = 2;
+		size_t _fpsLimitIndex = 0;
+		size_t _viewDistanceIndex = 0;
+		size_t _fovIndex = 0;
+		size_t _renderScaleIndex = 0;
+		size_t _dayCycleIndex = 0;
 		enum class settingsTab { user, world };
 		settingsTab _settingsTab = settingsTab::user;
 		ac::blockId _cursorItem = 0;
@@ -1762,7 +1818,7 @@ namespace {
 		float _lastInvClickTime = -10.0f;
 		ac::blockId _lastInvClickItem = 0;
 		int _selectedHotbarSlot = 0;
-		ac::blockId _selectedBlock = 1;
+		ac::blockId _selectedBlock = 0;
 		bool _inventoryOpen = false;
 		ac::cameraData _cameraData{};
 		dx::XMFLOAT4X4 _renderView{};
@@ -1773,6 +1829,7 @@ namespace {
 		dx::XMINT3 _renderedTargetBlock{};
 		dx::XMINT3 _renderedTargetAdjacent{};
 		ac::blockId _renderedTargetId = 0;
+		float _renderedTargetDistance = 0.0f;
 		bool _renderedTargetValid = false;
 		float _crosshairColor[3] = { 245.0f / 255.0f, 204.0f / 255.0f, 92.0f / 255.0f };
 		bool _crosshairColorValid = false;
@@ -1987,11 +2044,12 @@ namespace {
 									}
 								}
 							}
-							const ac::blockDefinition* definition = _blocks.get(ac::blockType(state));
+							const ac::blockDefinition* definition = _blocks.get(ac::blockType(ac::visualBlockState(state)));
 							if (definition && definition->_occludes &&
 								definition->_renderMode != ac::RENDER_MODE_TRANSPARENT) {
 								packed = 0x80000000u |
 									(definition->materialForFace(ac::BLOCK_FACE_UP) & 0xFFFFu);
+								packed |= (ac::isRedstoneLamp(state) ? ac::redstonePower(state) : 15u) << 16u;
 							}
 						}
 						_reflectionVoxelData[x + REFLECTION_VOLUME_SIZE *
@@ -2176,6 +2234,7 @@ namespace {
 				nightSky.z + (daySky.z - nightSky.z) * daylight
 			};
 			const float overcast = _weather.state().overcast;
+			const float frontOvercast = _weather.frontOvercast();
 			const float flash = _weather.state().lightning;
 			const dx::XMFLOAT3 cloudSky{
 				0.045f + daylight * 0.105f,
@@ -2206,10 +2265,10 @@ namespace {
 				moonStrength * (1.0f - 0.4f * overcast),
 				moonColor,
 				static_cast<uint32_t>(_sunLightIndex),
-				0.34f + overcast * 0.52f,
-				0.72f + overcast * 0.58f,
-				0.28f + overcast * 0.42f,
-				0.0f
+				0.34f + frontOvercast * 0.52f,
+				0.72f + frontOvercast * 0.58f,
+				0.28f + frontOvercast * 0.42f,
+				_weather.clock()
 			});
 			_fogSkyColor = weatherSky;
 
@@ -2238,8 +2297,106 @@ namespace {
 			setClearColor(weatherSky.x, weatherSky.y, weatherSky.z, 1.0f);
 		}
 
+		void stopWeatherAudio() {
+			_audio.stopVoice(_weatherWindVoice);
+			_audio.stopVoice(_weatherPrecipitationVoice);
+			_weatherWindGain = 0.0f;
+			_weatherPrecipitationGain = 0.0f;
+			_previousWeatherLightning = 0.0f;
+		}
+
+		bool playerIsOpenToSky(const dx::XMFLOAT3& eye) const {
+			const int32_t x = static_cast<int32_t>(std::floor(eye.x));
+			const int32_t z = static_cast<int32_t>(std::floor(eye.z));
+			const int32_t firstY = std::clamp(
+				static_cast<int32_t>(std::floor(eye.y)) + 1, 0, CHUNK_HEIGHT);
+			for (int32_t y = firstY; y < CHUNK_HEIGHT; ++y) {
+				const ac::blockId state = _streamer.blockAt(x, y, z);
+				if (state == 0u) continue;
+				const ac::blockDefinition* definition = _blocks.get(ac::blockType(state));
+				if (definition && (definition->_solid || definition->_occludes))
+					return false;
+			}
+			return true;
+		}
+
+		void updateWeatherAudio(
+			float deltaTime,
+			const ac::weatherState& weather,
+			const dx::XMFLOAT3& eye
+		) {
+			const bool openToSky = playerIsOpenToSky(eye);
+			const float shelter = _cameraUnderwater ? 0.07f : openToSky ? 1.0f : 0.22f;
+			float windTarget = 0.035f;
+			float precipitationTarget = 0.0f;
+			ac::weatherSound precipitationSound = ac::weatherSound::rain;
+			switch (weather.kind) {
+			case ac::weatherKind::rain:
+				windTarget = 0.07f + weather.intensity * 0.13f;
+				precipitationTarget = weather.intensity * 0.62f;
+				break;
+			case ac::weatherKind::storm:
+				windTarget = 0.14f + weather.intensity * 0.30f;
+				precipitationTarget = weather.intensity * 0.86f;
+				break;
+			case ac::weatherKind::snow:
+				windTarget = 0.10f + weather.intensity * 0.23f;
+				precipitationTarget = weather.intensity * 0.25f;
+				precipitationSound = ac::weatherSound::snow;
+				break;
+			default:
+				break;
+			}
+			windTarget *= shelter;
+			precipitationTarget *= shelter;
+
+			const float blend = 1.0f - std::exp(-std::clamp(deltaTime, 0.0f, 0.1f) * 3.2f);
+			_weatherWindGain += (windTarget - _weatherWindGain) * blend;
+			_weatherPrecipitationGain +=
+				(precipitationTarget - _weatherPrecipitationGain) * blend;
+
+			if (!_weatherWindVoice && _weatherWindGain > 0.002f)
+				_weatherWindVoice = _audio.playWeatherLoop(ac::weatherSound::wind, _weatherWindGain);
+			else if (_weatherWindVoice &&
+				!_audio.setVoiceVolume(_weatherWindVoice, _weatherWindGain))
+				_weatherWindVoice = {};
+
+			if (_weatherPrecipitationVoice &&
+				precipitationSound != _weatherPrecipitationSound) {
+				_audio.stopVoice(_weatherPrecipitationVoice);
+				_weatherPrecipitationGain = precipitationTarget;
+			}
+			_weatherPrecipitationSound = precipitationSound;
+			if (!_weatherPrecipitationVoice && _weatherPrecipitationGain > 0.002f) {
+				_weatherPrecipitationVoice = _audio.playWeatherLoop(
+					_weatherPrecipitationSound, _weatherPrecipitationGain);
+			}
+			else if (_weatherPrecipitationVoice &&
+				!_audio.setVoiceVolume(
+					_weatherPrecipitationVoice, _weatherPrecipitationGain)) {
+				_weatherPrecipitationVoice = {};
+			}
+			if (_weatherPrecipitationVoice && precipitationTarget <= 0.0f &&
+				_weatherPrecipitationGain < 0.002f) {
+				_audio.stopVoice(_weatherPrecipitationVoice);
+				_weatherPrecipitationGain = 0.0f;
+			}
+
+			if (weather.lightning > 0.55f && _previousWeatherLightning <= 0.55f) {
+				const float angle = _weather.clock() * 1.731f;
+				const ac::soundPos thunder = ac::soundPos::at(
+					eye.x + std::cos(angle) * 22.0f,
+					eye.y + 18.0f,
+					eye.z + std::sin(angle) * 22.0f,
+					112.0f);
+				_audio.playWeatherThunder(thunder, _cameraUnderwater ? 0.24f : openToSky ? 1.0f : 0.48f);
+			}
+			_previousWeatherLightning = weather.lightning;
+		}
+
 		void updateWeather(float deltaTime) {
-			ac::TERRAIN_BIOME biome = ac::BIOME_PLAINS;
+			_weather.setBiomeConfig(_world.terrainBiomes());
+			ac::TERRAIN_BIOME biome = _world.terrainBiomes().id("plains");
 			float temperature = 0.0f;
 			float surfaceHeight = 72.0f;
 			const dx::XMFLOAT3 eye = _player.getCamera()._gpuData._position;
@@ -2251,15 +2408,21 @@ namespace {
 				temperature = sample._temperature;
 			}
 			surfaceHeight = eye.y;
-			_weather.update(deltaTime, biome, temperature, surfaceHeight);
+			_weather.update(deltaTime, biome, temperature, surfaceHeight, eye.x, eye.z);
 			const ac::weatherState weather = _weather.state();
+			updateWeatherAudio(deltaTime, weather, eye);
 			const bool liquidPrecipitation =
 				weather.kind == ac::weatherKind::rain || weather.kind == ac::weatherKind::storm;
-			if (liquidPrecipitation)
+			const float localRain = liquidPrecipitation ? weather.intensity : 0.0f;
+			if (localRain > 0.035f)
 				_weatherWetness = std::min(1.0f,
-					_weatherWetness + deltaTime * (0.075f + weather.intensity * 0.10f));
-			else
-				_weatherWetness = std::max(0.0f, _weatherWetness - deltaTime * 0.014f);
+					_weatherWetness + deltaTime * (0.025f + localRain * 0.16f));
+			else {
+				// Pools linger beneath a retreating cloud, then evaporate more quickly
+				// as the sky clears. Snow does not replenish liquid surface water.
+				const float evaporation = 0.008f + (1.0f - weather.overcast) * 0.012f;
+				_weatherWetness = std::max(0.0f, _weatherWetness - deltaTime * evaporation);
+			}
 			_postSettings.weatherFog = 1.0f + weather.overcast * 2.15f;
 			_postSettings.weatherExposure = 1.0f - weather.overcast * 0.26f + weather.lightning * 0.38f;
 			_postSettings.weatherWetness = _weatherWetness;
@@ -2318,6 +2481,10 @@ namespace {
 					deltaTime,
 					_weather.clock(),
 					[this, eye](float px, float py, float pz, float& collisionY) {
+						// Precipitation belongs to the cloud above this exact column,
+						// rather than to one global weather switch around the player.
+						if (_weather.precipitationAt(px, pz) <= 0.045f)
+							return false;
 						const int32_t x = static_cast<int32_t>(std::floor(px));
 						const int32_t z = static_cast<int32_t>(std::floor(pz));
 						const int32_t spawnY = std::clamp(
@@ -2421,6 +2588,28 @@ namespace {
 			return _blocks.get(ac::blockType(_selectedBlock));
 		}
 
+		float heldEntityDamage() const {
+			const ac::blockDefinition* held = selectedItemDef();
+			if (!held || _hotbarCounts[_selectedHotbarSlot] == 0) return 1.0f;
+			const std::string& name = held->_name;
+			if (name == "wooden_sword" || name == "golden_sword") return 4.0f;
+			if (name == "stone_sword") return 5.0f;
+			if (name == "iron_sword") return 6.0f;
+			if (name == "diamond_sword") return 7.0f;
+			if (name == "wooden_axe" || name == "golden_axe") return 7.0f;
+			if (name == "stone_axe" || name == "iron_axe" || name == "diamond_axe") return 9.0f;
+			if (held->isMiningTool()) return 2.0f;
+			return 1.0f;
+		}
+
+		float heldEntityKnockback() const {
+			const ac::blockDefinition* held = selectedItemDef();
+			if (!held || _hotbarCounts[_selectedHotbarSlot] == 0) return 1.8f;
+			if (held->heldStyle() == ac::heldItemStyle::sword) return 3.4f;
+			if (held->heldStyle() == ac::heldItemStyle::axe) return 3.0f;
+			return held->isMiningTool() ? 2.5f : 2.0f;
+		}
+
 		bool canEatHeldFood() const {
 			if (!isSurvival() || _spawnPending) return false;
 			const ac::blockDefinition* held = selectedItemDef();
@@ -2470,9 +2659,9 @@ namespace {
 
 
 
-		void applyPlayerDamage(float amount, bool respectCooldown = true) {
-			if (!isSurvival() || amount <= 0.0f || _spawnPending) return;
-			if (respectCooldown && _hurtCooldown > 0.0f) return;
+		bool applyPlayerDamage(float amount, bool respectCooldown = true) {
+			if (!isSurvival() || amount <= 0.0f || _spawnPending) return false;
+			if (respectCooldown && _hurtCooldown > 0.0f) return false;
 			_health = (std::max)(0.0f, _health - amount);
 			_hurtCooldown = ac::PLAYER_HURT_COOLDOWN;
 			cancelEat();
@@ -2482,8 +2671,10 @@ namespace {
 				_player.getCamera()._gpuData._position.y,
 				_player.getCamera()._gpuData._position.z,
 				12.0f));
-			if (_health <= 0.0f)
+			const bool survived = _health > 0.0f;
+			if (!survived)
 				respawnAfterDeath();
+			return survived;
 		}
 
 		void respawnAfterDeath() {
@@ -2710,9 +2901,10 @@ namespace {
 				grid[static_cast<size_t>(i)] = counts[i] > 0 ? blocks[i] : 0;
 			const ac::craftMatch recipe = _recipes.match(grid.data(), width, height);
 			if (!recipe) return false;
+			if (recipe.resultCount > itemStackLimit(recipe.result)) return false;
 			if (_cursorItem != 0 && _cursorItem != recipe.result) return false;
 			if (_cursorItem == recipe.result &&
-				_cursorCount + recipe.resultCount > ac::ITEM_MAX_STACK)
+				_cursorCount + recipe.resultCount > itemStackLimit(recipe.result))
 				return false;
 			for (int i = 0; i < n; ++i) {
 				if (grid[static_cast<size_t>(i)] == 0) continue;
@@ -2744,7 +2936,7 @@ namespace {
 				else {
 					if (id != 0 && id != _cursorItem) return;
 					if (id == 0) { id = _cursorItem; count = 0; }
-					if (count >= ac::ITEM_MAX_STACK) return;
+					if (count >= itemStackLimit(_cursorItem)) return;
 					++count;
 					--_cursorCount;
 					if (_cursorCount == 0) _cursorItem = 0;
@@ -2765,7 +2957,8 @@ namespace {
 			}
 			else {
 				if (id == 0) { id = _cursorItem; count = 0; }
-				const uint32_t space = ac::ITEM_MAX_STACK - count;
+				const uint32_t space = itemStackLimit(_cursorItem) > count
+					? itemStackLimit(_cursorItem) - count : 0u;
 				const uint32_t move = (std::min)(space, _cursorCount);
 				count += move;
 				_cursorCount -= move;
@@ -3020,27 +3213,12 @@ namespace {
 				boxes[0] = ac::torchSelectionBox(state);
 				return 1;
 			}
+			if (ac::isDiode(type)) {
+				boxes[0] = { 0.0f, 0.0f, 0.0f, 1.0f, 0.125f, 1.0f };
+				return 1;
+			}
 			if (ac::isLever(type)) {
-				if (ac::isWallAttached(state)) {
-					switch (ac::blockFacing(state)) {
-					case 0: // south
-						boxes[0] = { 0.35f, 0.20f, 0.00f, 0.65f, 0.80f, 0.35f };
-						break;
-					case 1: // east
-						boxes[0] = { 0.65f, 0.20f, 0.35f, 1.00f, 0.80f, 0.65f };
-						break;
-					case 2: // north
-						boxes[0] = { 0.35f, 0.20f, 0.65f, 0.65f, 0.80f, 1.00f };
-						break;
-					case 3: // west
-					default:
-						boxes[0] = { 0.00f, 0.20f, 0.35f, 0.35f, 0.80f, 0.65f };
-						break;
-					}
-				}
-				else {
-					boxes[0] = { 0.35f, 0.0f, 0.35f, 0.65f, 0.70f, 0.65f };
-				}
+				boxes[0] = ac::leverSelectionBox(state);
 				return 1;
 			}
 			if (definition && definition->_model == ac::MODEL_CROSS) {
@@ -3140,8 +3318,8 @@ namespace {
 			if (id == 0u || ac::isBlockStateAlias(id)) return true;
 			const ac::blockDefinition* candidate = _blocks.get(id);
 			if (!candidate) return true;
-			if (candidate->_texture.empty()) return false;
-
+			if (candidate->_name.ends_with("_lit") && candidate->_behavior.dropSpecified &&
+				candidate->_behavior.drop != id) return true;
 			for (uint32_t ownerId : _blocks.ids()) {
 				if (ownerId == id) continue;
 				const ac::blockDefinition* owner = _blocks.get(ownerId);
@@ -3171,7 +3349,7 @@ namespace {
 			}
 			else {
 				_hotbarBlocks[slot] = id;
-				_hotbarCounts[slot] = (std::min)(count, ac::ITEM_MAX_STACK);
+				_hotbarCounts[slot] = (std::min)(count, itemStackLimit(id));
 			}
 			if (slot == _selectedHotbarSlot)
 				_selectedBlock = _hotbarBlocks[slot];
@@ -3179,11 +3357,12 @@ namespace {
 
 		uint32_t addToHotbar(ac::blockId id, uint32_t count) {
 			if (id == 0 || count == 0) return 0;
+			const uint32_t limit = itemStackLimit(id);
 			uint32_t remaining = count;
 			auto tryHotbar = [&](int slot) {
 				if (remaining == 0) return;
-				if (_hotbarBlocks[slot] == id && _hotbarCounts[slot] < ac::ITEM_MAX_STACK) {
-					const uint32_t space = ac::ITEM_MAX_STACK - _hotbarCounts[slot];
+				if (_hotbarBlocks[slot] == id && _hotbarCounts[slot] < limit) {
+					const uint32_t space = limit - _hotbarCounts[slot];
 					const uint32_t take = (std::min)(space, remaining);
 					_hotbarCounts[slot] += take;
 					remaining -= take;
@@ -3194,14 +3373,14 @@ namespace {
 				tryHotbar(slot);
 			for (int slot = 0; slot < HUD_HOTBAR_COUNT && remaining > 0; ++slot) {
 				if (_hotbarBlocks[slot] == 0) {
-					const uint32_t take = (std::min)(ac::ITEM_MAX_STACK, remaining);
+					const uint32_t take = (std::min)(limit, remaining);
 					setHotbarSlot(slot, id, take);
 					remaining -= take;
 				}
 			}
 			for (int slot = 0; slot < HUD_INV_SLOTS && remaining > 0; ++slot) {
-				if (_inventoryBlocks[slot] == id && _inventoryCounts[slot] < ac::ITEM_MAX_STACK) {
-					const uint32_t space = ac::ITEM_MAX_STACK - _inventoryCounts[slot];
+				if (_inventoryBlocks[slot] == id && _inventoryCounts[slot] < limit) {
+					const uint32_t space = limit - _inventoryCounts[slot];
 					const uint32_t take = (std::min)(space, remaining);
 					_inventoryCounts[slot] += take;
 					remaining -= take;
@@ -3209,7 +3388,7 @@ namespace {
 			}
 			for (int slot = 0; slot < HUD_INV_SLOTS && remaining > 0; ++slot) {
 				if (_inventoryBlocks[slot] == 0) {
-					const uint32_t take = (std::min)(ac::ITEM_MAX_STACK, remaining);
+					const uint32_t take = (std::min)(limit, remaining);
 					_inventoryBlocks[slot] = id;
 					_inventoryCounts[slot] = take;
 					remaining -= take;
@@ -3457,14 +3636,16 @@ namespace {
 				_player.isSprinting(),
 				_player.isSwimming(),
 				_cameraMode != 0u,
-				_player.swimBlend()
+				_player.swimBlend(),
+				_player.crouchBlend()
 			);
 			if (ac::dynamicEntity* entity = _dynamicRenderer.get(_playerEntity)) {
 				entity->visible = !_spectatorMode && !_spawnPending;
 				const uint32_t count = _hotbarCounts[_selectedHotbarSlot];
 				entity->heldStyle = ac::heldItemStyleFor(selectedItemDef(), count);
 				entity->humanoidAnimation.toolUsing =
-					entity->heldStyle == ac::heldItemStyle::tool &&
+					(entity->heldStyle == ac::heldItemStyle::tool ||
+						entity->heldStyle == ac::heldItemStyle::axe) &&
 					_screen == ac::gameScreen::playing &&
 					_cursorCaptured &&
 					!isSpectator() &&
@@ -3927,6 +4108,8 @@ namespace {
 					ac::blockType(ac::visualBlockState(emitter.id)));
 				if (!definition) continue;
 				const ac::blockLight& emission = definition->_emission;
+				const float signalBrightness = ac::isRedstoneLamp(emitter.id)
+					? static_cast<float>(ac::redstonePower(emitter.id)) / 15.0f : 1.0f;
 				dx::XMFLOAT3 local = ac::isWallAttached(emitter.id) && emission.wallPositionSpecified
 					? emission.wallPosition : emission.position;
 				dx::XMFLOAT3 halfExtent = emission.halfExtent;
@@ -3948,7 +4131,7 @@ namespace {
 					{ static_cast<float>(emitter.position.x) + local.x,
 					  static_cast<float>(emitter.position.y) + local.y,
 					  static_cast<float>(emitter.position.z) + local.z },
-					emission.radius, emission.color, emission.intensity,
+					emission.radius, emission.color, emission.intensity * signalBrightness,
 					halfExtent, ac::GPU_LIGHT_MESH
 				});
 			}
@@ -4226,20 +4409,13 @@ namespace {
 		}
 
 		void applyDefaultHotbar() {
-			const ac::blockId defaultHotbar[] = {
-				_blocks.getId("core:grass"),
-				_blocks.getId("core:oak_planks"),
-				BLOCK_OAK_SLAB,
-				BLOCK_OAK_STAIRS,
-				BLOCK_OAK_FENCE,
-				_blocks.getId("core:oak_log"),
-				BLOCK_CHEST,
-				BLOCK_OAK_DOOR,
-				_blocks.getId("core:bricks")
-			};
+			std::vector<ac::blockId> defaultHotbar;
+			defaultHotbar.reserve(APPLICATION_CONFIG.defaultHotbar.size());
+			for (const std::string& name : APPLICATION_CONFIG.defaultHotbar)
+				defaultHotbar.push_back(_blocks.getId(name));
 			for (size_t slot = 0; slot < _hotbarBlocks.size(); ++slot) {
-				_hotbarBlocks[slot] = slot < std::size(defaultHotbar) ? defaultHotbar[slot] : 0;
-				_hotbarCounts[slot] = _hotbarBlocks[slot] != 0 ? ac::ITEM_MAX_STACK : 0;
+				_hotbarBlocks[slot] = slot < defaultHotbar.size() ? defaultHotbar[slot] : 0;
+				_hotbarCounts[slot] = _hotbarBlocks[slot] != 0 ? itemStackLimit(_hotbarBlocks[slot]) : 0;
 			}
 			_selectedHotbarSlot = 0;
 			_selectedBlock = _hotbarBlocks[0];
@@ -4262,8 +4438,8 @@ namespace {
 					if (_hotbarBlocks[i] == 0)
 						count = 0;
 					else if (count == 0)
-						count = ac::ITEM_MAX_STACK;
-					_hotbarCounts[i] = (std::min)(count, ac::ITEM_MAX_STACK);
+						count = itemStackLimit(_hotbarBlocks[i]);
+					_hotbarCounts[i] = (std::min)(count, itemStackLimit(_hotbarBlocks[i]));
 				}
 				else {
 					_hotbarBlocks[i] = 0;
@@ -4278,8 +4454,8 @@ namespace {
 					if (_inventoryBlocks[i] == 0)
 						count = 0;
 					else if (count == 0)
-						count = ac::ITEM_MAX_STACK;
-					_inventoryCounts[i] = (std::min)(count, ac::ITEM_MAX_STACK);
+						count = itemStackLimit(_inventoryBlocks[i]);
+					_inventoryCounts[i] = (std::min)(count, itemStackLimit(_inventoryBlocks[i]));
 				}
 				else {
 					_inventoryBlocks[i] = 0;
@@ -4359,7 +4535,7 @@ namespace {
 		}
 
 		float baseFovRadians() const {
-			return FOV_RADIANS[_fovIndex];
+			return dx::XMConvertToRadians(static_cast<float>(FOV_DEGREES[_fovIndex]));
 		}
 
 		void applyBaseFov() {
@@ -4537,10 +4713,15 @@ namespace {
 		}
 
 		std::vector<std::string> consoleCommandNames() const {
-			return {
+			std::vector<std::string> result{
 				"help", "pos", "tp", "seed", "fly", "gamemode", "gm",
-				"time", "weather", "biome", "locate", "give", "clear"
+				"time", "weather", "biome", "locate", "give", "clear", "reload"
 			};
+			for (const std::string& alias : _modHost.registeredCommands().aliases())
+				result.push_back(alias);
+			std::sort(result.begin(), result.end());
+			result.erase(std::unique(result.begin(), result.end()), result.end());
+			return result;
 		}
 
 		static std::vector<std::string> biomeCommandNames() {
@@ -4618,6 +4799,235 @@ namespace {
 			return true;
 		}
 
+		void loadRecipesFromPacks(
+			const ac::contentPackSet& packs,
+			const ac::staticAssetManager& blocks,
+			ac::recipeBook& target
+		) const {
+			bool loadedAny = false;
+			for (const auto& [pack, recipePath] : packs.paths("recipes")) {
+				(void)pack;
+				const bool loaded = target.load(
+					recipePath,
+					[&blocks](const std::string& name) -> std::optional<ac::blockId> {
+						try { return static_cast<ac::blockId>(blocks.getId(name)); }
+						catch (...) { return std::nullopt; }
+					},
+					[&blocks](const std::function<void(ac::blockId, const std::string&)>& visit) {
+						for (uint32_t id : blocks.ids()) {
+							const ac::blockDefinition* definition = blocks.get(id);
+							if (definition)
+								visit(static_cast<ac::blockId>(id), definition->_name);
+						}
+					},
+					loadedAny);
+				if (!loaded)
+					throw std::runtime_error("No valid recipes loaded from " + recipePath.string());
+				loadedAny = true;
+			}
+			if (!loadedAny)
+				throw std::runtime_error("No content pack provides 'recipes'");
+		}
+
+		std::vector<std::string> reloadAreaNames() const {
+			std::vector<std::string> result = _contentPacks.kinds();
+			for (const ac::contentPack& pack : _contentPacks.ordered())
+				if (pack.entrypoints.wasm || pack.entrypoints.native) {
+					result.push_back("code");
+					break;
+				}
+			return result;
+		}
+
+		std::vector<std::string> resolveReloadAreas(
+			const std::vector<std::string>& arguments,
+			const ac::contentPackSet& packs
+		) const {
+			std::vector<std::string> available = packs.kinds();
+			for (const ac::contentPack& pack : packs.ordered())
+				if (pack.entrypoints.wasm || pack.entrypoints.native) {
+					available.push_back("code");
+					break;
+				}
+			std::unordered_map<std::string, std::string> canonical;
+			for (const std::string& area : available) {
+				std::string lower = area;
+				for (char& c : lower)
+					c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+				canonical.emplace(std::move(lower), area);
+			}
+			if (arguments.empty()) return available;
+
+			std::vector<std::string> result;
+			for (std::string argument : arguments) {
+				while (!argument.empty() && argument.back() == ',') argument.pop_back();
+				for (char& c : argument)
+					c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+				if (argument == "all") return available;
+				const auto found = canonical.find(argument);
+				if (found == canonical.end()) {
+					std::string message = "unknown reload area '" + argument + "'. available:";
+					for (const std::string& area : available) message += " " + area;
+					throw std::runtime_error(message);
+				}
+				if (std::find(result.begin(), result.end(), found->second) == result.end())
+					result.push_back(found->second);
+			}
+			return result;
+		}
+
+		void reloadResources(const std::vector<std::string>& arguments) {
+			ac::contentPackSet stagedPacks =
+				ac::contentPackSet::discover("assets/pack.json", "mods");
+			const std::vector<std::string> areas = resolveReloadAreas(arguments, stagedPacks);
+			const auto selected = [&areas](const char* area) {
+				return std::find(areas.begin(), areas.end(), area) != areas.end();
+			};
+			static const std::unordered_set<std::string> supported{
+				"models", "blocks", "recipes", "entities", "registries",
+				"terrainBlocks", "biomes", "code"
+			};
+			for (const std::string& area : areas)
+				if (!supported.contains(area))
+					throw std::runtime_error(
+						"reload area '" + area + "' is declared by pack.json but has no loader");
+
+			std::optional<ac::modelManager> stagedModels;
+			if (selected("models")) {
+				stagedModels.emplace();
+				for (const auto& [pack, path] : stagedPacks.paths("models")) {
+					(void)pack;
+					stagedModels->load(path.string());
+				}
+			}
+			ac::modelManager& candidateModels = stagedModels ? *stagedModels : _models;
+
+			std::optional<ac::staticAssetManager> stagedBlocks;
+			std::optional<ac::textureLibrary> stagedTextures;
+			std::optional<ac::blockTextureSet> stagedBlockTextures;
+			std::optional<ac::itemIconAtlas> stagedItemIcons;
+			if (selected("blocks")) {
+				stagedBlocks.emplace();
+				for (const auto& [pack, path] : stagedPacks.paths("blocks"))
+					stagedBlocks->load(path.string(), pack->id);
+				stagedBlocks->validateReferences(candidateModels);
+				ac::registerBlockStateVariants(*stagedBlocks);
+				for (uint32_t id : _blocks.ids()) {
+					if (stagedBlocks->persistentName(id) != _blocks.persistentName(id))
+						throw std::runtime_error(
+							"blocks reload changes or removes runtime id " + std::to_string(id) +
+							" ('" + _blocks.persistentName(id) + "')");
+				}
+				for (const auto& [alias, name] : APPLICATION_CONFIG.blockAliases) {
+					(void)alias;
+					stagedBlocks->getId(name);
+				}
+				stagedTextures.emplace();
+				stagedBlockTextures.emplace();
+				stagedBlockTextures->load(
+					_device, *stagedTextures, stagedBlocks->texturePaths());
+				stagedBlockTextures->loadEmissions(_device, *stagedBlocks);
+				stagedBlockTextures->loadMaterialProperties(_device, *stagedBlocks);
+				stagedBlockTextures->loadColormaps(
+					_device, *stagedTextures,
+					"assets/textures/colormap/grass.png",
+					"assets/textures/colormap/foliage.png");
+				stagedItemIcons.emplace();
+				stagedItemIcons->bake(
+					_device, _context, *stagedBlocks, candidateModels, *stagedBlockTextures);
+			}
+			else if (stagedModels) {
+				_blocks.validateReferences(candidateModels);
+			}
+			const ac::staticAssetManager& candidateBlocks = stagedBlocks ? *stagedBlocks : _blocks;
+			if (stagedModels && !stagedItemIcons) {
+				stagedItemIcons.emplace();
+				stagedItemIcons->bake(
+					_device, _context, _blocks, candidateModels, _blockTextures);
+			}
+
+			std::optional<ac::recipeBook> stagedRecipes;
+			if (selected("recipes")) {
+				stagedRecipes.emplace();
+				loadRecipesFromPacks(stagedPacks, candidateBlocks, *stagedRecipes);
+			}
+
+			std::unique_ptr<ac::livingEntitySystem> stagedEntities;
+			if (selected("entities")) {
+				std::vector<std::filesystem::path> files;
+				for (const auto& [pack, path] : stagedPacks.paths("entities")) {
+					(void)pack;
+					files.push_back(path);
+				}
+				if (files.empty())
+					throw std::runtime_error("No content pack provides 'entities'");
+				const bool gpuPaths = _livingEntities && _livingEntities->gpuEnabled();
+				stagedEntities = std::make_unique<ac::livingEntitySystem>(
+					_device, _context, files);
+				stagedEntities->setGpuEnabled(gpuPaths);
+			}
+
+			std::optional<ac::terrainBlockPalette> stagedTerrainBlocks;
+			std::optional<ac::terrainBiomeConfig> stagedBiomes;
+			if (selected("terrainBlocks"))
+				stagedTerrainBlocks = ac::terrainBlockPalette::load(
+					stagedPacks.singleton("terrainBlocks"), candidateBlocks);
+			if (selected("biomes"))
+				stagedBiomes = ac::terrainBiomeConfig::load(
+					stagedPacks.singleton("biomes"), candidateBlocks);
+
+			const bool geometryChanged = stagedModels.has_value() || stagedBlocks.has_value();
+			const bool worldGenerationChanged =
+				stagedTerrainBlocks.has_value() || stagedBiomes.has_value();
+			bool workersSuspended = false;
+			try {
+				if (geometryChanged || worldGenerationChanged) {
+					_streamer.suspendForResourceReload();
+					workersSuspended = true;
+				}
+				if (stagedModels) _models = std::move(*stagedModels);
+				if (stagedBlocks) {
+					_blocks = std::move(*stagedBlocks);
+					_textures = std::move(*stagedTextures);
+					_blockTextures = std::move(*stagedBlockTextures);
+					bindBlockAliases(_blocks);
+					_world.configureContentRegistry(_blocks);
+					if (const ac::blockDefinition* water = _blocks.get(ac::WATER_BLOCK_TYPE))
+						_waterMaterial = water->materialForFace(ac::BLOCK_FACE_UP);
+					rebuildChooserCatalog();
+				}
+				if (stagedItemIcons) _itemIcons = std::move(*stagedItemIcons);
+				if (stagedRecipes) _recipes = std::move(*stagedRecipes);
+				if (selected("entities")) _livingEntities = std::move(stagedEntities);
+				if (stagedTerrainBlocks || stagedBiomes) {
+					ac::terrainBlockPalette blocks = stagedTerrainBlocks
+						? std::move(*stagedTerrainBlocks) : _world.terrainBlocks();
+					ac::terrainBiomeConfig biomes = stagedBiomes
+						? std::move(*stagedBiomes) : _world.terrainBiomes();
+					_world.configureTerrain(std::move(blocks), std::move(biomes));
+				}
+				_contentPacks = std::move(stagedPacks);
+				if (selected("registries") || selected("code")) {
+					_modHost.stop();
+					_modHost.start(_contentPacks);
+				}
+				if (workersSuspended) {
+					_streamer.resumeAfterResourceReload(_context, stagedBlocks.has_value());
+					workersSuspended = false;
+				}
+			}
+			catch (...) {
+				if (workersSuspended)
+					_streamer.resumeAfterResourceReload(_context, stagedBlocks.has_value());
+				throw;
+			}
+
+			std::string message = "reloaded:";
+			for (const std::string& area : areas) message += " " + area;
+			pushConsoleMessage(message);
+			_modHost.events().publish(ac::modding::resourcesReloadedEvent{});
+		}
+
 		void applyConsoleTabComplete() {
 			std::string line = _consoleEditBuf.data();
 			while (!line.empty() && (line.front() == ' ' || line.front() == '\t'))
@@ -4660,7 +5070,8 @@ namespace {
 					}
 				}
 				else if (command == "give" || command == "gamemode" || command == "gm" ||
-					command == "time" || command == "weather" || command == "locate") {
+					command == "time" || command == "weather" || command == "locate" ||
+					command == "reload") {
 					if (command == "give") {
 						for (uint32_t id : _blocks.ids()) {
 							const ac::blockDefinition* definition = _blocks.get(id);
@@ -4712,6 +5123,19 @@ namespace {
 							}
 						}
 					}
+					else if (command == "reload") {
+						std::string areaNeedle = needle;
+						const size_t lastSpace = areaNeedle.find_last_of(" \t");
+						if (lastSpace != std::string::npos)
+							areaNeedle = areaNeedle.substr(lastSpace + 1);
+						for (const std::string& area : reloadAreaNames()) {
+							std::string lower = area;
+							for (char& c : lower)
+								c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+							if (areaNeedle.empty() || lower.rfind(areaNeedle, 0) == 0)
+								_consoleTabMatches.push_back(area);
+						}
+					}
 				}
 				std::sort(_consoleTabMatches.begin(), _consoleTabMatches.end());
 				_consoleTabMatches.erase(
@@ -4733,7 +5157,11 @@ namespace {
 			else {
 				const size_t firstSpace = line.find(' ');
 				const size_t secondSpace = line.find(' ', firstSpace + 1);
-				if (command == "locate" && secondSpace != std::string::npos)
+				if (command == "reload" && secondSpace != std::string::npos) {
+					const size_t lastSpace = line.find_last_of(" \t");
+					completed = line.substr(0, lastSpace + 1) + pick;
+				}
+				else if (command == "locate" && secondSpace != std::string::npos)
 					completed = line.substr(0, secondSpace + 1) + pick;
 				else
 					completed = line.substr(0, firstSpace + 1) + pick;
@@ -4787,6 +5215,13 @@ namespace {
 				return;
 			}
 
+			ac::modding::callbackCommandOutput modOutput([this](std::string_view message) {
+				pushConsoleMessage(std::string(message));
+			});
+			const ac::modding::commandExecution modCommand =
+				_modHost.commands().execute(trimmed, _modHost, modOutput);
+			if (modCommand != ac::modding::commandExecution::notFound) return;
+
 			std::istringstream stream(trimmed.substr(1));
 			std::string command;
 			stream >> command;
@@ -4802,8 +5237,21 @@ namespace {
 				pushConsoleMessage("/gamemode survival|creative|spectator");
 				pushConsoleMessage("/time day|night|noon|N  /weather clear|rain|storm|snow|auto");
 				pushConsoleMessage("/biome  /locate biome name");
-				pushConsoleMessage("/give id|name  /clear  /help");
+				pushConsoleMessage("/give id|name  /clear  /reload [area ...]  /help");
 				pushConsoleMessage("Q drop item, Ctrl+Q drop stack");
+				return;
+			}
+
+			if (command == "reload") {
+				std::vector<std::string> areas;
+				std::string area;
+				while (stream >> area) areas.push_back(std::move(area));
+				try {
+					reloadResources(areas);
+				}
+				catch (const std::exception& error) {
+					fail(std::string("reload failed: ") + error.what());
+				}
 				return;
 			}
 
@@ -4970,7 +5418,7 @@ namespace {
 				const auto& p = _player.getCamera()._gpuData._position;
 				const int32_t worldX = static_cast<int32_t>(std::floor(p.x));
 				const int32_t worldZ = static_cast<int32_t>(std::floor(p.z));
-				ac::TERRAIN_BIOME biome = ac::BIOME_PLAINS;
+				ac::TERRAIN_BIOME biome = _world.terrainBiomes().id("plains");
 				if (const ac::terrainGenerator* generator = _world.generator())
 					biome = generator->sampleBiome(worldX, worldZ)._biome;
 				char buffer[128];
@@ -5004,7 +5452,7 @@ namespace {
 					}
 					biomeToken = name;
 				}
-				ac::TERRAIN_BIOME want = ac::BIOME_PLAINS;
+				ac::TERRAIN_BIOME want = _world.terrainBiomes().id("plains");
 				if (!_world.terrainBiomes().parse(biomeToken.c_str(), want)) {
 					fail("unknown biome '" + biomeToken + "'");
 					return;
@@ -5042,7 +5490,7 @@ namespace {
 					return;
 				}
 				_hotbarBlocks[_selectedHotbarSlot] = *block;
-				_hotbarCounts[_selectedHotbarSlot] = ac::ITEM_MAX_STACK;
+				_hotbarCounts[_selectedHotbarSlot] = itemStackLimit(_hotbarBlocks[_selectedHotbarSlot]);
 				_selectedBlock = *block;
 				const ac::blockDefinition* definition = _blocks.get(*block);
 				pushConsoleMessage(
@@ -5085,6 +5533,11 @@ namespace {
 				returnCursorToInventory();
 				_blockEntities.save();
 			}
+			if (_screen == ac::gameScreen::furnace && leavingCurrent) {
+				endInventoryPaint();
+				returnCursorToInventory();
+				_blockEntities.save();
+			}
 			if (_screen == ac::gameScreen::inventory && leavingCurrent) {
 				endInventoryPaint();
 				dumpCraftGrid(_craft2Blocks.data(), _craft2Counts.data(), HUD_CRAFT2_SLOTS);
@@ -5101,7 +5554,7 @@ namespace {
 			_screen = screen;
 			_inventoryOpen =
 				screen == ac::gameScreen::inventory || screen == ac::gameScreen::chest ||
-				screen == ac::gameScreen::crafting;
+				screen == ac::gameScreen::crafting || screen == ac::gameScreen::furnace;
 			if (screen == ac::gameScreen::inventory && !isCreative())
 				_inventoryTab = inventoryTab::storage;
 			updateTextInput();
@@ -5184,6 +5637,7 @@ namespace {
 		void saveCurrentWorld(bool flushChunks = true) {
 			if (!_worldSessionOpen || !_world.isOpen())
 				return;
+			_modHost.events().publish(ac::modding::worldSavingEvent{});
 			capturePlayerState();
 			_items.saveToWorld(_world);
 			_blockEntities.save();
@@ -5196,9 +5650,11 @@ namespace {
 			_lastWorldPath = _world.path().string();
 			persistUserSettings();
 			_autosaveTimer = 0.0f;
+			_modHost.events().publish(ac::modding::worldSavedEvent{});
 		}
 
 		void resetPlayerForNewWorld() {
+			stopWeatherAudio();
 			_dayCycleIndex = 2;
 			_dayTimeSeconds = 600.0f;
 			_gameMode = ac::gameMode::survival;
@@ -5232,6 +5688,7 @@ namespace {
 			_blockEntities.setPath(_world.path());
 			_lastWorldPath = _world.path().string();
 			_worldSessionOpen = true;
+			_modHost.events().publish(ac::modding::worldOpenedEvent{ _world.seed() });
 			if (_livingEntities) _livingEntities->clear();
 			_autosaveTimer = 0.0f;
 			_voxelLightBuffer.update(_context, {
@@ -5270,6 +5727,7 @@ namespace {
 		}
 
 		void closeWorldToMenu() {
+			stopWeatherAudio();
 			saveCurrentWorld(true);
 			_streamer.unloadAllChunks(false);
 			_items.clear();
@@ -5277,6 +5735,7 @@ namespace {
 			_blockEntities.clearMemory();
 			_world.closeSession();
 			_worldSessionOpen = false;
+			_modHost.events().publish(ac::modding::worldClosedEvent{});
 			_spawnPending = false;
 			_restoredPlayerPendingValidation = false;
 			openWorldSelect();
@@ -5295,8 +5754,10 @@ namespace {
 
 		void loadExistingWorld(const std::filesystem::path& path) {
 			_worldMenuError.clear();
-			if (_worldSessionOpen)
+			if (_worldSessionOpen) {
 				saveCurrentWorld(true);
+				_modHost.events().publish(ac::modding::worldClosedEvent{});
+			}
 			_streamer.unloadAllChunks(false);
 			_items.clear();
 			if (_livingEntities) _livingEntities->clear();
@@ -5353,8 +5814,10 @@ namespace {
 				seed = static_cast<uint64_t>(parsed);
 			}
 
-			if (_worldSessionOpen)
+			if (_worldSessionOpen) {
 				saveCurrentWorld(true);
+				_modHost.events().publish(ac::modding::worldClosedEvent{});
+			}
 			_streamer.unloadAllChunks(false);
 			_items.clear();
 			if (_livingEntities) _livingEntities->clear();
@@ -5404,6 +5867,10 @@ namespace {
 
 
 		static constexpr int INV_TOTAL_SLOTS = HUD_INV_SLOTS + HUD_HOTBAR_COUNT;
+		uint32_t itemStackLimit(ac::blockId id) const {
+			const auto* definition = _blocks.get(ac::blockType(id));
+			return definition ? definition->maxStack() : ac::ITEM_MAX_STACK;
+		}
 
 		bool inventorySlotGet(int index, ac::blockId& id, uint32_t& count) const {
 			if (index < 0 || index >= INV_TOTAL_SLOTS) return false;
@@ -5425,7 +5892,7 @@ namespace {
 				id = 0;
 				count = 0;
 			}
-			count = (std::min)(count, ac::ITEM_MAX_STACK);
+			count = (std::min)(count, itemStackLimit(id));
 			if (index < HUD_INV_SLOTS) {
 				_inventoryBlocks[index] = id;
 				_inventoryCounts[index] = count;
@@ -5445,6 +5912,7 @@ namespace {
 		void setInventoryTab(inventoryTab tab) {
 			if (_inventoryTab == tab) return;
 			endInventoryPaint();
+			_chooserSearchFocus = false;
 			_inventoryTab = tab;
 			updateTextInput();
 		}
@@ -5516,11 +5984,13 @@ namespace {
 				return 6;
 			};
 			std::vector<std::pair<int, ac::blockId>> sorted;
+			std::unordered_set<std::string> seenNames;
 			for (uint32_t id : _blocks.ids()) {
 				if (id == 0) continue;
 				if (isInternalItemVariant(static_cast<ac::blockId>(id)))
 					continue;
 				const std::string name = _blocks.getName(id);
+				if (!seenNames.insert(name).second) continue;
 				sorted.push_back({ category(name), static_cast<ac::blockId>(id) });
 			}
 			std::sort(sorted.begin(), sorted.end(), [&](const auto& a, const auto& b) {
@@ -5560,21 +6030,22 @@ namespace {
 			if (id == 0 || count == 0) return 0;
 			uint32_t remaining = count;
 			inventorySlotSet(from, 0, 0);
+			const uint32_t limit = itemStackLimit(id);
 			for (int pass = 0; pass < 2 && remaining > 0; ++pass) {
 				for (int i = rangeBegin; i < rangeEnd && remaining > 0; ++i) {
 					ac::blockId slotId = 0;
 					uint32_t slotCount = 0;
 					inventorySlotGet(i, slotId, slotCount);
 					if (pass == 0) {
-						if (slotId != id || slotCount >= ac::ITEM_MAX_STACK) continue;
-						const uint32_t space = ac::ITEM_MAX_STACK - slotCount;
+						if (slotId != id || slotCount >= limit) continue;
+						const uint32_t space = limit - slotCount;
 						const uint32_t move = (std::min)(space, remaining);
 						inventorySlotSet(i, id, slotCount + move);
 						remaining -= move;
 					}
 					else {
 						if (slotId != 0) continue;
-						const uint32_t move = (std::min)(ac::ITEM_MAX_STACK, remaining);
+						const uint32_t move = (std::min)(limit, remaining);
 						inventorySlotSet(i, id, move);
 						remaining -= move;
 					}
@@ -5614,17 +6085,18 @@ namespace {
 
 		uint32_t addStackToChest(ac::chestInventory& inventory, ac::blockId id, uint32_t count) {
 			if (id == 0 || count == 0) return 0;
+			const uint32_t limit = itemStackLimit(id);
 			uint32_t remaining = count;
 			for (size_t i = 0; i < inventory.itemIds.size() && remaining > 0; ++i) {
-				if (inventory.itemIds[i] != id || inventory.counts[i] >= ac::ITEM_MAX_STACK)
+				if (inventory.itemIds[i] != id || inventory.counts[i] >= limit)
 					continue;
-				const uint32_t move = (std::min)(ac::ITEM_MAX_STACK - inventory.counts[i], remaining);
+				const uint32_t move = (std::min)(limit - inventory.counts[i], remaining);
 				inventory.counts[i] += move;
 				remaining -= move;
 			}
 			for (size_t i = 0; i < inventory.itemIds.size() && remaining > 0; ++i) {
 				if (inventory.itemIds[i] != 0) continue;
-				const uint32_t move = (std::min)(ac::ITEM_MAX_STACK, remaining);
+				const uint32_t move = (std::min)(limit, remaining);
 				inventory.itemIds[i] = id;
 				inventory.counts[i] = move;
 				remaining -= move;
@@ -5651,6 +6123,82 @@ namespace {
 				inventory.itemIds[index] = 0;
 		}
 
+		bool furnaceAccepts(int slot, ac::blockId id) const {
+			return id != 0 && (slot == ac::furnaceInventory::input ||
+				slot == ac::furnaceInventory::fuel);
+		}
+
+		uint32_t addStackToFurnace(ac::furnaceInventory& furnace, int slot,
+			ac::blockId id, uint32_t count) {
+			if (!furnaceAccepts(slot, id) || count == 0) return 0;
+			const size_t i = static_cast<size_t>(slot);
+			if (furnace.itemIds[i] != 0 && furnace.itemIds[i] != id) return 0;
+			const uint32_t space = itemStackLimit(id) > furnace.counts[i]
+				? itemStackLimit(id) - furnace.counts[i] : 0u;
+			const uint32_t moved = (std::min)(space, count);
+			if (moved) {
+				furnace.itemIds[i] = id;
+				furnace.counts[i] += moved;
+			}
+			return moved;
+		}
+
+		void shiftTransferInventoryToFurnace(ac::furnaceInventory& furnace, int index) {
+			ac::blockId id = 0;
+			uint32_t count = 0;
+			if (!inventorySlotGet(index, id, count) || id == 0 || count == 0) return;
+			int slot = _recipes.fuelSeconds(id) > 0.0f && !_recipes.smelting(id)
+				? ac::furnaceInventory::fuel : ac::furnaceInventory::input;
+			const uint32_t moved = addStackToFurnace(furnace, slot, id, count);
+			inventorySlotSet(index, id, count - moved);
+		}
+
+		void shiftTransferFurnaceToInventory(ac::furnaceInventory& furnace, int slot) {
+			if (slot < 0 || slot >= 3) return;
+			const ac::blockId id = static_cast<ac::blockId>(furnace.itemIds[slot]);
+			const uint32_t count = furnace.counts[slot];
+			const uint32_t moved = addToHotbar(id, count);
+			furnace.counts[slot] -= moved;
+			if (furnace.counts[slot] == 0) furnace.itemIds[slot] = 0;
+		}
+
+		void furnaceSlotClick(ac::furnaceInventory& furnace, int slot, bool rightClick) {
+			if (slot < 0 || slot >= 3) return;
+			if (inventoryShiftHeld() && _cursorItem == 0) {
+				shiftTransferFurnaceToInventory(furnace, slot);
+				playUiClick();
+				return;
+			}
+			const size_t i = static_cast<size_t>(slot);
+			ac::blockId id = static_cast<ac::blockId>(furnace.itemIds[i]);
+			uint32_t count = furnace.counts[i];
+			if (_cursorItem == 0) {
+				if (id == 0 || count == 0) return;
+				const uint32_t take = rightClick ? (count + 1u) / 2u : count;
+				_cursorItem = id;
+				_cursorCount = take;
+				furnace.counts[i] -= take;
+				if (furnace.counts[i] == 0) furnace.itemIds[i] = 0;
+				playUiClick();
+				return;
+			}
+			if (slot == ac::furnaceInventory::output || !furnaceAccepts(slot, _cursorItem)) return;
+			if (id != 0 && id != _cursorItem) {
+				if (rightClick) return;
+				const ac::blockId cursor = _cursorItem;
+				_cursorItem = static_cast<ac::blockId>(furnace.itemIds[i]);
+				furnace.itemIds[i] = cursor;
+				std::swap(furnace.counts[i], _cursorCount);
+			}
+			else {
+				const uint32_t move = rightClick ? 1u : _cursorCount;
+				const uint32_t added = addStackToFurnace(furnace, slot, _cursorItem, move);
+				_cursorCount -= added;
+				if (_cursorCount == 0) _cursorItem = 0;
+			}
+			playUiClick();
+		}
+
 		void gatherInventoryItem(int target) {
 			ac::blockId slotId = 0;
 			uint32_t slotCount = 0;
@@ -5663,10 +6211,10 @@ namespace {
 				_cursorCount = slotCount;
 				inventorySlotSet(target, 0, 0);
 			}
-			for (int i = 0; i < INV_TOTAL_SLOTS && _cursorCount < ac::ITEM_MAX_STACK; ++i) {
+			for (int i = 0; i < INV_TOTAL_SLOTS && _cursorCount < itemStackLimit(id); ++i) {
 				inventorySlotGet(i, slotId, slotCount);
 				if (slotId != id || slotCount == 0) continue;
-				const uint32_t move = (std::min)(ac::ITEM_MAX_STACK - _cursorCount, slotCount);
+				const uint32_t move = (std::min)(itemStackLimit(id) - _cursorCount, slotCount);
 				_cursorCount += move;
 				inventorySlotSet(i, slotId, slotCount - move);
 			}
@@ -5685,8 +6233,8 @@ namespace {
 				_cursorItem = 0;
 			else {
 				for (int i = 0; i < HUD_INV_SLOTS && _cursorCount > 0; ++i) {
-					if (_inventoryBlocks[i] == _cursorItem && _inventoryCounts[i] < ac::ITEM_MAX_STACK) {
-						const uint32_t space = ac::ITEM_MAX_STACK - _inventoryCounts[i];
+					if (_inventoryBlocks[i] == _cursorItem && _inventoryCounts[i] < itemStackLimit(_cursorItem)) {
+						const uint32_t space = itemStackLimit(_cursorItem) - _inventoryCounts[i];
 						const uint32_t move = (std::min)(space, _cursorCount);
 						_inventoryCounts[i] += move;
 						_cursorCount -= move;
@@ -5694,7 +6242,7 @@ namespace {
 				}
 				for (int i = 0; i < HUD_INV_SLOTS && _cursorCount > 0; ++i) {
 					if (_inventoryBlocks[i] == 0) {
-						const uint32_t move = (std::min)(ac::ITEM_MAX_STACK, _cursorCount);
+						const uint32_t move = (std::min)(itemStackLimit(_cursorItem), _cursorCount);
 						_inventoryBlocks[i] = _cursorItem;
 						_inventoryCounts[i] = move;
 						_cursorCount -= move;
@@ -5749,7 +6297,7 @@ namespace {
 					ac::blockId slotId = 0;
 					uint32_t slotCount = 0;
 					inventorySlotGet(index, slotId, slotCount);
-					if (slotId == id && slotCount >= ac::ITEM_MAX_STACK) continue;
+					if (slotId == id && slotCount >= itemStackLimit(id)) continue;
 					if (slotId == 0)
 						inventorySlotSet(index, id, 1);
 					else
@@ -5769,7 +6317,8 @@ namespace {
 				inventorySlotGet(index, slotId, slotCount);
 				uint32_t add = each + (remain > 0 ? 1u : 0u);
 				if (remain > 0) --remain;
-				const uint32_t space = ac::ITEM_MAX_STACK - (slotId == id ? slotCount : 0u);
+				const uint32_t space = itemStackLimit(id) > (slotId == id ? slotCount : 0u)
+					? itemStackLimit(id) - (slotId == id ? slotCount : 0u) : 0u;
 				add = (std::min)(add, space);
 				if (slotId == 0)
 					inventorySlotSet(index, id, add);
@@ -5822,24 +6371,24 @@ namespace {
 			const ac::blockId id = chooserCatalogAt(visibleSlot);
 			if (id == 0) return;
 			if (inventoryShiftHeld()) {
-				uint32_t remaining = single ? 1u : ac::ITEM_MAX_STACK;
+				uint32_t remaining = single ? 1u : itemStackLimit(id);
 				remaining -= addToHotbar(id, remaining);
 				playUiClick();
 				return;
 			}
 			if (_cursorItem != 0 && _cursorItem != id) {
 				_cursorItem = id;
-				_cursorCount = single ? 1u : ac::ITEM_MAX_STACK;
+				_cursorCount = single ? 1u : itemStackLimit(id);
 			}
 			else if (_cursorItem == id) {
 				if (single)
-					_cursorCount = (std::min)(_cursorCount + 1u, ac::ITEM_MAX_STACK);
+					_cursorCount = (std::min)(_cursorCount + 1u, itemStackLimit(id));
 				else
-					_cursorCount = ac::ITEM_MAX_STACK;
+					_cursorCount = itemStackLimit(id);
 			}
 			else {
 				_cursorItem = id;
-				_cursorCount = single ? 1u : ac::ITEM_MAX_STACK;
+				_cursorCount = single ? 1u : itemStackLimit(id);
 			}
 			playUiClick();
 		}
@@ -6122,6 +6671,12 @@ namespace {
 					shiftTransferInventoryToChest(chest, index);
 					playUiClick();
 				}
+				else if (click == 1 && _screen == ac::gameScreen::furnace && inventoryShiftHeld()) {
+					ac::furnaceInventory& furnace = _blockEntities.furnaceAt(
+						_openFurnaceBlock.x, _openFurnaceBlock.y, _openFurnaceBlock.z);
+					shiftTransferInventoryToFurnace(furnace, index);
+					playUiClick();
+				}
 				else if (click == 1) inventoryLeftClick(index);
 				else if (click == 2) inventoryRightClick(index);
 				if (hovered && _inventoryPaintActive)
@@ -6146,7 +6701,8 @@ namespace {
 							playUiClick();
 						}
 					} else if (!id || id == _cursorItem) {
-						const uint32_t space = id ? (ac::ITEM_MAX_STACK - c) : ac::ITEM_MAX_STACK;
+						const uint32_t limit = itemStackLimit(_cursorItem);
+						const uint32_t space = limit > c ? limit - c : 0u;
 						const uint32_t move = (std::min)(space, _cursorCount);
 						if (move) {
 							inventory.itemIds[i] = _cursorItem;
@@ -6172,7 +6728,7 @@ namespace {
 							if (inventory.counts[i] == 0) inventory.itemIds[i] = 0;
 							playUiClick();
 						}
-					} else if ((!id || id == _cursorItem) && c < ac::ITEM_MAX_STACK) {
+				} else if ((!id || id == _cursorItem) && c < itemStackLimit(_cursorItem)) {
 						inventory.itemIds[i] = _cursorItem;
 						inventory.counts[i] = c + 1;
 						if (--_cursorCount == 0) _cursorItem = 0;
@@ -6237,9 +6793,7 @@ namespace {
 
 					const struct nk_rect searchRect = nk_rect(
 						ox + 82.0f * scale, oy + 6.0f * scale, 89.0f * scale, 14.0f * scale);
-					const bool searchHover = nk_input_is_mouse_hovering_rect(&ctx->input, searchRect) != 0;
-					if (nk_input_is_mouse_pressed(&ctx->input, NK_BUTTON_LEFT))
-						_chooserSearchFocus = searchHover;
+					_chooserSearchRect = searchRect;
 					if (_chooserSearchFocus) {
 						if (nk_input_is_key_pressed(&ctx->input, NK_KEY_BACKSPACE) ||
 							nk_input_is_key_pressed(&ctx->input, NK_KEY_DEL)) {
@@ -6253,7 +6807,7 @@ namespace {
 							size_t n = std::strlen(_chooserSearchBuf.data());
 							for (int i = 0; i < ctx->input.keyboard.text_len && n + 1 < _chooserSearchBuf.size(); ++i) {
 								const char ch = ctx->input.keyboard.text[i];
-								if (ch >= 32 && ch != '`')
+								if (ch >= 32)
 									_chooserSearchBuf[n++] = ch;
 							}
 							_chooserSearchBuf[n] = 0;
@@ -6262,12 +6816,18 @@ namespace {
 					}
 					if (canvas) {
 						const char* query = _chooserSearchBuf.data();
+						nk_fill_rect(canvas, searchRect, 1.0f,
+							_chooserSearchFocus ? nk_rgb(242, 242, 242) : nk_rgb(224, 224, 224));
+						nk_stroke_rect(canvas, searchRect, 0, 1.0f,
+							_chooserSearchFocus ? nk_rgb(45, 85, 160) : nk_rgb(85, 85, 85));
 						if (query && query[0]) {
 							nk_draw_text(canvas, searchRect, query, (int)std::strlen(query),
 								ctx->style.font, nk_rgba(0, 0, 0, 0), nk_rgb(32, 32, 32));
 						}
-						else if (_chooserSearchFocus) {
-							nk_stroke_rect(canvas, searchRect, 0, 1.0f, nk_rgb(40, 40, 40));
+						else {
+							const char* placeholder = "Search items...";
+							nk_draw_text(canvas, searchRect, placeholder, (int)std::strlen(placeholder),
+								ctx->style.font, nk_rgba(0, 0, 0, 0), nk_rgb(105, 105, 105));
 						}
 					}
 
@@ -6459,6 +7019,57 @@ namespace {
 							_hotbarBlocks[i], _hotbarCounts[i], &hovered);
 						if (hovered && _hotbarBlocks[i] != 0)
 							hoveredItem = _hotbarBlocks[i];
+						handleInvSlot(HUD_INV_SLOTS + i, click, hovered);
+					}
+				}
+				else if (_screen == ac::gameScreen::furnace) {
+					drawGuiPanel(canvas, _guiFurnace, ox, oy, scale, 0, 0, 176, 166);
+					ac::furnaceInventory& furnace = _blockEntities.furnaceAt(
+						_openFurnaceBlock.x, _openFurnaceBlock.y, _openFurnaceBlock.z);
+					static const int furnacePos[3][2] = { {56,17}, {56,53}, {116,35} };
+					for (int i = 0; i < 3; ++i) {
+						const float sx = ox + static_cast<float>(furnacePos[i][0]) * scale;
+						const float sy = oy + static_cast<float>(furnacePos[i][1]) * scale;
+						bool hovered = false;
+						const ac::blockId item = static_cast<ac::blockId>(furnace.itemIds[i]);
+						const int click = drawItemSlotAbs(ctx, sx, sy, slotPx, 9400 + i,
+							item, furnace.counts[i], &hovered);
+						if (hovered && item != 0) hoveredItem = item;
+						if (click == 1 || click == 2) furnaceSlotClick(furnace, i, click == 2);
+					}
+					if (canvas) {
+						const float burn = furnace.burnTotal > 0.0f
+							? std::clamp(furnace.burnRemaining / furnace.burnTotal, 0.0f, 1.0f) : 0.0f;
+						const ac::smeltingRecipe* recipe = _recipes.smelting(
+							static_cast<ac::blockId>(furnace.itemIds[ac::furnaceInventory::input]));
+						const float progress = recipe && recipe->seconds > 0.0f
+							? std::clamp(furnace.cookProgress / recipe->seconds, 0.0f, 1.0f) : 0.0f;
+						if (burn > 0.0f)
+							nk_fill_rect(canvas, nk_rect(ox + 57.0f * scale,
+								oy + (50.0f - 13.0f * burn) * scale, 14.0f * scale,
+								13.0f * burn * scale), 0, nk_rgb(255, 144, 32));
+						if (progress > 0.0f)
+							nk_fill_rect(canvas, nk_rect(ox + 79.0f * scale, oy + 34.0f * scale,
+								24.0f * progress * scale, 16.0f * scale), 0, nk_rgb(224, 224, 224));
+					}
+					for (int i = 0; i < HUD_INV_SLOTS; ++i) {
+						bool hovered = false;
+						const int col = i % HUD_INV_COLUMNS;
+						const int row = i / HUD_INV_COLUMNS;
+						const float sx = ox + (8.0f + static_cast<float>(col) * 18.0f) * scale;
+						const float sy = oy + (84.0f + static_cast<float>(row) * 18.0f) * scale;
+						const int click = drawItemSlotAbs(ctx, sx, sy, slotPx, 4000 + i,
+							_inventoryBlocks[i], _inventoryCounts[i], &hovered);
+						if (hovered && _inventoryBlocks[i] != 0) hoveredItem = _inventoryBlocks[i];
+						handleInvSlot(i, click, hovered);
+					}
+					for (int i = 0; i < HUD_HOTBAR_COUNT; ++i) {
+						bool hovered = false;
+						const float sx = ox + (8.0f + static_cast<float>(i) * 18.0f) * scale;
+						const float sy = oy + 142.0f * scale;
+						const int click = drawItemSlotAbs(ctx, sx, sy, slotPx, 5000 + i,
+							_hotbarBlocks[i], _hotbarCounts[i], &hovered);
+						if (hovered && _hotbarBlocks[i] != 0) hoveredItem = _hotbarBlocks[i];
 						handleInvSlot(HUD_INV_SLOTS + i, click, hovered);
 					}
 				}
@@ -6988,7 +7599,8 @@ namespace {
 
 			if (_screen == ac::gameScreen::inventory ||
 				_screen == ac::gameScreen::crafting ||
-				_screen == ac::gameScreen::chest) {
+				_screen == ac::gameScreen::chest ||
+				_screen == ac::gameScreen::furnace) {
 				drawContainerGui(ctx, winW, winH);
 			}
 		}
@@ -6998,6 +7610,7 @@ namespace {
 			dx::XMINT3 block{};
 			dx::XMINT3 adjacent{};
 			ac::blockId id = 0;
+			float distance = 0.0f;
 		};
 
 		std::optional<blockRayHit> raycastBlock(float reach = 5.0f) const {
@@ -7070,7 +7683,7 @@ namespace {
 							}
 						}
 						if (hitShape)
-							return blockRayHit{ cell, previous, id };
+							return blockRayHit{ cell, previous, id, bestT };
 					}
 				}
 
@@ -7113,16 +7726,27 @@ namespace {
 				? std::optional<blockRayHit>{ blockRayHit{
 					_renderedTargetBlock,
 					_renderedTargetAdjacent,
-					_renderedTargetId
+					_renderedTargetId,
+					_renderedTargetDistance
 				} }
 				: raycastBlock();
+			const dx::XMFLOAT3 interactionOrigin = _player.getCamera()._gpuData._position;
+			const dx::XMFLOAT3 interactionDirection = _player.getLookDirection();
+			const std::optional<ac::entityRayHit> entityHit = _livingEntities
+				? _livingEntities->raycast(interactionOrigin, interactionDirection, 5.0f)
+				: std::nullopt;
+			const bool entityIsClosest = entityHit && (!hit || entityHit->distance < hit->distance);
 
 			const bool lmbDown = _uiInput.mouseDown(GLFW_MOUSE_BUTTON_LEFT);
 			const bool lmbPressed = _uiInput.mousePressed(GLFW_MOUSE_BUTTON_LEFT);
 			const bool rmbPressed = _uiInput.mousePressed(GLFW_MOUSE_BUTTON_RIGHT);
 			const bool rmbDown = _uiInput.mouseDown(GLFW_MOUSE_BUTTON_RIGHT);
-			const bool holdingTool = ac::heldItemStyleFor(
-				selectedItemDef(), _hotbarCounts[_selectedHotbarSlot]) == ac::heldItemStyle::tool;
+			const ac::heldItemStyle heldStyle = ac::heldItemStyleFor(
+				selectedItemDef(), _hotbarCounts[_selectedHotbarSlot]);
+			// Swords slash immediately; axes and the other mining tools retain their
+			// short pickup into the raised/tool-ready pose.
+			const bool holdingTool = heldStyle == ac::heldItemStyle::tool ||
+				heldStyle == ac::heldItemStyle::axe;
 
 			bool pickupJustFinished = false;
 			if (!lmbDown) {
@@ -7154,7 +7778,49 @@ namespace {
 
 			const bool waitingPickup = holdingTool && _toolPickupRemaining > 0.0f;
 
-			if (lmbDown && hit && !isSpectator()) {
+			const bool strikeEntity = entityIsClosest && !isSpectator() &&
+				((!holdingTool && lmbPressed) || pickupJustFinished);
+			if (strikeEntity && _livingEntities) {
+				const float damage = heldEntityDamage();
+				const float knockback = heldEntityKnockback();
+				const ac::blockDefinition* weapon = selectedItemDef();
+				const bool swordSweep = weapon && weapon->heldStyle() == ac::heldItemStyle::sword;
+				const auto targetPosition = _livingEntities->entity(entityHit->entityIndex)->position;
+				const bool hitPrimary = _livingEntities->damage(entityHit->entityIndex, damage,
+					interactionDirection, knockback);
+				if (hitPrimary) {
+					_audio.playHurt(ac::soundPos::at(targetPosition.x, targetPosition.y + 0.9f,
+						targetPosition.z));
+					_particles.emitBurst({ targetPosition.x, targetPosition.y + 0.9f, targetPosition.z },
+						{ 0.95f, 0.21f, 0.16f, 0.9f }, 10, 2.0f, 0.34f, 0.07f);
+				}
+				if (hitPrimary && swordSweep) {
+					const dx::XMFLOAT3 sweepOrigin{
+						interactionOrigin.x,
+						interactionOrigin.y - _player.collisionBox().feetBelowEye,
+						interactionOrigin.z
+					};
+					const size_t swept = _livingEntities->damageInArc(
+						sweepOrigin, interactionDirection, 3.15f, 0.42f,
+						(std::max)(1.0f, damage * 0.35f), knockback * 0.72f,
+						[this](int32_t x, int32_t y, int32_t z) { return solidBlock(x, y, z); });
+					if (swept > 0) {
+						_particles.emitBurst(
+							{ sweepOrigin.x + interactionDirection.x * 1.45f,
+							  sweepOrigin.y + 1.05f,
+							  sweepOrigin.z + interactionDirection.z * 1.45f },
+							{ 0.86f, 0.90f, 0.96f, 0.9f }, 12, 2.8f, 0.30f, 0.075f);
+					}
+				}
+				if (hitPrimary)
+					addExhaustion(0.1f);
+				cancelBreak();
+			}
+
+			if (lmbDown && entityIsClosest) {
+				cancelBreak();
+			}
+			else if (lmbDown && hit && !isSpectator()) {
 				const dx::XMINT3 block = hit->block;
 				const ac::blockId brokenId = hit->id;
 				const ac::blockId brokenType = ac::blockType(brokenId);
@@ -7206,6 +7872,23 @@ namespace {
 				return;
 			if (!rmbPressed)
 				return;
+			if (entityIsClosest && _livingEntities && !isSpectator()) {
+				_dynamicRenderer.triggerUseAnimation(_playerEntity);
+				const ac::blockDefinition* held = selectedItemDef();
+				const ac::livingEntity* target = _livingEntities->entity(entityHit->entityIndex);
+				const dx::XMFLOAT3 dropPosition = target ? target->position : dx::XMFLOAT3{};
+				if (held && held->_name == "shears" &&
+					_livingEntities->shear(entityHit->entityIndex)) {
+					const ac::blockId wool = _blocks.getId("white_wool");
+					spawnItemDrop(wool, 2u,
+						dropPosition.x, dropPosition.y + 0.55f, dropPosition.z,
+						0.0f, 1.2f, 0.0f, 0.35f);
+					_audio.play(ac::soundId::uiClick,
+						ac::soundPos::at(dropPosition.x, dropPosition.y + 0.6f, dropPosition.z, 16.0f),
+						0.75f);
+				}
+				return;
+			}
 			if (!hit) {
 				if (updateEating(dt, true))
 					return;
@@ -7250,6 +7933,19 @@ namespace {
 					});
 					return;
 				}
+				if (effectiveUse(targetDef) == ac::blockUseBehavior::configureDiode) {
+					const dx::XMINT3 block = hit->block;
+					_audio.play(ac::soundId::uiClick, ac::soundPos::block(block.x, block.y, block.z, 12.0f), 0.7f);
+					_server.schedule([this, block]() {
+						const auto state = _streamer.blockAt(block.x, block.y, block.z);
+						if (!ac::isDiode(state)) return;
+						const auto next = ac::blockType(state) == ac::BLOCK_REPEATER
+							? ac::withRepeaterDelay(state, ac::repeaterDelay(state) % 4u + 1u)
+							: state ^ (1u << 28u);
+						_streamer.setBlock(block.x, block.y, block.z, next, _device, _context);
+					});
+					return;
+				}
 				if (effectiveUse(targetDef) == ac::blockUseBehavior::togglePowered) {
 					const dx::XMINT3 block = hit->block;
 					const ac::blockId next = ac::withBlockPowered(
@@ -7283,6 +7979,13 @@ namespace {
 					_audio.play(ac::soundId::chestOpen,
 						ac::soundPos::block(hit->block.x, hit->block.y, hit->block.z, 20.0f));
 					setScreen(ac::gameScreen::chest);
+					return;
+				}
+				if (targetType == BLOCK_FURNACE || targetType == BLOCK_BLAST_FURNACE ||
+					targetType == BLOCK_FURNACE_LIT || targetType == BLOCK_BLAST_FURNACE_LIT) {
+					_openFurnaceBlock = hit->block;
+					_blockEntities.furnaceAt(hit->block.x, hit->block.y, hit->block.z);
+					setScreen(ac::gameScreen::furnace);
 					return;
 				}
 				if (effectiveUse(targetDef) == ac::blockUseBehavior::crafting ||
@@ -7322,6 +8025,11 @@ namespace {
 					const ac::blockPlacementBehavior placement = effectivePlacement(placing);
 					const dx::XMFLOAT3 eye = _player.getCamera()._gpuData._position;
 					ac::blockId oriented = block;
+					if (ac::isDiode(block)) {
+						const auto below = _streamer.blockAt(adjacent.x, adjacent.y - 1, adjacent.z);
+						const auto* supportDefinition = _blocks.get(ac::blockType(below));
+						if (!supportDefinition || !supportDefinition->_solid || !supportDefinition->_occludes) return;
+					}
 					if (ac::isRedstoneWire(block)) {
 						oriented = ac::withFacing(block, lookFacing);
 					}
@@ -7412,6 +8120,11 @@ namespace {
 					if (_streamer.setBlock(adjacent.x, adjacent.y, adjacent.z, oriented, _device, _context)) {
 						if (usesChestEntity(placing))
 							_blockEntities.chestAt(adjacent.x, adjacent.y, adjacent.z);
+						else if (ac::blockType(oriented) == BLOCK_FURNACE ||
+							ac::blockType(oriented) == BLOCK_BLAST_FURNACE ||
+							ac::blockType(oriented) == BLOCK_FURNACE_LIT ||
+							ac::blockType(oriented) == BLOCK_BLAST_FURNACE_LIT)
+							_blockEntities.furnaceAt(adjacent.x, adjacent.y, adjacent.z);
 						emitBlockBurst(adjacent, block, 14, 2.2f);
 						_audio.playPlace(materialForBlock(block),
 							ac::soundPos::block(adjacent.x, adjacent.y, adjacent.z, 24.0f));
@@ -7586,7 +8299,8 @@ namespace {
 		void updateHudInput() {
 			// Hotbar selection only — all panels are drawn with Nuklear.
 			for (int slot = 0; slot < HUD_HOTBAR_COUNT; ++slot) {
-				if (_window.getKeyPress(GLFW_KEY_1 + slot))
+				if (!(_screen == ac::gameScreen::inventory && _chooserSearchFocus) &&
+					_window.getKeyPress(GLFW_KEY_1 + slot))
 					_selectedHotbarSlot = slot;
 			}
 			if (_screen == ac::gameScreen::playing) {
@@ -7601,7 +8315,8 @@ namespace {
 			_selectedBlock = _hotbarBlocks[_selectedHotbarSlot];
 			if (_screen != ac::gameScreen::inventory &&
 				_screen != ac::gameScreen::chest &&
-				_screen != ac::gameScreen::crafting)
+				_screen != ac::gameScreen::crafting &&
+				_screen != ac::gameScreen::furnace)
 				endInventoryPaint();
 		}
 
@@ -7692,12 +8407,17 @@ namespace {
 			}
 
 			if (_uiInput.keyPressed(GLFW_KEY_ESCAPE)) {
-				if (_screen == ac::gameScreen::inventory) {
+				if (_screen == ac::gameScreen::inventory && _chooserSearchFocus) {
+					_chooserSearchFocus = false;
+					suppressWorldClick = true;
+				}
+				else if (_screen == ac::gameScreen::inventory) {
 					setInventoryOpen(false);
 					suppressWorldClick = true;
 				}
 				else if (_screen == ac::gameScreen::chest ||
 					_screen == ac::gameScreen::crafting ||
+					_screen == ac::gameScreen::furnace ||
 					_screen == ac::gameScreen::console) {
 					if (_screen == ac::gameScreen::console)
 						closeConsole();
@@ -7730,9 +8450,15 @@ namespace {
 					suppressWorldClick = true;
 				}
 			}
+			else if (_screen == ac::gameScreen::inventory && _chooserSearchFocus) {
+				// Text editing owns the keyboard until Escape or an outside click.
+				// Consume shortcut edges now so they cannot fire after focus leaves.
+				suppressWorldClick = true;
+			}
 			else if ((_screen == ac::gameScreen::inventory ||
 				_screen == ac::gameScreen::crafting ||
-				_screen == ac::gameScreen::chest) && _uiInput.keyPressed(GLFW_KEY_E)) {
+				_screen == ac::gameScreen::chest ||
+				_screen == ac::gameScreen::furnace) && _uiInput.keyPressed(GLFW_KEY_E)) {
 				setInventoryOpen(false);
 				suppressWorldClick = true;
 			}
@@ -7796,9 +8522,35 @@ namespace {
 			}
 
 			if (!freezeSimulation) {
+				_blockEntities.updateFurnaces(
+					frame.deltaTime,
+					[this](uint32_t input, uint32_t& result, uint32_t& count, float& seconds) {
+						const ac::smeltingRecipe* recipe = _recipes.smelting(static_cast<ac::blockId>(input));
+						if (!recipe) return false;
+						result = recipe->result;
+						count = recipe->resultCount;
+						seconds = recipe->seconds;
+						return true;
+					},
+					[this](uint32_t fuel) { return _recipes.fuelSeconds(static_cast<ac::blockId>(fuel)); },
+					[this](const ac::blockPosKey& position, bool burning) {
+						const ac::blockId state = _streamer.blockAt(position.x, position.y, position.z);
+						const ac::blockId type = ac::blockType(state);
+						ac::blockId wanted = 0;
+						if (type == BLOCK_FURNACE || type == BLOCK_FURNACE_LIT)
+							wanted = burning ? BLOCK_FURNACE_LIT : BLOCK_FURNACE;
+						else if (type == BLOCK_BLAST_FURNACE || type == BLOCK_BLAST_FURNACE_LIT)
+							wanted = burning ? BLOCK_BLAST_FURNACE_LIT : BLOCK_BLAST_FURNACE;
+						if (wanted != 0 && wanted != type) {
+							const ac::blockId next = wanted | (state & ~ac::BLOCK_TYPE_MASK);
+							_streamer.setBlock(position.x, position.y, position.z,
+								next, _device, _context, true, true);
+						}
+					});
 				_server.submitInput(captureServerInput());
 				_server.advance(frame.deltaTime,
 					[this](const ac::serverStep& step, const ac::serverInput& input) {
+						_modHost.publishTick(step.tick, step.subtick, step.deltaTime);
 						if (!_spawnPending) {
 							_player.update(
 								input,
@@ -7895,7 +8647,16 @@ namespace {
 				_livingEntities->update(
 					frame.deltaTime,
 					feet,
-					[this](int32_t x, int32_t y, int32_t z) { return solidBlock(x, y, z); });
+					[this](int32_t x, int32_t y, int32_t z) { return solidBlock(x, y, z); },
+					[this](const ac::livingEntity& attacker, float damage, float knockback) {
+						if (!applyPlayerDamage(damage)) return;
+						const dx::XMFLOAT3 eye = _player.getCamera()._gpuData._position;
+						float dx = eye.x - attacker.position.x;
+						float dz = eye.z - attacker.position.z;
+						const float length = std::sqrt(dx * dx + dz * dz);
+						if (length > 0.0001f) { dx /= length; dz /= length; }
+						_player.addVelocity({ dx * knockback, 2.15f, dz * knockback });
+					});
 			}
 
 			if (_screen == ac::gameScreen::playing && !_spectatorMode) {
@@ -8089,12 +8850,30 @@ namespace {
 			_blockTextures.bind(_context);
 
 			const dx::XMFLOAT3 playerEye = _player.getCamera()._gpuData._position;
-			const float crouchEyeOffset = 0.0f;
+			const float crouchBlend = std::clamp(_player.crouchBlend(), 0.0f, 1.0f);
+			const ac::playerCollisionBox physicalBox = _player.collisionBox();
+			const auto& crouchPose = ac::playerPose().crouch;
+			const auto& cameraPose = ac::playerPose().camera;
+			const float hipPivotY = cameraPose.hipPivotY;
+			const float standingEyeHeight = ac::standingPlayerBox().feetBelowEye;
+			const float crouchAngle = crouchPose.torsoPitch * crouchBlend;
+			// Follow the same hip-centred transform as the rendered torso/head. The
+			// collision eye sits lower than the model's eyes in a crouch, which was
+			// making the first-person camera look out through the chest.
+			const float visualFeetBelowEye = hipPivotY +
+				(standingEyeHeight - hipPivotY) * std::cos(crouchAngle) +
+				crouchPose.upperBodyY * crouchBlend;
+			const float swimKeep = 1.0f - std::clamp(_player.swimBlend(), 0.0f, 1.0f);
+			_crouchCameraOffset = (visualFeetBelowEye - physicalBox.feetBelowEye) * swimKeep;
+				const float crouchEyeOffset = _crouchCameraOffset;
+			const dx::XMFLOAT3 look = _player.getLookDirection();
+			const float sneakForward = crouchBlend * cameraPose.crouchForwardOffset *
+				(!_spectatorMode && _cameraMode == 0u ? 1.0f : 0.0f);
 			const float dt = (std::max)(frame.deltaTime, .0001f);
 			const dx::XMFLOAT3 velocity = _player.getVelocity();
 			const float horizontalSpeed = std::sqrt(velocity.x * velocity.x + velocity.z * velocity.z);
 			const float groundedMotion = (!_spectatorMode && _player.isGrounded())
-				? (std::min)(horizontalSpeed / 5.0f, 1.0f)
+				? (std::min)(horizontalSpeed / cameraPose.motionReferenceSpeed, 1.0f)
 				: 0.0f;
 			const auto& walkPose = ac::playerPose().walk;
 			const float cameraStride = _player.isCrouching()
@@ -8104,34 +8883,34 @@ namespace {
 			// third-person limbs instead of running a faster independent oscillator.
 			_walkBobPhase += dt * horizontalSpeed * cameraStride * dx::XM_2PI;
 			const float walkBobY = (!_spectatorMode && _cameraMode == 0u)
-				? std::sin(_walkBobPhase) * 0.045f * groundedMotion
+				? std::sin(_walkBobPhase) * cameraPose.walkBobY * groundedMotion
 				: 0.0f;
 			const float walkBobRoll = (!_spectatorMode && _cameraMode == 0u)
-				? std::cos(_walkBobPhase * 0.5f) * 0.018f * groundedMotion
+				? std::cos(_walkBobPhase * 0.5f) * cameraPose.walkBobRoll * groundedMotion
 				: 0.0f;
 			const float targetSprintFov = (!_spectatorMode && (
 				(_player.isSprinting() && (groundedMotion > 0.2f || _player.isFlying())) ||
 				_player.isSwimming()))
-				? baseFovRadians() * 1.07f
+				? baseFovRadians() * cameraPose.sprintFovScale
 				: baseFovRadians();
-			_sprintFov += (targetSprintFov - _sprintFov) * (1.0f - std::exp(-7.0f * dt));
+			_sprintFov += (targetSprintFov - _sprintFov) *
+				(1.0f - std::exp(-cameraPose.fovResponse * dt));
 			_player.getCamera()._fov = _sprintFov;
 			_player.getCamera().updateProjection();
 			if (_cameraShake > 0.0f)
-				_cameraShake = (std::max)(0.0f, _cameraShake - dt * 2.8f);
+				_cameraShake = (std::max)(0.0f, _cameraShake - dt * cameraPose.shakeDecay);
 			const float shake = _cameraShake;
 			const float shakeYaw = shake * std::sin(_walkBobPhase * 17.0f) * 0.035f;
 			const float shakePitch = shake * std::cos(_walkBobPhase * 13.0f) * 0.028f;
 			const dx::XMFLOAT3 visualPlayerEye = {
-				playerEye.x + shake * std::sin(_walkBobPhase * 11.0f) * 0.03f,
+				playerEye.x + look.x * sneakForward + shake * std::sin(_walkBobPhase * 11.0f) * 0.03f,
 				playerEye.y + crouchEyeOffset + walkBobY + shake * std::cos(_walkBobPhase * 9.0f) * 0.04f,
-				playerEye.z + shake * std::cos(_walkBobPhase * 7.0f) * 0.03f
+				playerEye.z + look.z * sneakForward + shake * std::cos(_walkBobPhase * 7.0f) * 0.03f
 			};
 			_cameraData._position = visualPlayerEye;
 
 			_cameraData._view =
 				_player.getCamera()._gpuData._view;
-			const dx::XMFLOAT3 look = _player.getLookDirection();
 			if (!_spectatorMode && _cameraMode == 0u) {
 				const float yaw = _player.getYaw() + shakeYaw;
 				if (!_bodycamInitialized) {
@@ -8152,22 +8931,25 @@ namespace {
 				dx::XMFLOAT3 right;
 				dx::XMStoreFloat3(&right, rightVector);
 				const float speed = horizontalSpeed;
-				const float targetMotion = (std::min)(speed / 5.0f, 1.0f);
-				const float response = 1.0f - std::exp(-8.0f * dt);
-				const float tiltResponse = 1.0f - std::exp(-14.0f * dt);
+				const float targetMotion = (std::min)(speed / cameraPose.motionReferenceSpeed, 1.0f);
+				const float response = 1.0f - std::exp(-cameraPose.motionResponse * dt);
+				const float tiltResponse = 1.0f - std::exp(-cameraPose.tiltResponse * dt);
 				_bodycamMotion += (targetMotion - _bodycamMotion) * response;
-				_bodycamClock += dt * (4.0f + _bodycamMotion * 3.0f);
+				_bodycamClock += dt * (cameraPose.idleClockRate +
+					_bodycamMotion * cameraPose.movementClockRate);
 
 				const float lateralSpeed = velocity.x * right.x + velocity.z * right.z;
 				const float forwardSpeed = velocity.x * bodyForward.x + velocity.z * bodyForward.z;
 				const float turnRate = std::clamp(yawDelta / dt, -5.0f, 5.0f);
-				const float walkingRoll = std::sin(_bodycamClock) * .007f * _bodycamMotion + walkBobRoll;
-				const float targetRoll = std::clamp(-turnRate * .035f - lateralSpeed * .010f + walkingRoll, -.18f, .18f);
+				const float walkingRoll = std::sin(_bodycamClock) * cameraPose.walkingRoll * _bodycamMotion + walkBobRoll;
+				const float targetRoll = std::clamp(-turnRate * cameraPose.turnRoll -
+					lateralSpeed * cameraPose.lateralRoll + walkingRoll,
+					-cameraPose.maximumRoll, cameraPose.maximumRoll);
 				_bodycamRoll += (targetRoll - _bodycamRoll) * tiltResponse;
 				float targetPitchLean = std::clamp(
-					-forwardSpeed * .010f + shakePitch,
-					-.14f,
-					.14f
+					-forwardSpeed * cameraPose.forwardPitch + shakePitch,
+					-cameraPose.maximumPitchLean,
+					cameraPose.maximumPitchLean
 				);
 				// The input pitch is clamped in player.h, but bodycam lean is applied
 				// afterward. Clamp their sum as well so jumping or moving cannot rotate
@@ -8189,8 +8971,8 @@ namespace {
 					 maximumRenderedPitch - playerPitch
 				);
 				if (_player.justLanded()) {
-					_bodycamPitchLean *= .75f;
-					_bodycamRoll *= .90f;
+					_bodycamPitchLean *= cameraPose.landingPitchRetention;
+					_bodycamRoll *= cameraPose.landingRollRetention;
 				}
 
 				// Keep the lens and its near plane inside the player's 0.30-block
@@ -8200,7 +8982,6 @@ namespace {
 				const float swim = std::clamp(_player.swimBlend(), 0.0f, 1.0f);
 				const float swimSmooth = swim * swim * (3.0f - 2.0f * swim);
 				const float standKeep = 1.0f - swimSmooth;
-				const auto& cameraPose = ac::playerPose().camera;
 				const dx::XMFLOAT3 desiredEye = {
 					visualPlayerEye.x + faceForward.x * cameraPose.faceOffset * standKeep + look.x * cameraPose.swimOffset * swimSmooth,
 					visualPlayerEye.y + look.y * cameraPose.swimOffset * swimSmooth,
@@ -8246,15 +9027,19 @@ namespace {
 				dx::XMFLOAT3 right;
 				dx::XMStoreFloat3(&right, rightVector);
 				const dx::XMFLOAT3 desiredEye = {
-					visualPlayerEye.x + look.x * (frontView ? 3.25f : -3.25f) + right.x * (frontView ? 0.0f : .72f),
-					visualPlayerEye.y + look.y * (frontView ? 3.25f : -3.25f) + .22f,
-					visualPlayerEye.z + look.z * (frontView ? 3.25f : -3.25f) + right.z * (frontView ? 0.0f : .72f)
+					visualPlayerEye.x + look.x * (frontView ? cameraPose.thirdPersonDistance : -cameraPose.thirdPersonDistance) +
+						right.x * (frontView ? 0.0f : cameraPose.thirdPersonShoulder),
+					visualPlayerEye.y + look.y * (frontView ? cameraPose.thirdPersonDistance : -cameraPose.thirdPersonDistance) +
+						cameraPose.thirdPersonHeight,
+					visualPlayerEye.z + look.z * (frontView ? cameraPose.thirdPersonDistance : -cameraPose.thirdPersonDistance) +
+						right.z * (frontView ? 0.0f : cameraPose.thirdPersonShoulder)
 				};
 				const dx::XMFLOAT3 eye = unobstructedCameraPosition(visualPlayerEye, desiredEye);
 				const dx::XMFLOAT3 focus = {
-					visualPlayerEye.x + look.x * (frontView ? 0.0f : 8.0f),
-					visualPlayerEye.y + look.y * (frontView ? 0.0f : 8.0f) - (frontView ? .18f : 0.0f),
-					visualPlayerEye.z + look.z * (frontView ? 0.0f : 8.0f)
+					visualPlayerEye.x + look.x * (frontView ? 0.0f : cameraPose.thirdPersonFocusDistance),
+					visualPlayerEye.y + look.y * (frontView ? 0.0f : cameraPose.thirdPersonFocusDistance) -
+						(frontView ? cameraPose.frontFocusDrop : 0.0f),
+					visualPlayerEye.z + look.z * (frontView ? 0.0f : cameraPose.thirdPersonFocusDistance)
 				};
 				_cameraData._position = eye;
 				dx::XMStoreFloat4x4(
@@ -8618,6 +9403,7 @@ namespace {
 					_renderedTargetBlock = target->block;
 					_renderedTargetAdjacent = target->adjacent;
 					_renderedTargetId = target->id;
+					_renderedTargetDistance = target->distance;
 					_renderedTargetValid = true;
 					ac::blockAABB boxes[8];
 					dx::XMINT3 outlineBlock = target->block;
@@ -8767,6 +9553,9 @@ namespace {
 		}
 
 		void onShutdown() override {
+			_modHost.stop();
+			_streamer.setBlockChangeHooks({}, {});
+			stopWeatherAudio();
 			// Automated frame captures are read-only diagnostics. They can end while
 			// spawn validation or synthetic window input is still active, so persisting
 			// that transient state would move the user's player or alter the camera.
@@ -8794,10 +9583,11 @@ namespace {
 			staticPipeline& pipeline,
 			pointShadowMap& shadowMap,
 			ac::staticRenderer& renderer,
+			ac::textureLibrary& textures,
 			ac::blockTextureSet& blockTextures,
 			ac::staticAssetManager& blocks,
 			ac::modelManager& models,
-			const ac::contentPackSet& contentPacks,
+			ac::contentPackSet& contentPacks,
 			ac::world& world,
 			ac::worldStreamer& streamer,
 			ac::player& player,
@@ -8818,11 +9608,141 @@ namespace {
 			_pipeline(pipeline),
 			_shadowMap(shadowMap),
 			_renderer(renderer),
+			_textures(textures),
 			_blockTextures(blockTextures),
 			_blocks(blocks),
 			_models(models),
+			_contentPacks(contentPacks),
 			_world(world),
 			_streamer(streamer),
+			_modBlocks(
+				[this](const ac::modding::resourceId& id) -> std::optional<uint32_t> {
+					try { return _blocks.getId(id.string()); }
+					catch (const std::exception&) { return std::nullopt; }
+				},
+				[this](uint32_t id) -> std::optional<ac::modding::blockDescription> {
+					const ac::blockDefinition* definition = _blocks.get(id);
+					if (!definition) return std::nullopt;
+					return ac::modding::blockDescription{
+						ac::modding::resourceId(_blocks.persistentName(id)),
+						id,
+						definition->_solid,
+						definition->_item,
+						definition->_hardness
+					};
+				},
+				[this](uint32_t id) -> std::optional<ac::modding::resourceId> {
+					const std::string name = _blocks.persistentName(id);
+					return name.empty()
+						? std::nullopt
+						: std::optional<ac::modding::resourceId>(ac::modding::resourceId(name));
+				}),
+			_modWorld(
+				[this](ac::modding::blockPosition position) -> std::optional<uint32_t> {
+					const std::optional<ac::blockId> state =
+						_streamer.tryBlockAt(position.x, position.y, position.z);
+					return state ? std::optional<uint32_t>(*state) : std::nullopt;
+				},
+				[this](ac::modding::blockPosition position, uint32_t state,
+					const ac::modding::worldWriteOptions& options) {
+					return _streamer.setBlock(
+						position.x, position.y, position.z,
+						static_cast<ac::blockId>(state), _device, _context,
+						options.notifyFluids, options.immediateRemesh,
+						options.notifyRedstone, options.notifyFallingBlocks);
+				}),
+			_modEntities(
+				[this](const ac::modding::entitySpawnRequest& request)
+					-> std::optional<ac::modding::entityId> {
+					if (!_livingEntities) return std::nullopt;
+					return _livingEntities->spawnNamed(request.type.string(),
+						{ request.position.x, request.position.y, request.position.z }, request.yaw);
+				},
+				[this](ac::modding::entityId id)
+					-> std::optional<ac::modding::entityDescription> {
+					if (!_livingEntities) return std::nullopt;
+					const ac::livingEntity* value = _livingEntities->entityById(id);
+					if (!value) return std::nullopt;
+					const std::string_view type = _livingEntities->definitionName(value->definition);
+					if (type.empty()) return std::nullopt;
+					uint32_t flags = 0;
+					if (value->grounded) flags |= 1u;
+					if (value->sheared) flags |= 2u;
+					return ac::modding::entityDescription{
+						value->id,
+						ac::modding::resourceId(std::string(type)),
+						{ value->position.x, value->position.y, value->position.z },
+						{ value->horizontalVelocity.x, value->verticalVelocity,
+							value->horizontalVelocity.y },
+						value->yaw, 0.0f, value->health, flags
+					};
+				},
+				[this]() -> std::vector<ac::modding::entityId> {
+					return _livingEntities ? _livingEntities->entityIds()
+						: std::vector<ac::modding::entityId>{};
+				},
+				[this](ac::modding::entityId id, ac::modding::float3 position) {
+					return _livingEntities && _livingEntities->teleport(
+						id, { position.x, position.y, position.z });
+				},
+				[this](ac::modding::entityId id, float amount,
+					ac::modding::float3 direction, float knockback) {
+					return _livingEntities && _livingEntities->damageById(id, amount,
+						{ direction.x, direction.y, direction.z }, knockback);
+				},
+				[this](ac::modding::entityId id) {
+					return _livingEntities && _livingEntities->remove(id);
+				}),
+			_modPresentation([this](const ac::modding::particleBurst& burst) {
+				_particles.emitBurst(
+					{ burst.position.x, burst.position.y, burst.position.z },
+					{ burst.color.red, burst.color.green, burst.color.blue, burst.color.alpha },
+					static_cast<int>((std::min)(burst.count, 256u)),
+					std::clamp(burst.speed, 0.0f, 64.0f),
+					std::clamp(burst.lifetime, 0.01f, 30.0f),
+					std::clamp(burst.size, 0.001f, 4.0f));
+				return true;
+			}),
+			_modUi(
+				[this]() { return std::string(ac::gameScreenName(_screen)); },
+				[this](std::string_view message) { pushConsoleMessage(std::string(message)); }),
+			_modStorage([this]() { return _world.path(); }),
+			_modRegistries(
+				[this](const ac::modding::resourceId& registry,
+					const ac::modding::resourceId& entry) -> std::optional<uint32_t> {
+					if (registry.string() == "core:blocks") {
+						try { return _blocks.getId(entry.string()); }
+						catch (...) { return std::nullopt; }
+					}
+					if (registry.string() == "core:entities" && _livingEntities)
+						return _livingEntities->definitionId(entry.string());
+					return std::nullopt;
+				},
+				[this](const ac::modding::resourceId& registry, uint32_t handle)
+					-> std::optional<ac::modding::resourceId> {
+					if (registry.string() == "core:blocks") {
+						const std::string name = _blocks.persistentName(handle);
+						return name.empty() ? std::nullopt :
+							std::optional<ac::modding::resourceId>(ac::modding::resourceId(name));
+					}
+					if (registry.string() == "core:entities" && _livingEntities) {
+						const std::string_view name = _livingEntities->definitionName(handle);
+						return name.empty() ? std::nullopt :
+							std::optional<ac::modding::resourceId>(
+								ac::modding::resourceId(std::string(name)));
+					}
+					return std::nullopt;
+				},
+				[this](const ac::modding::resourceId& registry) -> uint32_t {
+					if (registry.string() == "core:blocks")
+						return static_cast<uint32_t>(_blocks.ids().size());
+					if (registry.string() == "core:entities" && _livingEntities)
+						return _livingEntities->definitionCount();
+					return 0u;
+				}),
+			_modNetwork([]() { return false; },
+				[](const ac::modding::resourceId&, std::span<const uint8_t>) { return false; }),
+			_modHost(_modBlocks, _modWorld, _modLog),
 			_player(player),
 			_dynamicRenderer(dynamicRenderer),
 			_cameraBuffer(cameraBuffer),
@@ -8832,6 +9752,23 @@ namespace {
 			_lightOccluders(lightOccluders),
 			_lightOccluderData(lightOccluderData),
 			_lightOcclusionBuffer(lightOcclusionBuffer) {
+			_streamer.setBlockChangeHooks(
+				[this](int32_t x, int32_t y, int32_t z, ac::blockId previous, ac::blockId& next) {
+					ac::modding::blockChangingEvent event{ { x, y, z }, previous, next };
+					const ac::modding::eventResult result = _modHost.events().publish(event);
+					next = static_cast<ac::blockId>(event.nextState);
+					return result != ac::modding::eventResult::cancel;
+				},
+				[this](int32_t x, int32_t y, int32_t z, ac::blockId previous, ac::blockId current) {
+					ac::modding::blockChangedEvent event{ { x, y, z }, previous, current };
+					_modHost.events().publish(event);
+				});
+			_modHost.installPorts({
+				&_modEntities, &_modPresentation, &_modUi, &_modStorage,
+				&_modRegistries, &_modNetwork
+			});
+			_modHost.addRuntime(std::make_unique<ac::modding::wasmModRuntime>(
+				std::make_unique<ac::modding::wasmtimeBackend>()));
 			_blockEntities.configureIdTranslation(
 				[this](uint32_t id) { return _world.remapSavedBlockState(id); },
 				[this](uint32_t id) { return _world.persistentBlockState(id); });
@@ -8880,6 +9817,22 @@ namespace {
 			_planarClipBuffer.create(device);
 			_planarClipBuffer.update(context, {});
 			_celestialShadow.create(device);
+			_streamer.setRedstoneSupportRules([this](ac::blockId state) {
+				const auto* support = _blocks.get(ac::blockType(state));
+				return support && support->_solid && support->_occludes;
+			}, [this](int32_t x, int32_t y, int32_t z, ac::blockId item) {
+				spawnItemDrop(item, 1u, x + 0.5f, y + 0.15f, z + 0.5f, 0.0f, 0.8f, 0.0f);
+			});
+			_streamer.setRedstoneAnalogQuery([this](int32_t x, int32_t y, int32_t z) -> std::optional<uint8_t> {
+				const auto state = _streamer.blockAt(x, y, z);
+				const auto type = ac::blockType(state);
+				const auto* definition = _blocks.get(type);
+				const bool container = usesChestEntity(definition) || type == BLOCK_FURNACE ||
+					type == BLOCK_BLAST_FURNACE || type == BLOCK_FURNACE_LIT || type == BLOCK_BLAST_FURNACE_LIT;
+				if (!container) return std::nullopt;
+				return _blockEntities.analogSignalAt(x, y, z,
+					[this](uint32_t item) { return itemStackLimit(item); }).value_or(0u);
+			});
 			_streamer.setRedstonePoweredDeviceUpdate(
 				[this](int32_t x, int32_t y, int32_t z, ac::blockId state, uint8_t power)
 					-> std::optional<ac::blockId> {
@@ -8937,6 +9890,19 @@ namespace {
 			_nuklear.beginInput();
 			syncNuklearMouse();
 			_window.setEventHook([this](const SDL_Event& event) {
+				if (event.type == SDL_EVENT_MOUSE_BUTTON_DOWN &&
+					_screen == ac::gameScreen::inventory && isCreative() &&
+					_inventoryTab == inventoryTab::chooser) {
+					// Resolve focus before onUpdate dispatches inventory shortcuts.
+					const auto& r = _chooserSearchRect;
+					const float mx = event.button.x * static_cast<float>(_window.getWidth()) /
+						static_cast<float>((std::max)(_window.getLogicalWidth(), 1));
+					const float my = event.button.y * static_cast<float>(_window.getHeight()) /
+						static_cast<float>((std::max)(_window.getLogicalHeight(), 1));
+					const bool inside = mx >= r.x && mx < r.x + r.w && my >= r.y && my < r.y + r.h;
+					if (!inside) _chooserSearchFocus = false;
+					else if (event.button.button == SDL_BUTTON_LEFT) _chooserSearchFocus = true;
+				}
 				if (_screen == ac::gameScreen::console &&
 					(event.type == SDL_EVENT_KEY_DOWN || event.type == SDL_EVENT_KEY_UP) &&
 					event.key.key == SDLK_TAB) {
@@ -8960,6 +9926,7 @@ namespace {
 			loadGui(_guiInventory, "assets/textures/gui/container/inventory.png");
 			loadGui(_guiCrafting, "assets/textures/gui/container/crafting_table.png");
 			loadGui(_guiChest, "assets/textures/gui/container/generic_54.png");
+			loadGui(_guiFurnace, "assets/textures/gui/container/furnace.png");
 			loadGui(_guiCreativeItems,
 				"assets/textures/gui/container/creative_inventory/tab_items.png");
 			loadGui(_guiCreativeInv,
@@ -9002,6 +9969,7 @@ namespace {
 			setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			_playerEntity = _dynamicRenderer.createHumanoid({}, { 1.0f, 1.0f, 1.0f, 1.0f }, false);
 			setScreen(ac::gameScreen::mainMenu);
+			_modHost.start(contentPacks);
 		}
 	};
 }
@@ -9064,23 +10032,7 @@ int runVoxelApplication() {
 		for (const auto& [pack, path] : contentPacks.paths("blocks"))
 			blocks.load(path.string(), pack->id);
 		blocks.validateReferences(models);
-		ac::WATER_BLOCK_TYPE = blocks.getId("core:water");
-		ac::BLOCK_CRAFTING_TABLE = blocks.getId("core:crafting_table");
-		ac::BLOCK_REDSTONE = blocks.getId("core:redstone");
-		ac::BLOCK_REDSTONE_BLOCK = blocks.getId("core:redstone_block");
-		ac::BLOCK_REDSTONE_WIRE = blocks.getId("core:redstone_wire");
-		ac::BLOCK_REDSTONE_LAMP = blocks.getId("core:redstone_lamp");
-		ac::BLOCK_REDSTONE_LAMP_ON = blocks.getId("core:redstone_lamp_on");
-		ac::BLOCK_REDSTONE_TORCH = blocks.getId("core:redstone_torch");
-		ac::BLOCK_REDSTONE_TORCH_OFF = blocks.getId("core:redstone_torch_off");
-		ac::BLOCK_LEVER = blocks.getId("core:lever");
-		ac::BLOCK_LEVER_ON = blocks.getId("core:lever_on");
-		BLOCK_CHEST = blocks.getId("core:chest");
-		BLOCK_OAK_DOOR = blocks.getId("core:oak_door");
-		BLOCK_OAK_SLAB = blocks.getId("core:oak_slab");
-		BLOCK_OAK_STAIRS = blocks.getId("core:oak_stairs");
-		BLOCK_OAK_FENCE = blocks.getId("core:oak_fence");
-		BLOCK_MAGMA = blocks.getId("core:magma_block");
+		bindBlockAliases(blocks);
 		ac::registerBlockStateVariants(blocks);
 	}
 	catch (const std::exception& error) {
@@ -9117,8 +10069,9 @@ int runVoxelApplication() {
 		return -1;
 	}
 
-	// GPU terrain is the fast default and already has an exception-safe CPU
-	// fallback. Set AC_CPU_TERRAIN only for debugging or compatibility testing.
+	// The streamer currently keeps terrain on its canonical background CPU path
+	// so saved and newly generated chunks always use the same world function.
+	// Keep the preference plumbing for a future bit-identical GPU implementation.
 	char* cpuTerrainValue = nullptr;
 	size_t cpuTerrainLength = 0;
 	_dupenv_s(&cpuTerrainValue, &cpuTerrainLength, "AC_CPU_TERRAIN");
@@ -9189,6 +10142,7 @@ int runVoxelApplication() {
 		pipeline,
 		shadowMap,
 		renderer,
+		textures,
 		blockTextures,
 		blocks,
 		models,

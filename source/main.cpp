@@ -1,5 +1,7 @@
 #include <app/VoxelApplication.h>
+#include <Windows.h>
 
 int main() {
-	return runVoxelApplication();
+	auto ret = runVoxelApplication();
+	return ret;
 }

@@ -1,0 +1,21 @@
+{
+  "id": 588,
+  "name": "poplar_planks",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/poplar_planks.png",
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

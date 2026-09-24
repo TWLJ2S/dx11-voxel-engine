@@ -1,0 +1,21 @@
+{
+  "id": 381,
+  "name": "chiseled_sulfur",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/chiseled_sulfur.png",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -1,0 +1,25 @@
+{
+  "id": 820,
+  "name": "iron_bars",
+  "texture": "assets/textures/block/iron_bars.png",
+  "model": 8,
+  "solid": true,
+  "occludes": false,
+  "renderMode": "cutout",
+  "roughness": 0.4,
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "sprite"
+}

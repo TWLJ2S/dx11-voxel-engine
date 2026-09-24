@@ -24,6 +24,9 @@ struct MaterialProperties
 	uint interpolate;
 	float roughness;
 	float metallic;
+	float4 emissionUvBounds;
+	uint emissionWarmMask;
+	float3 materialPadding;
 };
 
 Texture2DArray blockTextures : register(t0);

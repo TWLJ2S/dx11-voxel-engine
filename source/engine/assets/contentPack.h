@@ -6,13 +6,19 @@
 #include <cctype>
 #include <filesystem>
 #include <functional>
+#include <optional>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
 namespace ac {
+	struct contentPackEntrypoints {
+		std::optional<std::filesystem::path> wasm;
+		std::optional<std::filesystem::path> native;
+	};
 
     struct contentPack {
         std::string id;
@@ -21,6 +27,8 @@ namespace ac {
         std::vector<std::string> dependencies;
         std::unordered_map<std::string, std::vector<std::filesystem::path>> content;
         std::unordered_set<std::string> overrides;
+		contentPackEntrypoints entrypoints;
+		std::unordered_set<std::string> capabilities;
         bool core = false;
     };
 
@@ -88,9 +96,35 @@ namespace ac {
                     result.overrides.emplace(value.GetString());
                 }
             }
-            if (!document.HasMember("content") || !document["content"].IsObject())
+			if (document.HasMember("entrypoints")) {
+				if (!document["entrypoints"].IsObject())
+					throw std::runtime_error(manifest.string() + ": entrypoints must be an object");
+				const rapidjson::Value& entrypoints = document["entrypoints"];
+				auto readEntrypoint = [&](const char* name) -> std::optional<std::filesystem::path> {
+					if (!entrypoints.HasMember(name)) return std::nullopt;
+					if (!entrypoints[name].IsString())
+						throw std::runtime_error(manifest.string() + ": entrypoint '" + name + "' must be a string");
+					const std::filesystem::path path = safeContentPath(
+						result.root, entrypoints[name].GetString(), manifest.string());
+					if (!std::filesystem::is_regular_file(path))
+						throw std::runtime_error(manifest.string() + ": entrypoint does not exist: " + path.string());
+					return path;
+				};
+				result.entrypoints.wasm = readEntrypoint("wasm");
+				result.entrypoints.native = readEntrypoint("native");
+			}
+			if (document.HasMember("capabilities")) {
+				if (!document["capabilities"].IsArray())
+					throw std::runtime_error(manifest.string() + ": capabilities must be an array");
+				for (const rapidjson::Value& capability : document["capabilities"].GetArray()) {
+					if (!capability.IsString() || std::string_view(capability.GetString()).empty())
+						throw std::runtime_error(manifest.string() + ": capabilities must be non-empty strings");
+					result.capabilities.emplace(capability.GetString());
+				}
+			}
+            if (document.HasMember("content") && !document["content"].IsObject())
                 throw std::runtime_error(manifest.string() + ": content must be an object");
-            for (auto member = document["content"].MemberBegin();
+            if (document.HasMember("content")) for (auto member = document["content"].MemberBegin();
                 member != document["content"].MemberEnd(); ++member) {
                 const std::string kind = member->name.GetString();
                 auto addPath = [&](const rapidjson::Value& value) {
@@ -154,6 +188,18 @@ namespace ac {
         }
 
         const std::vector<contentPack>& ordered() const { return _ordered; }
+
+		std::vector<std::string> kinds() const {
+			std::unordered_set<std::string> unique;
+			for (const contentPack& pack : _ordered)
+				for (const auto& [kind, paths] : pack.content) {
+					(void)paths;
+					unique.insert(kind);
+				}
+			std::vector<std::string> result(unique.begin(), unique.end());
+			std::sort(result.begin(), result.end());
+			return result;
+		}
 
         std::vector<std::pair<const contentPack*, std::filesystem::path>> paths(
             const std::string& kind

@@ -1,0 +1,68 @@
+{
+  "collision": {
+    "standing": { "radius": 0.30, "feetBelowEye": 1.62, "headAboveEye": 0.18 },
+    "crouching": { "radius": 0.30, "feetBelowEye": 1.27, "headAboveEye": 0.23 },
+    "swimming": { "radius": 0.30, "feetBelowEye": 0.40, "headAboveEye": 0.20 },
+    "stepHeight": 0.55,
+    "maximumMoveStep": 0.08
+  },
+  "look": { "sensitivity": 0.0007, "maximumPitchDeg": 89.9 },
+  "water": {
+    "feetSampleOffset": 0.12,
+    "torsoSampleFraction": 0.5,
+    "surfaceSampleOffset": 0.85,
+    "control": 0.82,
+    "swimInputScale": 0.72,
+    "horizontalInputScale": 0.28,
+    "verticalInputScale": 1.20,
+    "swimRetention": 0.05,
+    "wadeRetention": 0.018,
+    "swimVerticalRetention": 0.05,
+    "wadeVerticalRetention": 0.09,
+    "maximumSwimSpeed": 3.4,
+    "maximumWadeSpeed": 2.2,
+    "wadeGravity": -1.5,
+    "minimumVerticalSpeed": -7.0,
+    "maximumVerticalSpeed": 8.8
+  },
+  "movement": {
+    "crouchScale": 0.24,
+    "sprintScale": 1.25,
+    "airControl": 0.15,
+    "groundInputRetention": 0.30,
+    "groundStopRetention": 0.00001,
+    "airRetention": 0.90,
+    "stopSnapSpeed": 0.02,
+    "walkSpeed": 4.0,
+    "sprintSpeed": 5.75,
+    "crouchSpeed": 1.2
+  },
+  "flight": {
+    "toggleWindow": 0.30,
+    "normalScale": 1.8,
+    "sprintScale": 3.6,
+    "maximumNormalSpeed": 10.92,
+    "maximumSprintSpeed": 21.84,
+    "maximumVerticalSpeed": 10.92,
+    "spectatorNormalScale": 1.8,
+    "spectatorSprintScale": 3.6,
+    "maximumSpectatorSpeed": 12.0,
+    "maximumSpectatorVerticalSpeed": 12.0
+  },
+  "jump": {
+    "velocity": 7.5,
+    "gravity": -25.0,
+    "terminalVelocity": -40.0,
+    "landingCooldownSubticks": 12
+  },
+  "landing": {
+    "initialDuration": 0.30,
+    "initialMomentumRetention": 0.55,
+    "minimumImpactSpeed": 2.0,
+    "maximumImpactSpeed": 10.0,
+    "minimumMomentumLoss": 0.70,
+    "maximumMomentumLoss": 0.998,
+    "minimumDuration": 0.15,
+    "maximumDuration": 1.0
+  }
+}

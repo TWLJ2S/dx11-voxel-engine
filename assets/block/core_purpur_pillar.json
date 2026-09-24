@@ -1,0 +1,29 @@
+{
+  "id": 95,
+  "name": "purpur_pillar",
+  "textures": {
+    "side": "assets/textures/block/purpur_pillar.png",
+    "top": "assets/textures/block/purpur_pillar_top.png",
+    "bottom": "assets/textures/block/purpur_pillar_top.png",
+    "west": "assets/textures/block/purpur_pillar.png",
+    "east": "assets/textures/block/purpur_pillar.png",
+    "north": "assets/textures/block/purpur_pillar.png",
+    "south": "assets/textures/block/purpur_pillar.png"
+  },
+  "roughness": 0.7,
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

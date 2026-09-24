@@ -1,0 +1,22 @@
+{
+  "id": 19,
+  "name": "iron_ore",
+  "texture": "assets/textures/block/iron_ore.png",
+  "roughness": 0.72,
+  "metallic": 0.22,
+  "hardness": 3.0,
+  "harvestLevel": 1,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -1,0 +1,25 @@
+{
+  "id": 715,
+  "name": "cactus_flower",
+  "roughness": 0.8,
+  "model": 15,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "texture": "assets/textures/block/cactus_flower.png",
+  "hardness": 0.2,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "cross"
+}

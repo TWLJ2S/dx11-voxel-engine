@@ -1,0 +1,21 @@
+{
+  "id": 310,
+  "name": "rooted_dirt",
+  "roughness": 0.9,
+  "texture": "assets/textures/block/rooted_dirt.png",
+  "hardness": 0.5,
+  "harvestLevel": 0,
+  "tool": "shovel",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

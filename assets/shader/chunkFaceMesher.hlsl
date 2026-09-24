@@ -229,6 +229,8 @@ void main(uint3 groupId : SV_GroupID, uint3 groupThreadId : SV_GroupThreadID)
                     ((fluidLevel(state) & 15u) << 20u) |
                     ((neighborLevel & 7u) << 24u) |
                     (((block.flags & 4u) != 0u ? 1u : 0u) << 27u);
+                if ((block.flags & 32u) != 0u)
+                    key |= ((state >> 12u) & 15u) << 28u;
             }
         }
         faceMask[maskIndex] = key;
@@ -278,6 +280,8 @@ void main(uint3 groupId : SV_GroupID, uint3 groupThreadId : SV_GroupThreadID)
                             (h01 << 16u) | (h11 << 20u);
                     }
                     else face.ao = packedAO;
+                    if ((blocks[faceId].flags & 32u) != 0u)
+                        face.ao |= 0x4000u | (((faceKey >> 28u) & 15u) << 9u);
                     face.opacity = blocks[faceId].opacity;
                     if (((faceKey >> 27u) & 1u) != 0u) translucentFaces.Append(face);
                     else opaqueFaces.Append(face);

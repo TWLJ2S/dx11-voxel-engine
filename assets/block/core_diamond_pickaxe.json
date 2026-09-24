@@ -1,0 +1,25 @@
+{
+  "id": 164,
+  "name": "diamond_pickaxe",
+  "texture": "assets/textures/item/diamond_pickaxe.png",
+  "roughness": 0.55,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "tool": "pickaxe",
+  "harvestLevel": 3,
+  "miningSpeed": 8,
+  "hardness": 0.0,
+  "requiresTool": false,
+  "toolHarvestLevel": 3,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "tool"
+}

@@ -1,0 +1,22 @@
+{
+  "id": 315,
+  "name": "nether_gold_ore",
+  "roughness": 0.7,
+  "texture": "assets/textures/block/nether_gold_ore.png",
+  "metallic": 0.3,
+  "hardness": 3.0,
+  "harvestLevel": 2,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

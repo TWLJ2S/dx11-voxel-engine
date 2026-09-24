@@ -71,7 +71,7 @@ namespace ac {
 		float cloudCoverage = 0.36f;
 		float cloudDensity = 0.72f;
 		float cloudShadowStrength = 0.30f;
-		float daylightPadding = 0.0f;
+		float cloudTime = 0.0f;
 	};
 
 	struct chunkLightBufferData {

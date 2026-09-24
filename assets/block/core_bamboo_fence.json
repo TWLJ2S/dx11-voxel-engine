@@ -1,0 +1,24 @@
+{
+  "id": 356,
+  "name": "bamboo_fence",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/bamboo_fence.png",
+  "model": 5,
+  "solid": true,
+  "occludes": false,
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

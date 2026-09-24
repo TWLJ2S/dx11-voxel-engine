@@ -3706,28 +3706,48 @@
       "name": "core:pumpkin_pie"
     },
     {
-      "id": 928,
+      "id": 927,
       "name": "core:rotten_flesh"
     },
     {
-      "id": 929,
+      "id": 928,
       "name": "core:sweet_berries"
     },
     {
-      "id": 930,
+      "id": 929,
       "name": "core:beetroot"
     },
     {
-      "id": 931,
+      "id": 930,
       "name": "core:chorus_fruit"
     },
     {
-      "id": 932,
+      "id": 931,
       "name": "core:rabbit_stew"
     },
     {
-      "id": 933,
+      "id": 932,
       "name": "core:beetroot_soup"
+    },
+    {
+      "id": 933,
+      "name": "core:shears"
+    },
+    {
+      "id": 934,
+      "name": "core:furnace_lit"
+    },
+    {
+      "id": 935,
+      "name": "core:blast_furnace_lit"
+    },
+    {
+      "id": 936,
+      "name": "core:repeater"
+    },
+    {
+      "id": 937,
+      "name": "core:comparator"
     }
   ]
 }

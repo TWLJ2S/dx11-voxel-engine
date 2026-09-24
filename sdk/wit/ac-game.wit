@@ -1,0 +1,145 @@
+package ac:game@0.1.0;
+
+interface logging {
+    enum level { debug, info, warning, error }
+    write: func(level: level, message: string);
+}
+
+interface blocks {
+    type block-state = u32;
+
+    record block-description {
+        id: string,
+        runtime-id: u32,
+        solid: bool,
+        item: bool,
+        hardness: f32,
+    }
+
+    find: func(id: string) -> option<block-description>;
+    persistent-id: func(runtime-id: u32) -> option<string>;
+}
+
+interface world {
+    use blocks.{block-state};
+
+    record block-position { x: s32, y: s32, z: s32 }
+    record write-options {
+        notify-fluids: bool,
+        notify-redstone: bool,
+        notify-falling-blocks: bool,
+        immediate-remesh: bool,
+    }
+
+    read-block: func(position: block-position) -> option<block-state>;
+    write-block: func(
+        position: block-position,
+        state: block-state,
+        options: write-options,
+    ) -> bool;
+}
+
+interface entities {
+    type entity-id = u64;
+    record vec3 { x: f32, y: f32, z: f32 }
+    record entity-description {
+        id: entity-id,
+        type-id: string,
+        position: vec3,
+        velocity: vec3,
+        yaw: f32,
+        pitch: f32,
+        health: f32,
+        flags: u32,
+    }
+    spawn: func(type-id: string, position: vec3, yaw: f32) -> option<entity-id>;
+    describe: func(id: entity-id) -> option<entity-description>;
+    teleport: func(id: entity-id, position: vec3) -> bool;
+    damage: func(id: entity-id, amount: f32, direction: vec3, knockback: f32) -> bool;
+    remove: func(id: entity-id) -> bool;
+}
+
+interface presentation {
+    use entities.{vec3};
+    record color { red: f32, green: f32, blue: f32, alpha: f32 }
+    particle-burst: func(
+        position: vec3, color: color, count: u32,
+        speed: f32, lifetime: f32, size: f32,
+    ) -> bool;
+}
+
+interface ui {
+    current-screen: func() -> string;
+    notify: func(message: string);
+}
+
+interface storage {
+    read: func(key: string) -> option<list<u8>>;
+    write: func(key: string, value: list<u8>) -> bool;
+    remove: func(key: string) -> bool;
+}
+
+interface registries {
+    find: func(registry: string, entry: string) -> option<u32>;
+    add: func(registry: string, entry: string, value: string) -> bool;
+    value: func(registry: string, handle: u32) -> option<string>;
+}
+
+interface network {
+    available: func() -> bool;
+    send: func(channel: string, payload: list<u8>) -> bool;
+}
+
+interface registration {
+    register-command: func(name: string, description: string, usage: string) -> result;
+    subscribe-server-tick: func() -> result;
+    subscribe-block-changing: func(priority: s32) -> result;
+    subscribe-block-changed: func(priority: s32) -> result;
+}
+
+interface callbacks {
+    use blocks.{block-state};
+    use world.{block-position};
+
+    enum block-change-action { continue, cancel }
+    record block-change-result {
+        action: block-change-action,
+        state: block-state,
+    }
+
+    initialize: func(api-version: u32) -> result;
+    registries-frozen: func();
+    engine-started: func();
+    shutdown: func();
+    server-tick: func(tick: u64, subtick: u8, delta-time: f32);
+    world-opened: func(seed: u64);
+    world-saving: func();
+    world-saved: func();
+    world-closed: func();
+    resources-reloaded: func();
+    block-changing: func(
+        position: block-position,
+        previous: block-state,
+        next: block-state,
+    ) -> block-change-result;
+    block-changed: func(
+        position: block-position,
+        previous: block-state,
+        current: block-state,
+    );
+    execute-command: func(name: string, arguments: list<string>) -> result<string, string>;
+}
+
+world game-mod {
+    import logging;
+    import blocks;
+    import world;
+    import registration;
+    import entities;
+    import presentation;
+    import ui;
+    import storage;
+    import registries;
+    import network;
+    export callbacks;
+}

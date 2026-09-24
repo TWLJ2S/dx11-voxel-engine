@@ -49,7 +49,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)source;$(ProjectDir)source/engine;$(ProjectDir)dependencies;$(ProjectDir)dependencies/SDL3/include;$(ProjectDir)dependencies/nuklear</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source;$(ProjectDir)source/engine;$(ProjectDir)dependencies;$(ProjectDir)dependencies/SDL3/include;$(ProjectDir)dependencies/nuklear;$(ProjectDir)dependencies/wasmtime/wasmtime-v49.0.0-x86_64-windows-c-api/include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
@@ -59,12 +59,13 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)dependencies/SDL3/lib;$(PROJECTDIR)dependencies/DirectXTex/lib/Debug;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DirectXTex.lib;windowscodecs.lib;dxguid.lib;SDL3.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)dependencies/SDL3/lib;$(PROJECTDIR)dependencies/DirectXTex/lib/Debug;$(PROJECTDIR)dependencies/wasmtime/wasmtime-v49.0.0-x86_64-windows-c-api/lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;wasmtime.dll.lib;windowscodecs.lib;dxguid.lib;SDL3.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /D /E /I /Q /Y "$(ProjectDir)assets" "$(OutDir)assets\"
-xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Command>
+xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"
+xcopy /D /I /Q /Y "$(ProjectDir)dependencies\wasmtime\wasmtime-v49.0.0-x86_64-windows-c-api\lib\wasmtime.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -76,7 +77,7 @@ xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Com
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)source;$(ProjectDir)source/engine;$(ProjectDir)dependencies;$(ProjectDir)dependencies/SDL3/include;$(ProjectDir)dependencies/nuklear</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)source;$(ProjectDir)source/engine;$(ProjectDir)dependencies;$(ProjectDir)dependencies/SDL3/include;$(ProjectDir)dependencies/nuklear;$(ProjectDir)dependencies/wasmtime/wasmtime-v49.0.0-x86_64-windows-c-api/include</AdditionalIncludeDirectories>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
@@ -84,12 +85,13 @@ xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Com
     <Link>
       <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(PROJECTDIR)dependencies/SDL3/lib;$(PROJECTDIR)dependencies/DirectXTex/lib/Release;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DirectXTex.lib;windowscodecs.lib;dxguid.lib;SDL3.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(PROJECTDIR)dependencies/SDL3/lib;$(PROJECTDIR)dependencies/DirectXTex/lib/Release;$(PROJECTDIR)dependencies/wasmtime/wasmtime-v49.0.0-x86_64-windows-c-api/lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;wasmtime.dll.lib;windowscodecs.lib;dxguid.lib;SDL3.lib;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /D /E /I /Q /Y "$(ProjectDir)assets" "$(OutDir)assets\"
-xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Command>
+xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"
+xcopy /D /I /Q /Y "$(ProjectDir)dependencies\wasmtime\wasmtime-v49.0.0-x86_64-windows-c-api\lib\wasmtime.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -117,6 +119,9 @@ xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Com
     <ClCompile Include="source\engine\renderer\playerRenderer.cpp" />
     <ClCompile Include="source\engine\renderer\staticRenderer.cpp" />
     <ClCompile Include="source\engine\server\simulationServer.cpp" />
+	<ClCompile Include="source\engine\modding\modHost.cpp" />
+	<ClCompile Include="source\engine\modding\wasmRuntime.cpp" />
+	<ClCompile Include="source\engine\modding\wasmtimeBackend.cpp" />
     <ClCompile Include="source\engine\ui\nuklearImpl.cpp" />
     <ClCompile Include="source\engine\world\chunk.cpp" />
     <ClCompile Include="source\engine\world\chunkWorker.cpp" />
@@ -132,6 +137,10 @@ xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Com
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dependencies\DirectXTex\DirectXTex.h" />
+    <ClInclude Include="source\engine\core\animationTimeline.h" />
+    <ClInclude Include="source\engine\core\animationSystem.h" />
+    <ClInclude Include="source\engine\core\applicationConfig.h" />
+    <ClInclude Include="source\engine\core\playerController.h" />
     <ClInclude Include="source\engine\core\inputKeys.h" />
     <ClInclude Include="source\app\VoxelApplication.h" />
     <ClInclude Include="source\engine\world\chunk.h" />
@@ -152,6 +161,16 @@ xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Com
     <ClInclude Include="source\engine\renderer\buffer.h" />
     <ClInclude Include="source\engine\renderer\scenePostProcess.h" />
     <ClInclude Include="source\engine\server\simulationServer.h" />
+	<ClInclude Include="source\engine\modding\resourceId.h" />
+	<ClInclude Include="source\engine\modding\runtimeRegistry.h" />
+	<ClInclude Include="source\engine\modding\gameEvents.h" />
+	<ClInclude Include="source\engine\modding\gameApi.h" />
+	<ClInclude Include="source\engine\modding\gameServices.h" />
+	<ClInclude Include="source\engine\modding\gameApiAdapters.h" />
+	<ClInclude Include="source\engine\modding\commandRegistry.h" />
+	<ClInclude Include="source\engine\modding\modHost.h" />
+	<ClInclude Include="source\engine\modding\wasmRuntime.h" />
+	<ClInclude Include="source\engine\modding\wasmtimeBackend.h" />
     <ClInclude Include="source\engine\renderer\gpuFrameTimer.h" />
     <ClInclude Include="source\engine\core\camera.h" />
     <ClInclude Include="source\engine\core\debug.h" />
@@ -215,11 +234,12 @@ xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Com
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shader\basic.hlsl" />
+	<None Include="sdk\wit\ac-game.wit" />
     <None Include="assets\shader\staticVertex.hlsl" />
     <None Include="assets\shader\staticPixel.hlsl" />
-	<None Include="assets\shader\sky.hlsl" />
-	<None Include="assets\shader\directionalShadowVertex.hlsl" />
-	<None Include="assets\shader\directionalFaceShadowVertex.hlsl" />
+    <None Include="assets\shader\sky.hlsl" />
+    <None Include="assets\shader\directionalShadowVertex.hlsl" />
+    <None Include="assets\shader\directionalFaceShadowVertex.hlsl" />
     <None Include="assets\shader\playerShadow.hlsl" />
     <None Include="assets\shader\pointShadowVertex.hlsl" />
     <None Include="assets\shader\pointShadowPixel.hlsl" />
@@ -252,6 +272,8 @@ xcopy /D /I /Q /Y "$(ProjectDir)dependencies\SDL3\bin\SDL3.dll" "$(OutDir)"</Com
     <None Include="assets\terrain\README.md" />
     <None Include="assets\entities\entities.json" />
     <None Include="assets\player\animation.json" />
+    <None Include="assets\player\controller.json" />
+    <None Include="assets\application.json" />
     <None Include="assets\player\held_items.json" />
     <None Include="dependencies\DirectXTex\DirectXTex.inl" />
   </ItemGroup>

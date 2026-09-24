@@ -1,0 +1,29 @@
+{
+  "id": 708,
+  "name": "beehive",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/beehive_side.png",
+    "top": "assets/textures/block/beehive_end.png",
+    "bottom": "assets/textures/block/beehive_bottom.png",
+    "north": "assets/textures/block/beehive_front.png",
+    "west": "assets/textures/block/beehive_side.png",
+    "east": "assets/textures/block/beehive_side.png",
+    "south": "assets/textures/block/beehive_side.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

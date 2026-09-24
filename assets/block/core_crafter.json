@@ -1,0 +1,28 @@
+{
+  "id": 725,
+  "name": "crafter",
+  "roughness": 0.8,
+  "textures": {
+    "top": "assets/textures/block/crafter_top.png",
+    "bottom": "assets/textures/block/crafter_bottom.png",
+    "north": "assets/textures/block/crafter_north.png",
+    "south": "assets/textures/block/crafter_south.png",
+    "west": "assets/textures/block/crafter_west.png",
+    "east": "assets/textures/block/crafter_east.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

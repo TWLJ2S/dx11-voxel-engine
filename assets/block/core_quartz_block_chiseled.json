@@ -1,0 +1,29 @@
+{
+  "id": 594,
+  "name": "quartz_block_chiseled",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/quartz_block_chiseled.png",
+    "top": "assets/textures/block/quartz_block_chiseled_top.png",
+    "bottom": "assets/textures/block/quartz_block_chiseled_top.png",
+    "west": "assets/textures/block/quartz_block_chiseled.png",
+    "east": "assets/textures/block/quartz_block_chiseled.png",
+    "north": "assets/textures/block/quartz_block_chiseled.png",
+    "south": "assets/textures/block/quartz_block_chiseled.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

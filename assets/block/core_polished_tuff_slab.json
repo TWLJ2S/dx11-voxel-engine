@@ -1,0 +1,23 @@
+{
+  "id": 586,
+  "name": "polished_tuff_slab",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/polished_tuff_slab.png",
+  "model": 3,
+  "occludes": false,
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "slab"
+}

@@ -1,0 +1,36 @@
+{
+  "id": 701,
+  "name": "lever_on",
+  "model": 31,
+  "texture": "assets/textures/block/lever.png",
+  "textures": {
+    "side": "assets/textures/block/lever.png",
+    "top": "assets/textures/block/cobblestone.png"
+  },
+  "roughness": 0.7,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "interaction": "lever",
+  "behavior": {
+    "placement": "wall_or_floor",
+    "use": "toggle_powered",
+    "redstone": "switch",
+    "redstoneOutput": 15
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": true,
+  "heldStyle": "block"
+}

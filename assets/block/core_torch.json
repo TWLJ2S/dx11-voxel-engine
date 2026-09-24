@@ -1,0 +1,53 @@
+{
+  "id": 819,
+  "name": "torch",
+  "texture": "assets/textures/block/torch.png",
+  "model": 14,
+  "roughness": 0.55,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "emission": {
+    "r": 1.0,
+    "g": 0.85,
+    "b": 0.45,
+    "intensity": 0.7,
+    "radius": 14.0,
+    "position": [
+      0.5,
+      0.82,
+      0.5
+    ],
+    "wallPosition": [
+      0.261,
+      0.851,
+      0.5
+    ],
+    "halfExtent": [
+      0.075,
+      0.075,
+      0.075
+    ],
+    "uvBounds": [
+      0.0,
+      0.35,
+      1.0,
+      0.52
+    ]
+  },
+  "hardness": 0.2,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "rod"
+}

@@ -12,6 +12,7 @@ namespace ac {
 		inventory,
 		chest,
 		crafting,
+		furnace,
 		console,
 		worldSelect,
 		createWorld
@@ -26,6 +27,7 @@ namespace ac {
 		case gameScreen::inventory: return "Inventory";
 		case gameScreen::chest: return "Chest";
 		case gameScreen::crafting: return "Crafting";
+		case gameScreen::furnace: return "Furnace";
 		case gameScreen::console: return "Console";
 		case gameScreen::worldSelect: return "Select World";
 		case gameScreen::createWorld: return "Create World";

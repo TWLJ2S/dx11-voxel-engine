@@ -1,0 +1,32 @@
+{
+  "id": 790,
+  "name": "sniffer_egg_not_cracked",
+  "model": 27,
+  "roughness": 0.8,
+  "textures": {
+    "top": "assets/textures/block/sniffer_egg_not_cracked_top.png",
+    "bottom": "assets/textures/block/sniffer_egg_not_cracked_bottom.png",
+    "north": "assets/textures/block/sniffer_egg_not_cracked_north.png",
+    "south": "assets/textures/block/sniffer_egg_not_cracked_south.png",
+    "west": "assets/textures/block/sniffer_egg_not_cracked_west.png",
+    "east": "assets/textures/block/sniffer_egg_not_cracked_east.png"
+  },
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

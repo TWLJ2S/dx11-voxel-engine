@@ -1,0 +1,29 @@
+{
+  "id": 777,
+  "name": "quartz_block_lines",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/quartz_block_lines.png",
+    "top": "assets/textures/block/quartz_block_lines_top.png",
+    "bottom": "assets/textures/block/quartz_block_lines_top.png",
+    "west": "assets/textures/block/quartz_block_lines.png",
+    "east": "assets/textures/block/quartz_block_lines.png",
+    "north": "assets/textures/block/quartz_block_lines.png",
+    "south": "assets/textures/block/quartz_block_lines.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

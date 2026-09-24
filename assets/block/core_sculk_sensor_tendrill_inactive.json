@@ -1,0 +1,22 @@
+{
+  "id": 617,
+  "name": "sculk_sensor_tendrill_inactive",
+  "model": 37,
+  "roughness": 0.8,
+  "texture": "assets/textures/block/sculk_sensor_tendrill_inactive.png",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

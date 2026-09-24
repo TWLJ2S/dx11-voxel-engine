@@ -49,5 +49,6 @@ compile_commands.json
 Thumbs.db
 desktop.ini
 
-# Generated voxel chunk files
-world/
+# Generated voxel chunk files at the repository root. Do not ignore the
+# engine's source/engine/world directory.
+/world/

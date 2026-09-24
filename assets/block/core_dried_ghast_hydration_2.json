@@ -1,0 +1,28 @@
+{
+  "id": 739,
+  "name": "dried_ghast_hydration_2",
+  "roughness": 0.8,
+  "textures": {
+    "top": "assets/textures/block/dried_ghast_hydration_2_top.png",
+    "bottom": "assets/textures/block/dried_ghast_hydration_2_bottom.png",
+    "north": "assets/textures/block/dried_ghast_hydration_2_north.png",
+    "south": "assets/textures/block/dried_ghast_hydration_2_south.png",
+    "west": "assets/textures/block/dried_ghast_hydration_2_west.png",
+    "east": "assets/textures/block/dried_ghast_hydration_2_east.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -1,0 +1,29 @@
+{
+  "id": 28,
+  "name": "sandstone",
+  "textures": {
+    "side": "assets/textures/block/sandstone_normal.png",
+    "top": "assets/textures/block/sandstone_top.png",
+    "bottom": "assets/textures/block/sandstone_bottom.png",
+    "west": "assets/textures/block/sandstone_normal.png",
+    "east": "assets/textures/block/sandstone_normal.png",
+    "north": "assets/textures/block/sandstone_normal.png",
+    "south": "assets/textures/block/sandstone_normal.png"
+  },
+  "roughness": 0.8,
+  "hardness": 0.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "sand",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

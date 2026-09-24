@@ -1,0 +1,21 @@
+{
+  "id": 63,
+  "name": "gravelly_dirt",
+  "texture": "assets/textures/block/gravel.png",
+  "roughness": 0.9,
+  "hardness": 0.5,
+  "harvestLevel": 0,
+  "tool": "shovel",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "gravel",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

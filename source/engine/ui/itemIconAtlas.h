@@ -347,7 +347,9 @@ namespace ac {
 				vertices = prototype->_vertex;
 				indices = prototype->_index;
 				for (vertex& v : vertices) {
-					v._material = definition->materialForNormal(v._normal);
+					v._material = isDiodeModel(modelId) ? definition->materialForFace(v._material) : modelId == MODEL_LEVER
+						? definition->materialForFace(v._material == 1u ? BLOCK_FACE_UP : BLOCK_FACE_WEST)
+						: definition->materialForNormal(v._normal);
 					v._opacity = definition->_opacity;
 					if (v._ao == 0) v._ao = 0xFFu;
 				}
@@ -365,6 +367,7 @@ namespace ac {
 
 		static bool shouldUseFlatIcon(const blockDefinition* definition) {
 			if (!definition) return false;
+			if (definition->_model == MODEL_LEVER) return false;
 			if (definition->_flatIcon) return true;
 			if (definition->_item) return true;
 			if (definition->_texture.find("/item/") != std::string::npos)

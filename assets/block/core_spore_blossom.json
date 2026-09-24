@@ -1,0 +1,25 @@
+{
+  "id": 630,
+  "name": "spore_blossom",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/spore_blossom.png",
+  "model": 15,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "hardness": 3.0,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "cross"
+}

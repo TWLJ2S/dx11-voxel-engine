@@ -1,0 +1,29 @@
+{
+  "id": 30,
+  "name": "red_sandstone",
+  "roughness": 0.82,
+  "textures": {
+    "side": "assets/textures/block/red_sandstone.png",
+    "top": "assets/textures/block/red_sandstone_top.png",
+    "bottom": "assets/textures/block/red_sandstone_bottom.png",
+    "west": "assets/textures/block/red_sandstone.png",
+    "east": "assets/textures/block/red_sandstone.png",
+    "north": "assets/textures/block/red_sandstone.png",
+    "south": "assets/textures/block/red_sandstone.png"
+  },
+  "hardness": 0.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "sand",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

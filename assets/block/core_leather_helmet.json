@@ -1,0 +1,25 @@
+{
+  "id": 206,
+  "name": "leather_helmet",
+  "texture": "assets/textures/item/leather_helmet.png",
+  "roughness": 0.85,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "hardness": 0.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.04,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "toolHarvestLevel": 0,
+  "heldStyle": "sprite"
+}

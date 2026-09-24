@@ -1,0 +1,29 @@
+{
+  "id": 322,
+  "name": "sculk",
+  "roughness": 0.95,
+  "textures": {
+    "side": "assets/textures/block/sculk.png",
+    "bottom": "assets/textures/block/sculk_bottom.png",
+    "top": "assets/textures/block/sculk.png",
+    "west": "assets/textures/block/sculk.png",
+    "east": "assets/textures/block/sculk.png",
+    "north": "assets/textures/block/sculk.png",
+    "south": "assets/textures/block/sculk.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

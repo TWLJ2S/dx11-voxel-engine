@@ -1,0 +1,21 @@
+{
+  "id": 48,
+  "name": "lapis_ore",
+  "texture": "assets/textures/block/lapis_ore.png",
+  "roughness": 0.8,
+  "hardness": 3.0,
+  "harvestLevel": 1,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

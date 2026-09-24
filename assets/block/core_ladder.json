@@ -1,0 +1,25 @@
+{
+  "id": 900,
+  "name": "ladder",
+  "texture": "assets/textures/block/ladder.png",
+  "model": 28,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "roughness": 0.7,
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": true,
+  "heldStyle": "block"
+}

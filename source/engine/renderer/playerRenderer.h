@@ -14,6 +14,7 @@
 
 #include <assets/cpuAsset.h>
 #include <core/playerPose.h>
+#include <core/animationSystem.h>
 #include <core/shader.h>
 #include <core/texture.h>
 #include <renderer/buffer.h>
@@ -26,12 +27,20 @@ namespace ac {
 		return definition->heldStyle();
 	}
 
+	inline bool isToolHeldStyle(heldItemStyle style) {
+		return style == heldItemStyle::tool || style == heldItemStyle::axe ||
+			style == heldItemStyle::sword;
+	}
+
 	struct humanoidAnimationState {
 		float animationTime = 0.0f;
 		float useAnimationRemaining = 0.0f;
 		float useAnimationDuration = 0.42f;
 		float usePitch = 0.85f;
+		float useYaw = 0.0f;
 		float useRoll = 0.20f;
+		float useMoveY = 1.0f;
+		float useMoveZ = 1.0f;
 		float smoothedMovement = 0.0f;
 		float smoothedPitch = 0.0f;
 		float airborneMovement = 0.0f;
@@ -39,6 +48,9 @@ namespace ac {
 		float idleTime = 0.0f;
 		float toolRaise = 0.0f;
 		float swimBlend = 0.0f;
+		float crouchBlend = 0.0f;
+		std::vector<animationTimingSegment> useTiming;
+		animationCurve useCurve;
 		bool toolUsing = false;
 	};
 
@@ -93,6 +105,8 @@ namespace ac {
 			clip._duration = 1.0f;
 			clip._ticksPerSecond = 1.0f;
 			clip._loop = true;
+			clip._timing = pose.walk.timing;
+			clip._timeCurve = pose.walk.timeCurve;
 			for (const auto [bone, phase] : std::array<std::pair<uint32_t, float>, 4>{ {
 				{ 2u, pose.walk.armSwing }, { 3u, -pose.walk.armSwing },
 				{ 4u, -pose.walk.legSwing }, { 5u, pose.walk.legSwing }
@@ -112,14 +126,12 @@ namespace ac {
 			using namespace DirectX;
 			for (const animationChannel& channel : clip._channels) {
 				if (channel._boneId != bone || channel._keyframes.empty()) continue;
-				const float local = std::fmod(time, clip._duration);
-				for (size_t i = 1; i < channel._keyframes.size(); ++i) {
-					if (local > channel._keyframes[i]._time) continue;
-					const keyframe& a = channel._keyframes[i - 1];
-					const keyframe& b = channel._keyframes[i];
-					const float blend = (local - a._time) / (std::max)(b._time - a._time, .0001f);
-					return XMQuaternionSlerp(XMLoadFloat4(&a._rotation), XMLoadFloat4(&b._rotation), blend);
-				}
+				const float normalized = clip._duration > 0.0f ? time / clip._duration : 0.0f;
+				const float phase = !clip._timeCurve.empty()
+					? std::clamp(clip._timeCurve.evaluate(normalized - std::floor(normalized)), 0.0f, 1.0f)
+					: remapAnimationPhase(normalized, clip._timing);
+				const animationTransform sampled = sampleAnimationChannel(channel, phase * clip._duration);
+				return XMLoadFloat4(&sampled.rotation);
 			}
 			return XMQuaternionIdentity();
 		}
@@ -127,8 +139,12 @@ namespace ac {
 		static float useSwingAmount(const humanoidAnimationState& state) {
 			if (state.useAnimationRemaining <= 0.0f || state.useAnimationDuration <= 0.0f)
 				return 0.0f;
-			const float progress = 1.0f - state.useAnimationRemaining / state.useAnimationDuration;
-			return std::sin((std::max)(0.0f, (std::min)(1.0f, progress)) * DirectX::XM_PI);
+			const float progress = std::clamp(
+				1.0f - state.useAnimationRemaining / state.useAnimationDuration, 0.0f, 1.0f);
+			const float timedProgress = state.useCurve.empty()
+				? remapAnimationPhase(progress, state.useTiming)
+				: std::clamp(state.useCurve.evaluate(progress), 0.0f, 1.0f);
+			return std::sin(timedProgress * DirectX::XM_PI);
 		}
 
 		static DirectX::XMMATRIX rotationXYZ(float radX, float radY, float radZ) {
@@ -141,7 +157,9 @@ namespace ac {
 		static const heldItemPose& heldPose(heldItemStyle style) {
 			const playerPoseConfig& pose = playerPose();
 			switch (style) {
-			case heldItemStyle::tool: return pose.tool;
+			case heldItemStyle::tool:
+			case heldItemStyle::axe:
+			case heldItemStyle::sword: return pose.tool;
 			case heldItemStyle::rod: return pose.rod;
 			case heldItemStyle::cross: return pose.cross;
 			case heldItemStyle::sprite: return pose.sprite;
@@ -317,13 +335,14 @@ namespace ac {
 			const XMMATRIX extraMotion = XMMatrixRotationRollPitchYaw(
 				-swing * (view.swingPitch + state.usePitch * view.swingPitchUse) +
 					bob * walk * view.walkBobPitch + idle * view.idlePitch - airborne * view.airbornePitch,
-				swing * view.swingYaw + idle2 * view.idleYaw,
+				swing * (view.swingYaw + state.useYaw) + idle2 * view.idleYaw,
 				-swing * (view.swingRoll + state.useRoll) + bob * walk * view.walkBobRoll + idle * view.idleRoll
 			);
 			const XMMATRIX extraMove = XMMatrixTranslation(
 				view.walkX * bob * walk + idle * view.idleX,
-				-view.walkY * std::abs(bob) * walk - swing * view.swingY + idle2 * view.idleY - airborne * view.airborneY,
-				swing * view.swingZ + idle * view.idleZ
+				-view.walkY * std::abs(bob) * walk - swing * view.swingY * state.useMoveY +
+					idle2 * view.idleY - airborne * view.airborneY,
+				swing * view.swingZ * state.useMoveZ + idle * view.idleZ
 			);
 			return pose * extraMotion * extraMove *
 				XMMatrixTranslation(view.offset.x, view.offset.y, view.offset.z);
@@ -459,22 +478,22 @@ namespace ac {
 			bool firstPerson = false
 		) const {
 			using namespace DirectX;
+			(void)crouching;
 			(void)swimming;
 			const playerPoseConfig& pose = playerPose();
 			const float swimAmount = std::clamp(state.swimBlend, 0.0f, 1.0f);
 			const float swimSmooth = swimAmount * swimAmount * (3.0f - 2.0f * swimAmount);
 			const float moving = swimSmooth > 0.5f ? 1.0f : state.smoothedMovement;
-			const float useProgress = state.useAnimationRemaining > 0
-				? 1.0f - state.useAnimationRemaining /
-					(std::max)(state.useAnimationDuration, .0001f)
-				: 0.0f;
-			const float useSwing = std::sin((std::max)(0.0f, (std::min)(1.0f, useProgress)) * XM_PI);
+			const float useSwing = useSwingAmount(state);
 			const float stroke = std::sin(state.animationTime * XM_2PI);
 			const float hold = (std::max)(0.0f, (std::min)(1.0f, state.toolRaise));
 			const float holdSmooth = hold * hold * (3.0f - 2.0f * hold);
-			const bool twoHand = itemStyle == heldItemStyle::tool &&
+			const bool twoHand = (itemStyle == heldItemStyle::tool || itemStyle == heldItemStyle::axe) &&
 				swimSmooth < pose.swim.twoHandLimit && holdSmooth > 0.001f;
 			const float chop = useSwing * holdSmooth;
+			const float axePitch = itemStyle == heldItemStyle::axe ? state.usePitch : 0.0f;
+			const float axeYaw = itemStyle == heldItemStyle::axe ? state.useYaw : 0.0f;
+			const float axeRoll = itemStyle == heldItemStyle::axe ? state.useRoll : 0.0f;
 			boneData bones{};
 			const std::array<XMFLOAT3, 6> pivots = {{
 				{ 0, 1.125f, 0 }, { 0, 1.5f, 0 }, { -.375f, 1.5f, 0 },
@@ -488,10 +507,6 @@ namespace ac {
 					sampleRotation(_walkAnimation, id, state.animationTime),
 					armWalk
 				);
-				if (crouching && id <= 3u)
-					rotation = XMQuaternionMultiply(rotation, XMQuaternionRotationRollPitchYaw(pose.crouch.torsoPitch, 0, 0));
-				else if (crouching && id >= 4u)
-					rotation = XMQuaternionMultiply(rotation, XMQuaternionRotationRollPitchYaw(pose.crouch.legPitch, 0, 0));
 				if (!grounded && swimSmooth < 0.5f && id >= 2u)
 					rotation = XMQuaternionMultiply(rotation, XMQuaternionRotationRollPitchYaw(
 						id < 4u ? pose.airborne.armPitch : pose.airborne.legPitch, 0, 0));
@@ -503,18 +518,18 @@ namespace ac {
 					const float bob = stroke * moving * pose.toolRaise.bob * holdSmooth;
 					rotation = XMQuaternionMultiply(rotation,
 						XMQuaternionRotationRollPitchYaw(
-							holdSmooth * (ready.pitch + bob) + chop * ready.chop,
-							holdSmooth * ready.yaw + chop * ready.chopYaw,
-							holdSmooth * ready.roll - chop * ready.chopRoll));
+							holdSmooth * (ready.pitch + bob) + chop * (ready.chop + axePitch),
+							holdSmooth * ready.yaw + chop * (ready.chopYaw + axeYaw),
+							holdSmooth * ready.roll - chop * (ready.chopRoll + axeRoll)));
 				}
 				else if (twoHand && id == 3u) {
 					const armReadyPose& ready = firstPerson ? pose.twoHand.leftFirst : pose.twoHand.leftThird;
 					const float bob = stroke * moving * pose.toolRaise.bob * holdSmooth;
 					rotation = XMQuaternionMultiply(rotation,
 						XMQuaternionRotationRollPitchYaw(
-							holdSmooth * (ready.pitch + bob) + chop * ready.chop,
-							holdSmooth * ready.yaw - chop * ready.chopYaw,
-							holdSmooth * ready.roll + chop * ready.chopRoll));
+							holdSmooth * (ready.pitch + bob) + chop * (ready.chop + axePitch),
+							holdSmooth * ready.yaw - chop * (ready.chopYaw + axeYaw),
+							holdSmooth * ready.roll + chop * (ready.chopRoll + axeRoll)));
 				}
 				else if (id == 2u && useSwing > 0.0f && swimSmooth < pose.swim.twoHandLimit)
 					rotation = XMQuaternionMultiply(rotation,
@@ -528,8 +543,25 @@ namespace ac {
 						swimRotation = XMQuaternionIdentity();
 					rotation = XMQuaternionSlerp(rotation, swimRotation, swimSmooth);
 				}
-				const XMMATRIX local = XMMatrixTranslation(-pivots[id].x, -pivots[id].y, -pivots[id].z) *
+				XMMATRIX local = XMMatrixTranslation(-pivots[id].x, -pivots[id].y, -pivots[id].z) *
 					XMMatrixRotationQuaternion(rotation) * XMMatrixTranslation(pivots[id].x, pivots[id].y, pivots[id].z);
+				const float crouch = std::clamp(state.crouchBlend, 0.0f, 1.0f) * (1.0f - swimSmooth);
+				if (crouch > 0.0001f && id <= 3u) {
+					// Rotate the torso, head, and arms as one connected upper-body rig
+					// around the hips, then lower it into the shortened collision pose.
+					local *= XMMatrixTranslation(0.0f, -0.75f, 0.0f) *
+						XMMatrixRotationX(pose.crouch.torsoPitch * crouch) *
+						XMMatrixTranslation(0.0f, 0.75f, 0.0f) *
+						XMMatrixTranslation(
+							0.0f, pose.crouch.upperBodyY * crouch,
+							pose.crouch.upperBodyZ * crouch);
+				}
+				else if (crouch > 0.0001f && id >= 4u) {
+					local *= XMMatrixTranslation(-pivots[id].x, -pivots[id].y, -pivots[id].z) *
+						XMMatrixRotationX(pose.crouch.legPitch * crouch) *
+						XMMatrixTranslation(pivots[id].x, pivots[id].y, pivots[id].z) *
+						XMMatrixTranslation(0.0f, 0.0f, pose.crouch.legZ * crouch);
+				}
 				XMStoreFloat4x4(&bones.transforms[id], XMMatrixTranspose(local));
 			}
 			return bones;
@@ -567,7 +599,9 @@ namespace ac {
 			D3D11_SAMPLER_DESC sampler{};
 			sampler.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
 			sampler.AddressU = sampler.AddressV = sampler.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-			sampler.MaxLOD = D3D11_FLOAT32_MAX;
+			// A Minecraft skin is an atlas, not a tileable surface. Mips combine
+			// adjacent limbs/faces and visibly corrupt their colours at a distance.
+			sampler.MinLOD = sampler.MaxLOD = 0.0f;
 			DX_CHECK(device->CreateSamplerState(&sampler, _sampler.GetAddressOf()));
 
 			D3D11_BLEND_DESC blend{};
@@ -603,16 +637,23 @@ namespace ac {
 		void triggerUseAnimation(humanoidAnimationState& state, heldItemStyle style = heldItemStyle::none) {
 			const auto& use = playerPose().use;
 			if (state.useAnimationRemaining <= use.retrigger) {
-				if (style == heldItemStyle::tool) {
+				if (isToolHeldStyle(style)) {
 					state.useAnimationDuration = use.toolDuration;
 					state.usePitch = use.toolPitch;
 					state.useRoll = use.toolRoll;
+					state.useTiming = use.toolTiming;
+					state.useCurve = use.toolCurve;
 				}
 				else {
 					state.useAnimationDuration = use.handDuration;
 					state.usePitch = use.handPitch;
 					state.useRoll = use.handRoll;
+					state.useTiming = use.handTiming;
+					state.useCurve = use.handCurve;
 				}
+				state.useYaw = 0.0f;
+				state.useMoveY = 1.0f;
+				state.useMoveZ = 1.0f;
 				state.useAnimationRemaining = state.useAnimationDuration;
 			}
 		}
@@ -621,15 +662,45 @@ namespace ac {
 			const auto& attack = playerPose().attack;
 			const auto& use = playerPose().use;
 			if (state.useAnimationRemaining <= use.retrigger) {
-				if (style == heldItemStyle::tool) {
+				if (style == heldItemStyle::axe) {
+					state.useAnimationDuration = attack.axeDuration;
+					state.usePitch = attack.axePitch;
+					state.useYaw = attack.axeYaw;
+					state.useRoll = attack.axeRoll;
+					state.useMoveY = attack.axeMoveY;
+					state.useMoveZ = attack.axeMoveZ;
+					state.useTiming = attack.axeTiming;
+					state.useCurve = attack.axeCurve;
+				}
+				else if (style == heldItemStyle::sword) {
+					state.useAnimationDuration = attack.swordDuration;
+					state.usePitch = attack.swordPitch;
+					state.useYaw = attack.swordYaw;
+					state.useRoll = attack.swordRoll;
+					state.useMoveY = attack.swordMoveY;
+					state.useMoveZ = attack.swordMoveZ;
+					state.useTiming = attack.swordTiming;
+					state.useCurve = attack.swordCurve;
+				}
+				else if (style == heldItemStyle::tool) {
 					state.useAnimationDuration = attack.toolDuration;
 					state.usePitch = attack.toolPitch;
+					state.useYaw = 0.0f;
 					state.useRoll = attack.toolRoll;
+					state.useMoveY = 1.0f;
+					state.useMoveZ = 1.0f;
+					state.useTiming = attack.toolTiming;
+					state.useCurve = attack.toolCurve;
 				}
 				else {
 					state.useAnimationDuration = attack.handDuration;
 					state.usePitch = attack.handPitch;
+					state.useYaw = 0.0f;
 					state.useRoll = attack.handRoll;
+					state.useMoveY = 1.0f;
+					state.useMoveZ = 1.0f;
+					state.useTiming = attack.handTiming;
+					state.useCurve = attack.handCurve;
 				}
 				state.useAnimationRemaining = state.useAnimationDuration;
 			}
@@ -689,7 +760,8 @@ namespace ac {
 			state.useAnimationRemaining = (std::max)(0.0f, state.useAnimationRemaining - deltaTime);
 			{
 				const float dt = (std::max)(deltaTime, 0.0f);
-				const bool raising = itemStyle == heldItemStyle::tool && state.toolUsing && !swimming;
+				const bool raising = (itemStyle == heldItemStyle::tool ||
+					itemStyle == heldItemStyle::axe) && state.toolUsing && !swimming;
 				const float seconds = raising ? pose.toolRaise.raiseSeconds : pose.toolRaise.lowerSeconds;
 				const float target = raising ? 1.0f : 0.0f;
 				if (target > state.toolRaise)

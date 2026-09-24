@@ -1,0 +1,21 @@
+{
+  "id": 407,
+  "name": "copper_bulb_powered",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/copper_bulb_powered.png",
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

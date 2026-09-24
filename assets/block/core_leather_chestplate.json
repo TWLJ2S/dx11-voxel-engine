@@ -1,0 +1,25 @@
+{
+  "id": 207,
+  "name": "leather_chestplate",
+  "texture": "assets/textures/item/leather_chestplate.png",
+  "roughness": 0.85,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "hardness": 0.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.12,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "toolHarvestLevel": 0,
+  "heldStyle": "sprite"
+}

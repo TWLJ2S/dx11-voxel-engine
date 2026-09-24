@@ -1,0 +1,23 @@
+{
+  "id": 119,
+  "name": "dark_oak_stairs",
+  "texture": "assets/textures/block/planks_big_oak.png",
+  "model": 4,
+  "roughness": 0.78,
+  "occludes": false,
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

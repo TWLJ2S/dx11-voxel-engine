@@ -1,0 +1,21 @@
+{
+  "id": 228,
+  "name": "magenta_wool",
+  "roughness": 0.92,
+  "texture": "assets/textures/block/magenta_wool.png",
+  "hardness": 0.8,
+  "harvestLevel": 0,
+  "tool": "hoe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "cloth",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -1,0 +1,22 @@
+{
+  "id": 293,
+  "name": "netherite_block",
+  "roughness": 0.25,
+  "texture": "assets/textures/block/netherite_block.png",
+  "metallic": 0.95,
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

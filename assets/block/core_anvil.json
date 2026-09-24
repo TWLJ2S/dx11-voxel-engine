@@ -1,0 +1,31 @@
+{
+  "id": 703,
+  "name": "anvil",
+  "model": 23,
+  "occludes": false,
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/anvil.png",
+    "top": "assets/textures/block/anvil_top.png",
+    "bottom": "assets/textures/block/anvil_top.png",
+    "west": "assets/textures/block/anvil.png",
+    "east": "assets/textures/block/anvil.png",
+    "north": "assets/textures/block/anvil.png",
+    "south": "assets/textures/block/anvil.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -1,0 +1,21 @@
+{
+  "id": 611,
+  "name": "sandstone_smooth",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/sandstone_smooth.png",
+  "hardness": 0.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "sand",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

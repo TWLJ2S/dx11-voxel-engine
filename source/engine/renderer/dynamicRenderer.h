@@ -252,7 +252,8 @@ namespace ac {
 			bool sprinting,
 			bool swimming,
 			bool thirdPerson,
-			float swimBlend = 0.0f
+			float swimBlend = 0.0f,
+			float crouchBlend = 0.0f
 		) {
 			dynamicEntity* entity = get(handle);
 			if (!entity || entity->type != dynamicEntityType::humanoid) return false;
@@ -266,6 +267,7 @@ namespace ac {
 			entity->swimming = swimming;
 			entity->thirdPerson = thirdPerson;
 			entity->humanoidAnimation.swimBlend = std::clamp(swimBlend, 0.0f, 1.0f);
+			entity->humanoidAnimation.crouchBlend = std::clamp(crouchBlend, 0.0f, 1.0f);
 			return true;
 		}
 

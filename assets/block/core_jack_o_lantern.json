@@ -1,0 +1,39 @@
+{
+  "id": 279,
+  "name": "jack_o_lantern",
+  "roughness": 0.7,
+  "textures": {
+    "side": "assets/textures/block/pumpkin_face_on.png",
+    "north": "assets/textures/block/pumpkin_face_on.png",
+    "top": "assets/textures/block/pumpkin_top.png",
+    "bottom": "assets/textures/block/pumpkin_top.png",
+    "west": "assets/textures/block/pumpkin_face_on.png",
+    "east": "assets/textures/block/pumpkin_face_on.png",
+    "south": "assets/textures/block/pumpkin_face_on.png"
+  },
+  "emission": {
+    "r": 1.0,
+    "g": 0.65,
+    "b": 0.2,
+    "intensity": 0.85,
+    "radius": 10.0
+  },
+  "solid": true,
+  "occludes": true,
+  "renderMode": "opaque",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": true,
+  "heldStyle": "block"
+}

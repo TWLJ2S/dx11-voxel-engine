@@ -1,0 +1,29 @@
+{
+  "id": 747,
+  "name": "fletching_table",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/fletching_table_side.png",
+    "top": "assets/textures/block/fletching_table_top.png",
+    "bottom": "assets/textures/block/fletching_table_top.png",
+    "north": "assets/textures/block/fletching_table_front.png",
+    "west": "assets/textures/block/fletching_table_side.png",
+    "east": "assets/textures/block/fletching_table_side.png",
+    "south": "assets/textures/block/fletching_table_side.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

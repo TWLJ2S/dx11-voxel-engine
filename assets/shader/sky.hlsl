@@ -29,7 +29,7 @@ cbuffer DaylightBuffer : register(b7)
 	float cloudCoverage;
 	float cloudDensity;
 	float cloudShadowStrength;
-	float daylightPadding;
+	float cloudTime;
 };
 
 SkyVertex vertexMain(uint vertexId : SV_VertexID)
@@ -78,9 +78,17 @@ float cloudFbm(float2 p)
 	return value;
 }
 
+float cloudMoisture(float2 worldXZ)
+{
+	float2 coordinate = (worldXZ + float2(cloudTime * 2.15, cloudTime * 0.72)) / 420.0;
+	float phaseOffset = cloudNoise(coordinate * 0.31 + float2(13.7, -8.4));
+	float phase = frac(cloudTime / 110.0 + phaseOffset);
+	return smoothstep(0.12, 0.34, phase) * (1.0 - smoothstep(0.72, 0.96, phase));
+}
+
 float cloudShape(float2 worldXZ, float heightFraction)
 {
-	const float time = abs(waterTime);
+	const float time = cloudTime;
 	float2 wind = float2(time * 2.15, time * 0.72);
 	float2 coordinate = (worldXZ + wind) / 420.0 + heightFraction * float2(0.031, -0.019);
 	float broad = cloudFbm(coordinate);
@@ -113,6 +121,7 @@ float4 traceClouds(float3 ray, float daylight)
 		float3 samplePosition = cameraPosition + ray * distance;
 		float heightFraction = saturate((samplePosition.y - bottom) / (top - bottom));
 		float density = cloudShape(samplePosition.xz, heightFraction);
+		float moisture = cloudMoisture(samplePosition.xz);
 		float towardSun = cloudShape(samplePosition.xz + sunDir.xz * 32.0,
 			saturate(heightFraction + sunDir.y * 0.10));
 		float lightThrough = exp(-towardSun * lerp(0.75, 3.2, towardSun));
@@ -121,11 +130,16 @@ float4 traceClouds(float3 ray, float daylight)
 			saturate(lightThrough * 0.72 + topLight * 0.28));
 		float3 nightCloud = float3(0.025, 0.033, 0.060) * (0.62 + lightThrough * 0.38);
 		float3 sampleColor = lerp(nightCloud, dayCloud, daylight);
+		// Charged clouds carry a dark water-heavy base. Once their rain phase has
+		// passed they return toward a bright, thin white cloud.
+		float3 wetCloud = lerp(float3(0.075, 0.090, 0.115), float3(0.30, 0.32, 0.34), daylight);
+		sampleColor = lerp(sampleColor * 1.08, wetCloud, moisture * 0.82);
 		float sunEdge = pow(saturate(dot(ray, sunDir)), 18.0) * lightThrough * daylight;
 		sampleColor += sunColor * sunEdge * 0.38;
 		// Beer-Lambert-style extinction keeps wispy edges translucent while a
 		// dense stack reaches full opacity and can completely obscure the sun.
-		float opticalDepth = density * lerp(0.10, 1.45, density) * cloudDensity;
+		float opticalDepth = density * lerp(0.10, 1.45, density) * cloudDensity *
+			lerp(0.42, 1.22, moisture);
 		float alpha = (1.0 - exp(-opticalDepth * 1.28)) * (1.0 - accumulated.a);
 		accumulated.rgb += sampleColor * alpha;
 		accumulated.a += alpha;

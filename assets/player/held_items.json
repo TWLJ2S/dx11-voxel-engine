@@ -2,7 +2,7 @@
   "note": "Held-item layout. translation/fist are blocks. rotationDeg is XYZ Euler in degrees. scaleFirstPerson/scaleThirdPerson can be one number or [x,y,z].",
   "tool": {
     "translation": [0.22, 0.22, 0.0],
-    "rotationDeg": [90.0, -45.0, -90.0],
+    "rotationDeg": [90.0, -45.0, 90.0],
     "scaleFirstPerson": 1.15,
     "scaleThirdPerson": 1.28,
     "fist": [-0.375, 0.76, 0.08]

@@ -1,0 +1,29 @@
+{
+  "id": 721,
+  "name": "chiseled_bookshelf",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/chiseled_bookshelf_side.png",
+    "top": "assets/textures/block/chiseled_bookshelf_top.png",
+    "bottom": "assets/textures/block/chiseled_bookshelf_top.png",
+    "west": "assets/textures/block/chiseled_bookshelf_side.png",
+    "east": "assets/textures/block/chiseled_bookshelf_side.png",
+    "north": "assets/textures/block/chiseled_bookshelf_side.png",
+    "south": "assets/textures/block/chiseled_bookshelf_side.png"
+  },
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

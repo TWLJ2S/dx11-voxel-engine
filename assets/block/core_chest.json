@@ -1,0 +1,36 @@
+{
+  "id": 103,
+  "name": "chest",
+  "model": 19,
+  "occludes": false,
+  "textures": {
+    "west": "assets/textures/block/chest_front.png",
+    "east": "assets/textures/block/chest_side.png",
+    "north": "assets/textures/block/chest_side.png",
+    "south": "assets/textures/block/chest_side.png",
+    "top": "assets/textures/block/chest_top.png",
+    "bottom": "assets/textures/block/chest_bottom.png"
+  },
+  "roughness": 0.78,
+  "interaction": "chest",
+  "behavior": {
+    "placement": "horizontal_facing",
+    "use": "container",
+    "entity": "chest"
+  },
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

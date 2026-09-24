@@ -1,0 +1,29 @@
+{
+  "id": 382,
+  "name": "chiseled_tuff",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/chiseled_tuff.png",
+    "top": "assets/textures/block/chiseled_tuff_top.png",
+    "bottom": "assets/textures/block/chiseled_tuff_top.png",
+    "west": "assets/textures/block/chiseled_tuff.png",
+    "east": "assets/textures/block/chiseled_tuff.png",
+    "north": "assets/textures/block/chiseled_tuff.png",
+    "south": "assets/textures/block/chiseled_tuff.png"
+  },
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

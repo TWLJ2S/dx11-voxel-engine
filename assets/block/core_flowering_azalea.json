@@ -1,0 +1,33 @@
+{
+  "id": 748,
+  "name": "flowering_azalea",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/flowering_azalea_side.png",
+    "top": "assets/textures/block/flowering_azalea_top.png",
+    "bottom": "assets/textures/block/flowering_azalea_top.png",
+    "west": "assets/textures/block/flowering_azalea_side.png",
+    "east": "assets/textures/block/flowering_azalea_side.png",
+    "north": "assets/textures/block/flowering_azalea_side.png",
+    "south": "assets/textures/block/flowering_azalea_side.png"
+  },
+  "model": 15,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "hardness": 0.2,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "cross"
+}

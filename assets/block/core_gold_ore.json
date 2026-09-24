@@ -1,0 +1,22 @@
+{
+  "id": 20,
+  "name": "gold_ore",
+  "texture": "assets/textures/block/gold_ore.png",
+  "roughness": 0.62,
+  "metallic": 0.35,
+  "hardness": 3.0,
+  "harvestLevel": 2,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

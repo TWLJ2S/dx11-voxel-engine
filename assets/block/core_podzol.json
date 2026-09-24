@@ -1,0 +1,29 @@
+{
+  "id": 34,
+  "name": "podzol",
+  "textures": {
+    "side": "assets/textures/block/podzol_side.png",
+    "bottom": "assets/textures/block/dirt.png",
+    "top": "assets/textures/block/dirt_podzol_top.png",
+    "west": "assets/textures/block/podzol_side.png",
+    "east": "assets/textures/block/podzol_side.png",
+    "north": "assets/textures/block/podzol_side.png",
+    "south": "assets/textures/block/podzol_side.png"
+  },
+  "roughness": 0.84,
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

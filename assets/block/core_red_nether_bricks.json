@@ -1,0 +1,21 @@
+{
+  "id": 87,
+  "name": "red_nether_bricks",
+  "texture": "assets/textures/block/red_nether_brick.png",
+  "roughness": 0.82,
+  "hardness": 1.5,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

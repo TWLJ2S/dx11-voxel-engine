@@ -1,0 +1,29 @@
+{
+  "id": 795,
+  "name": "stripped_acacia_log",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/stripped_acacia_log.png",
+    "top": "assets/textures/block/stripped_acacia_log_top.png",
+    "bottom": "assets/textures/block/stripped_acacia_log_top.png",
+    "west": "assets/textures/block/stripped_acacia_log.png",
+    "east": "assets/textures/block/stripped_acacia_log.png",
+    "north": "assets/textures/block/stripped_acacia_log.png",
+    "south": "assets/textures/block/stripped_acacia_log.png"
+  },
+  "hardness": 2.0,
+  "harvestLevel": 0,
+  "tool": "axe",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "wood",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

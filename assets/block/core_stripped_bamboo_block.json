@@ -1,0 +1,29 @@
+{
+  "id": 796,
+  "name": "stripped_bamboo_block",
+  "roughness": 0.8,
+  "textures": {
+    "side": "assets/textures/block/stripped_bamboo_block.png",
+    "top": "assets/textures/block/stripped_bamboo_block_top.png",
+    "bottom": "assets/textures/block/stripped_bamboo_block_top.png",
+    "west": "assets/textures/block/stripped_bamboo_block.png",
+    "east": "assets/textures/block/stripped_bamboo_block.png",
+    "north": "assets/textures/block/stripped_bamboo_block.png",
+    "south": "assets/textures/block/stripped_bamboo_block.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

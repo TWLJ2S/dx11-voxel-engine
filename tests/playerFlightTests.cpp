@@ -66,6 +66,30 @@ int main() {
 		return 1;
 	}
 
+	ac::player crouchingPlayer({ 0.0f, 10.0f, 0.0f }, { 1.0f, 10.0f, 0.0f },
+		1.2f, 16.0f / 9.0f, 0.01f);
+	ac::serverInput crouchInput{};
+	crouchInput.crouch = true;
+	step(crouchingPlayer, crouchInput, false, empty);
+	const float enteringCrouch = crouchingPlayer.crouchBlend();
+	if (!crouchingPlayer.isCrouching() || enteringCrouch <= 0.0f || enteringCrouch >= 1.0f) {
+		std::cerr << "crouch did not begin with a smooth transition\n";
+		return 1;
+	}
+	step(crouchingPlayer, crouchInput, false, empty, 48u);
+	const float heldCrouch = crouchingPlayer.crouchBlend();
+	if (heldCrouch <= 0.95f || heldCrouch > 1.0f) {
+		std::cerr << "crouch transition did not settle into its target pose\n";
+		return 1;
+	}
+	crouchInput.crouch = false;
+	step(crouchingPlayer, crouchInput, false, empty);
+	const float leavingCrouch = crouchingPlayer.crouchBlend();
+	if (crouchingPlayer.isCrouching() || leavingCrouch <= 0.0f || leavingCrouch >= heldCrouch) {
+		std::cerr << "standing did not begin with a smooth reverse transition\n";
+		return 1;
+	}
+
 	ac::player restored({ 0.0f, 5.0f, 0.0f }, { 1.0f, 5.0f, 0.0f },
 		1.2f, 16.0f / 9.0f, 0.01f);
 	restored.restoreState({ 0.0f, 5.0f, 0.0f }, {}, 0.0f, 0.0f, false, true);
@@ -88,6 +112,6 @@ int main() {
 		return 1;
 	}
 
-	std::cout << "creative flight activation, controls, persistence, and landing passed\n";
+	std::cout << "creative flight, crouch transitions, persistence, and landing passed\n";
 	return 0;
 }

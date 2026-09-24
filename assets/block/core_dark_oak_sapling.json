@@ -1,0 +1,25 @@
+{
+  "id": 825,
+  "name": "dark_oak_sapling",
+  "texture": "assets/textures/block/dark_oak_sapling.png",
+  "model": 15,
+  "solid": false,
+  "occludes": false,
+  "renderMode": "cutout",
+  "roughness": 0.85,
+  "hardness": 0.2,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "cross"
+}

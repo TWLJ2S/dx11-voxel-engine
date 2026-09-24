@@ -1,0 +1,21 @@
+{
+  "id": 44,
+  "name": "coal_block",
+  "texture": "assets/textures/block/coal_block.png",
+  "roughness": 0.7,
+  "hardness": 5.0,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

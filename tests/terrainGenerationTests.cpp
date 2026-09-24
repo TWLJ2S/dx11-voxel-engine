@@ -61,7 +61,7 @@ int main() {
 
             for (uint32_t z = 0; z < CHUNK_LENGTH; ++z) {
                 for (uint32_t x = 0; x < CHUNK_WIDTH; ++x) {
-                    if (generated.getBlock(x, 0, z) != palette.BEDROCK_BLOCK) {
+                    if (generated.getBlock(x, 0, z) != palette.require("bedrock")) {
                         std::cerr << "bedrock floor is not sealed\n";
                         return 3;
                     }
@@ -77,19 +77,19 @@ int main() {
                     int32_t terrainTop = CHUNK_HEIGHT - 1;
                     while (terrainTop > 0) {
                         const ac::blockId type = ac::blockType(generated.getBlock(x, terrainTop, z));
-                        if (type != palette.AIR_BLOCK && type != palette.WATER_BLOCK &&
-                            type != palette.LOG_BLOCK && type != palette.LEAVES_BLOCK &&
-                            type != palette.SPRUCE_LOG_BLOCK && type != palette.SPRUCE_LEAVES_BLOCK &&
-                            type != palette.BIRCH_LOG_BLOCK && type != palette.BIRCH_LEAVES_BLOCK &&
-                            type != palette.JUNGLE_LOG_BLOCK && type != palette.JUNGLE_LEAVES_BLOCK &&
-                            type != palette.ACACIA_LOG_BLOCK && type != palette.ACACIA_LEAVES_BLOCK &&
-                            type != palette.DARK_OAK_LOG_BLOCK && type != palette.DARK_OAK_LEAVES_BLOCK)
+                    if (type != palette.AIR_BLOCK && type != palette.require("water") &&
+                            type != palette.require("oak_log") && type != palette.require("oak_leaves") &&
+                            type != palette.require("spruce_log") && type != palette.require("spruce_leaves") &&
+                            type != palette.require("birch_log") && type != palette.require("birch_leaves") &&
+                            type != palette.require("jungle_log") && type != palette.require("jungle_leaves") &&
+                            type != palette.require("acacia_log") && type != palette.require("acacia_leaves") &&
+                            type != palette.require("dark_oak_log") && type != palette.require("dark_oak_leaves"))
                             break;
                         --terrainTop;
                     }
                     for (int32_t y = 8; y < terrainTop - 5; ++y) {
                         const ac::blockId type = ac::blockType(generated.getBlock(x, y, z));
-                        if (type == palette.AIR_BLOCK || type == palette.WATER_BLOCK)
+                        if (type == palette.AIR_BLOCK || type == palette.require("water"))
                             ++undergroundVoid;
                     }
                 }
@@ -98,19 +98,19 @@ int main() {
     }
 
     std::cout << "air=" << counts[palette.AIR_BLOCK]
-        << " stone=" << counts[palette.STONE_BLOCK]
-        << " dirt=" << counts[palette.DIRT_BLOCK]
-        << " grass=" << counts[palette.GRASS_BLOCK]
-        << " bedrock=" << counts[palette.BEDROCK_BLOCK]
-        << " water=" << counts[palette.WATER_BLOCK]
-        << " sand=" << counts[palette.SAND_BLOCK]
-        << " snow=" << counts[palette.SNOW_BLOCK]
-        << " deepslate=" << counts[palette.DEEPSLATE_BLOCK]
-        << " gravel=" << counts[palette.GRAVEL_BLOCK]
-        << " logs=" << counts[palette.LOG_BLOCK]
-        << " leaves=" << counts[palette.LEAVES_BLOCK] << '\n';
+        << " stone=" << counts[palette.require("stone")]
+        << " dirt=" << counts[palette.require("dirt")]
+        << " grass=" << counts[palette.require("grass")]
+        << " bedrock=" << counts[palette.require("bedrock")]
+        << " water=" << counts[palette.require("water")]
+        << " sand=" << counts[palette.require("sand")]
+        << " snow=" << counts[palette.require("snow")]
+        << " deepslate=" << counts[palette.require("deepslate")]
+        << " gravel=" << counts[palette.require("gravel")]
+        << " logs=" << counts[palette.require("oak_log")]
+        << " leaves=" << counts[palette.require("oak_leaves")] << '\n';
 
-    if (counts[palette.STONE_BLOCK] == 0 || counts[palette.BEDROCK_BLOCK] == 0) {
+    if (counts[palette.require("stone")] == 0 || counts[palette.require("bedrock")] == 0) {
         std::cerr << "core terrain layers were not generated\n";
         return 5;
     }
@@ -120,12 +120,12 @@ int main() {
     }
 
     ac::terrainBlockPalette remapped = palette;
-    remapped.BEDROCK_BLOCK = palette.DIRT_BLOCK;
+    remapped.set("bedrock", palette.require("dirt"));
     ac::terrainGenerator remappedGenerator(seed, remapped, biomes);
     ac::chunk remappedChunk;
     remappedChunk._position = { 0, 0, 0 };
     remappedGenerator.generate(remappedChunk);
-    if (remappedChunk.getBlock(0, 0, 0) != palette.DIRT_BLOCK) {
+    if (remappedChunk.getBlock(0, 0, 0) != palette.require("dirt")) {
         std::cerr << "terrain generator ignored the configured block palette\n";
         return 7;
     }

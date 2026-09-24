@@ -1,0 +1,25 @@
+{
+  "id": 195,
+  "name": "iron_sword",
+  "texture": "assets/textures/item/iron_sword.png",
+  "roughness": 0.45,
+  "solid": false,
+  "occludes": false,
+  "item": true,
+  "tool": "sword",
+  "harvestLevel": 2,
+  "miningSpeed": 6,
+  "hardness": 0.0,
+  "requiresTool": false,
+  "toolHarvestLevel": 2,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "tool"
+}

@@ -1,0 +1,24 @@
+{
+  "id": 141,
+  "name": "black_stained_glass",
+  "texture": "assets/textures/block/black_stained_glass.png",
+  "roughness": 0.08,
+  "occludes": false,
+  "renderMode": "translucent",
+  "opacity": 0.5,
+  "hardness": 0.3,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "glass",
+  "armorReduction": 0.0,
+  "connectsToPanes": true,
+  "lightTransmission": [
+    0.0704,
+    0.0704,
+    0.0704
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

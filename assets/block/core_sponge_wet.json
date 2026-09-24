@@ -1,0 +1,21 @@
+{
+  "id": 629,
+  "name": "sponge_wet",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/sponge_wet.png",
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

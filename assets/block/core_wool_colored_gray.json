@@ -1,0 +1,21 @@
+{
+  "id": 683,
+  "name": "wool_colored_gray",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/wool_colored_gray.png",
+  "hardness": 0.8,
+  "harvestLevel": 0,
+  "tool": "pickaxe",
+  "requiresTool": true,
+  "miningSpeed": 1.0,
+  "soundMaterial": "cloth",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

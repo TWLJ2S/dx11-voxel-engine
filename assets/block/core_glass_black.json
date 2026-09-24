@@ -1,0 +1,24 @@
+{
+  "id": 477,
+  "name": "glass_black",
+  "roughness": 0.8,
+  "texture": "assets/textures/block/glass_black.png",
+  "renderMode": "translucent",
+  "occludes": false,
+  "opacity": 0.35,
+  "hardness": 0.3,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "glass",
+  "armorReduction": 0.0,
+  "connectsToPanes": true,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

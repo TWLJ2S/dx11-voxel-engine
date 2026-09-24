@@ -1,0 +1,29 @@
+{
+  "id": 774,
+  "name": "pot",
+  "model": 41,
+  "roughness": 0.8,
+  "textures": {
+    "north": "assets/textures/block/pot_front.png",
+    "south": "assets/textures/block/pot_back.png",
+    "west": "assets/textures/block/pot_left.png",
+    "east": "assets/textures/block/pot_right.png",
+    "top": "assets/textures/block/pot_front.png",
+    "bottom": "assets/textures/block/pot_front.png"
+  },
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

@@ -1,0 +1,22 @@
+{
+  "id": 46,
+  "name": "gold_block",
+  "texture": "assets/textures/block/gold_block.png",
+  "roughness": 0.16,
+  "metallic": 1.0,
+  "hardness": 1.0,
+  "harvestLevel": 0,
+  "tool": "none",
+  "requiresTool": false,
+  "miningSpeed": 1.0,
+  "soundMaterial": "stone",
+  "armorReduction": 0.0,
+  "connectsToPanes": false,
+  "lightTransmission": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "flatIcon": false,
+  "heldStyle": "block"
+}

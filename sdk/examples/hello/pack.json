@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "hello",
+  "version": "1.0.0",
+  "dependencies": ["core"],
+  "capabilities": ["commands.register", "ui.notify"],
+  "entrypoints": {
+    "wasm": "hello.wasm"
+  }
+}
